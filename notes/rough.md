@@ -5,6 +5,7 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 -----------------------------------------------
 
 ### Summary
+
 - Roles:
     - Components of cell membranes, barrier for entry
     - Second messengers
@@ -22,8 +23,9 @@ Vance - Phospholipid Biosynthesis in eukaryotes
             - Enzyme found in ER, mitochondria and mitochondria associated membranes
             - May provide distinct pools
     - Precursor of **phospholipid**s and **triacylglycerol**s
-    
+
 ### 2 Phosphatidic acid biosynthesis and conversion to diacylglycerol
+
 - **Phosphatidic acid** (PA)
     - Branchpoint in glycerolipid biosynthesis
     - **Kornberg and Pricer**
