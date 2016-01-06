@@ -1,4 +1,4 @@
 Phospholipid Biosynthetic Proteins
 ==================================
 
-[Notes](notes.md)
+[Notes](notes/index.md)
