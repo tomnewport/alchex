@@ -23,7 +23,7 @@ Vance - Phospholipid Biosynthesis in eukaryotes
             - May provide distinct pools
     - Precursor of **phospholipid**s and **triacylglycerol**s
 ### 2 Phosphatidic acid biosynthesis and conversion to diacylglycerol
-- *Phosphatidic acid** (PA)
+- **Phosphatidic acid** (PA)
     - Branchpoint in glycerolipid biosynthesis
     - **Kornberg and Pricer**
         - Fatty acids activated to Acyl CoA prior to reaction with **glycerol-3-P**
@@ -41,6 +41,6 @@ Vance - Phospholipid Biosynthesis in eukaryotes
         - **GPAT3** - ER
             - inhibited by **N-ethylmaleimide**
             - No preference for saturated vs. unsaturated fatty acids
-    
+
 
     
