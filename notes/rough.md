@@ -42,10 +42,91 @@ Vance - Phospholipid Biosynthesis in eukaryotes
             - not inhibited by **N-ethylmaleimide**
             - Prefers **palmitoyl-CoA** as acyl donor over **olyl CoA**
                 - Thought to be responsible for abubdance of saturated fatty acids in **sn-1 position** of **glycerophospholipids**
+            - Localised in **mitochondrial outer membrane** with active site facing cytosol
+            - Deletion results in decrease in **TG** and cholesterol content of liver
+            - Transcriptional regulation
+                - decreased by starvation and glucagon
+                - increased by high-carbohydrate diet
+                - Animals do not need to make **TG** or phospholipids if energy supply is limited.
+            - Studied when linked to **luciferace reporter**
+                - **Sterol response element-binding protein** (SREBP) and **NF-Y** transcription factors important in stimulating GPAT
+                - **SREBP** is key regulator
+                    - synthesis of cholesterol and fatty acids
+                    - fatty acid desaturation
+                    - Reasonable to assume **SREBP** enhances **glycerolipid** biosynthesus
+                        - particularly **TG**
+                        - by increasing expression of GPAT
         - **GPAT3** - ER
             - inhibited by **N-ethylmaleimide**
             - No preference for saturated vs. unsaturated fatty acids
+            - Little transcriptional regulation
+- **Acylglycerol-3-P acyltransferase**
+    - Less known
+    - Second step in **PA** biosynthetic pathway
+    - Multiple encoding genes identified
+    - Activity lower in mitochondria than in ER
+    - Presumed much of **lyso-PA** formed in mitochondria transfered to ER for second **acylation** step
+    - Carrier protein not required for transfer
+    - Esterification at **sn-2** position uses mainly unsaturated fatty acids
+    - Types of fatty **acyl-CoA**s available influence **acyl-CoA** species selected for transfer to **lyso-PA**
+    - **Congenital generalised lysodystrophy**
+        - Disease characterised by decreased adipose tissue
+        - Mytations found in **1-acylglycerol-3-P acyltransferase 2**
+- **Dihydroxyacetone-P acyltransferase**
+    - Integral membrane protein
+    - Localised on lumenal side of peroxisomes
+    - Some reports of other localisation - peroxisomal contamination
+    - Important in lipid biosynthesis
+    - **1-acyldihydroxyacetone-P** forms
+        - Elsewhere used as substrate for **1-alkyldihydroxyacetone-P** synthesis
+        - Can also be reduced to lyso-PA by peroxisomal **acyldihydroxyacetone-P reductase**
+- **Phosphatidic acid phosphatase**
+    - Hydrolyses **PA** to **DG**
+        - **DG** can be converted to:
+            - **TG**
+            - **PC**
+            - **PE**
+    - Two types identified
+        - Cytosolic ER form
+            - Dependent on **Mg**
+            - Inhibited by thiol-reactive agents
+                - e.g. **N-ethylmaleimide**
+            - Inactive and translocated to ER membrane in presence of **fatty acid**s, **fatty acyl-CoA**s and **PA**
+        - Regulated by reversable translocation between **cytosol** and **ER**
+        - Substrate (**PA**) found on ER so expect ER to be where enzym functions.
+        - Mammalian ortholog **lipin-1**
+            - KO mice causes:
+                - fatty liver dystrophy
+                - adipose devviciency
+                - insulin resistance
+                - increased beta-oxidation
+            - Lipin-2 and lipin-3
+                - Most PA phosphatase in liver
+                    - Lipin-1 KO has normal liver **PA phosphatase** activity
+                - **Lipin-1 phenotype** due to lack of enzyme in muscle and adipose
+                    - **Fatty acid**s cannot be utilised for glycerolipid synthesis in muscle or adipose
+                        - Directed to liver and converted to TG via lipin-2 and lipin-3
+            - Lipin-1 has nuclear localization signal
+            - Lipin-1 induced by fasting and glucocorticoids
+     -Second form
+         - Not inhibited by **N-ethylmaleimide** or stimulated by **Mg**
+         - Glycosylated protein in plasma membrane
+         - Six putative TM regions
+         - Hydrolyses:
+            - **ceramide-1-phosphate**
+            - **sphingosine-1 phosphate**
+            - **lyso-PA**
+        - Active site
+            - predicted to face outside the cell
+            - activity with **lyso-PA** but low activity with PA
+            - signaling role
+            - 34% sequence identity shared with Wunen protein
+    - Novel DG pytophosphatase in Yeast
+        - PA phosphatase activity
+        - Prefers DG pyrophosphate
+        - Function unknown
+
+### ***Phosphatidylcholine*** biosynthesis
 
 
 
-    
