@@ -39,11 +39,13 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Not clear what regulatory role is
     - Mammals - 2 **glycerol-3-P acyltransferase**s identified
         - **GPAT1** - mitochondrial
-            - not inhibited by N-ethylmaleimide
+            - not inhibited by **N-ethylmaleimide**
             - Prefers **palmitoyl-CoA** as acyl donor over **olyl CoA**
+                - Thought to be responsible for abubdance of saturated fatty acids in **sn-1 position** of **glycerophospholipids**
         - **GPAT3** - ER
             - inhibited by **N-ethylmaleimide**
             - No preference for saturated vs. unsaturated fatty acids
+
 
 
     
