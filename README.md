@@ -9,8 +9,13 @@ Occurs in cytosol adjacent to ER membrane.
 - Allocation
     - Flippase and floppase
 
-Examples
---------
+Key Proteins
+------------
+
+- '''GPAT''': 
+
+Examples in MemProtMD
+---------------------
 
 ### 2KDC - DAG (Diacylglycerol) Kinase
 
