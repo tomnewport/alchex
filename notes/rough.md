@@ -126,7 +126,7 @@ Vance - Phospholipid Biosynthesis in eukaryotes
         - Prefers DG pyrophosphate
         - Function unknown
 
-### ***Phosphatidylcholine*** biosynthesis
+### **Phosphatidylcholine** biosynthesis
 
 
 
