@@ -126,7 +126,41 @@ Vance - Phospholipid Biosynthesis in eukaryotes
         - Prefers DG pyrophosphate
         - Function unknown
 
-### **Phosphatidylcholine** biosynthesis
+### **Phosphatidylcholine** (PC) biosynthesis
+
+- Historical Background
+    - **PC** first described by Gobley in 1847
+        - Named lecithin (egg yolk)
+    - Diakonow and Strecker
+        - two fatty acids linked by glycerol
+        - choline attatched to third hydroxyl by phosphodiester
+    - Charles Best
+        - Animals require choline
+    - **CDP-choline pathway** for **PC** biosynthesis
+        - Eugene Kennedy et al
+        - CTP not ATP is activating nucleotide for PC biosynthesis
+        - CTP required for PC biosynthesis
+            - Required for denovo synthesis of all phospholipids except PA
+    - Alternative pathway
+        - In liver
+        - PE to PC via PE [15N]choline
+        - Transfer of methyl groups from S-adenosylmethionine
+- **Choline transport and oxidation**
+    - Choline not made de novo in animals except:
+        - by methylation of PE to PC
+        - Then hydrolysis of choline moiety from PC
+    - Imported from extracellular sources
+    - Cells require for growth and division
+    - Two entry mechanisms
+        - High affinity
+            - NA dependent transporter
+        - Low afffinity
+            - NA independent transporter
+    - Once in cell, rapidly phosphorylated by **choline kinase**
+        - 
 
 
+Proteins
+--------
 
+- Choline Kinase
