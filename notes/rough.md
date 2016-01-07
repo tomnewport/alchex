@@ -196,7 +196,7 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Excess DG stored in liver as TG
 
 ### Abbreviations
-
+- **CDP:Choline: 1,2-diacylglycerol cholinephosphotransferase** (CPT)
 - **CTP:phosphocholine cytidylyltransferase** (CT)
 - **Diacylglycerol** (DG)
 - **Diphosohatidylglycerol** (DPG) (Cardiolipin)

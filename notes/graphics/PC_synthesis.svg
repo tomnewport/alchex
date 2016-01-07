@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="147.57711"
-     inkscape:cy="249.03615"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="524.06088"
+     inkscape:cy="347.29816"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -191,36 +191,13 @@
        x="19.752367"
        style="font-size:24.00704002px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        xml:space="preserve"><tspan
-         style="-inkscape-font-specification:Helvetica Neue;font-family:Helvetica Neue;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue"
          y="343.20602"
          x="19.752367"
          id="tspan2987"
-         sodipodi:role="line">Phospholipid biosynthesis</tspan></text>
+         sodipodi:role="line">PC synthesis</tspan></text>
     <g
-       id="g3763">
-      <rect
-         style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-         id="rect2989"
-         width="170.71577"
-         height="42.426407"
-         x="113.13708"
-         y="86.485176"
-         transform="translate(0,308.2677)" />
-      <text
-         xml:space="preserve"
-         style="font-size:17.7938118px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         x="198.1257"
-         y="422.59964"
-         id="text3759"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan3761"
-           x="198.1257"
-           y="422.59964"
-           style="text-align:center;text-anchor:middle;-inkscape-font-specification:Helvetica Neue;font-family:Helvetica Neue;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">Fatty Acids</tspan></text>
-    </g>
-    <g
-       transform="translate(185.71429,241.43877)"
+       transform="translate(301.88183,241.43877)"
        id="g4408">
       <rect
          transform="translate(0,308.2677)"
@@ -247,11 +224,11 @@
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path3776"
-       d="m 666.94902,699.31113 -94.44927,0"
+       d="m 783.11656,699.31113 -94.44927,0"
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
     <g
        id="g4424"
-       transform="translate(566.75679,292.16051)"
+       transform="translate(682.92433,292.16051)"
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <rect
          style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -276,57 +253,35 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
-       d="m 571.67173,719.31113 94.44927,0"
+       d="m 687.83927,719.31113 94.44927,0"
        id="path4432"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <text
-       xml:space="preserve"
-       style="font-size:11.19929695px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="615.1842"
-       y="734.36298"
-       id="text3759-7"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3761-9"
-         x="615.1842"
-         y="734.36298"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue">+ PC</tspan><tspan
-         id="tspan4455"
-         sodipodi:role="line"
-         x="615.1842"
-         y="748.36212"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue">- DG</tspan><tspan
-         id="tspan4457"
-         sodipodi:role="line"
-         x="615.1842"
-         y="762.36121"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue">+ Phosphorylation</tspan></text>
-    <text
        sodipodi:linespacing="125%"
        id="text4459"
        y="660.32324"
-       x="623.9906"
+       x="740.15814"
        style="font-size:11.19929695px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue"
          y="660.32324"
-         x="623.9906"
+         x="740.15814"
          id="tspan4461"
          sodipodi:role="line">- PC</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue"
          y="674.32239"
-         x="623.9906"
+         x="740.15814"
          sodipodi:role="line"
          id="tspan4463">+ DG</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue"
          y="688.32147"
-         x="623.9906"
+         x="740.15814"
          sodipodi:role="line"
          id="tspan4465">- Phosphorylation</tspan></text>
     <g
        id="g4467"
-       transform="translate(185.71429,341.3844)">
+       transform="translate(301.88183,341.3844)">
       <rect
          style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect4469"
@@ -350,7 +305,7 @@
     </g>
     <g
        id="g5210"
-       transform="translate(197.85714,41.428571)">
+       transform="translate(314.02468,41.428571)">
       <g
          id="g4416"
          transform="translate(79.85791,250.01276)"
@@ -399,7 +354,7 @@
     </g>
     <g
        id="g4530"
-       transform="translate(185.71429,138.60626)">
+       transform="translate(301.88183,138.60626)">
       <rect
          style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect4532"
@@ -422,7 +377,7 @@
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue">choline</tspan></text>
     </g>
     <g
-       transform="translate(197.85714,-60.714289)"
+       transform="translate(314.02468,-60.714289)"
        id="g5219">
       <g
          style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
@@ -465,7 +420,7 @@
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2LendzL4)" />
     </g>
     <g
-       transform="translate(197.85714,141.42857)"
+       transform="translate(314.02468,141.42857)"
        id="g5235">
       <g
          style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
@@ -514,7 +469,7 @@
          sodipodi:nodetypes="cc" />
     </g>
     <g
-       transform="translate(191.50504,444.96753)"
+       transform="translate(307.67258,444.96753)"
        id="g3768-6">
       <rect
          transform="translate(0,308.2677)"
@@ -546,7 +501,7 @@
          transform="translate(0,308.2677)" />
     </g>
     <g
-       transform="translate(-105.71428,341.3844)"
+       transform="translate(-91.572144,341.3844)"
        id="g5354">
       <rect
          transform="translate(0,308.2677)"
@@ -571,7 +526,7 @@
     </g>
     <g
        id="g5362"
-       transform="translate(-93.571432,141.42857)">
+       transform="translate(-79.429296,141.42857)">
       <g
          id="g5364"
          transform="translate(79.85791,250.01276)"
@@ -620,7 +575,7 @@
     </g>
     <g
        id="g5378"
-       transform="translate(-105.71428,444.96753)">
+       transform="translate(-91.572144,444.96753)">
       <rect
          style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect5380"
@@ -649,6 +604,38 @@
          width="170.71577"
          id="rect5386"
          style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <g
+       transform="translate(480.1742,340.92182)"
+       id="g5388">
+      <rect
+         transform="translate(0,308.2677)"
+         y="86.485176"
+         x="113.13708"
+         height="42.426407"
+         width="170.71577"
+         id="rect5390"
+         style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text5392"
+         y="422.59964"
+         x="198.1257"
+         style="font-size:17.7938118px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue"
+           y="422.59964"
+           x="198.1257"
+           id="tspan5394"
+           sodipodi:role="line">1,2 DG</tspan></text>
+      <rect
+         style="fill:none;stroke:#2e3436;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect5396"
+         width="170.71577"
+         height="42.426407"
+         x="113.13708"
+         y="86.485176"
+         transform="translate(0,308.2677)" />
     </g>
   </g>
 </svg>
