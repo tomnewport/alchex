@@ -194,6 +194,29 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Regulated by substrate supply (upstream CT)
     - DG supply regulated by upstream fatty acids
     - Excess DG stored in liver as TG
+- **Phosphatidylethanolamine N-methyltransferase** (PEMT)
+    - All nucleated cells contain PC and use CDP-choline pathway
+    - but PE Methylation is alternative pathway
+    - Liver specific (50x other tissues)
+    - Produces 1x PC and 3x S-ademosylhomocysteine
+        - S-ademosylhomocysteine catabolysed to homocysteine
+        - homocysteine recycled to methyonine, cystathionine or secreted
+    - PEMT accounts for half of plasma homocysteine - independent cardiovascular disease risk factor
+    - Intrinsic membrane protein
+    - Two types exist, only one in mice and humans
+    - Backup PC supply when CDP-choline pathway less active
+        - Starvation
+        - Pregnancy
+        - Suckling mothers
+    - PC has three methyl groups
+        - PC analogue phosphatidyldimethylethanolamine has two and is not suitable replacement
+    - PC is cylindrical, PE is conical - replacement of PC by PE comprimises cell membrane
+    - Yeast uses PEMT and CDP Choline
+    - Bacteria generally not PC
+        - Some bacteria convert PE to PC 
+            - Enzyme has little homology with PEMT
+
+
 
 ### Abbreviations
 - **CDP:Choline: 1,2-diacylglycerol cholinephosphotransferase** (CPT)
@@ -226,7 +249,6 @@ Soluable
     - PDB Entries
         - 1K30
         - 1IUQ
-- PEMT
 - SREBP
     - PDB Entries
         - 1UKL
@@ -244,5 +266,6 @@ Integral Membrane
     - PDB:4Q2E (MemProtMD)
     - PDB:4Q2G (MemProtMD)
 - DAG Kinase
-    - PDB:2KDC (MemProtMD)
-    - PDB:3ZE3 (MemProtMD)
+    - 15 PDB Structures
+        - PDB:2KDC (MemProtMD) + others
+- PEMT
