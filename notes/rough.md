@@ -173,8 +173,45 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Two genes (Pcyt1a, Pcyt1b) - encode two isoforms
         - CT&alpha; 
         - CT&beta;
+    - Found in cytosol
+    - also nuclear matrix, associated with nuclear membrane
+    - temperature sensitive mutant
+        - CT abolished, cells die via apoptosis
+    - has nuclear localisation signal (res 8-28)
+    - possible CT migrates to cytoplasm during G1 phase of mitosis
+    - *TN: obvs this will cure cancer*
+    - Lipid binding domain of CT&alpha; regulates binding to membranes and activation of CT
+        - Phosphorylation segment is after r314
+        - Cts truncated at r236 lack phosphorylation and lipid binding domains
+        - Binding of lipids decreases Km
+- **CDP-choline: 1,2-diacylglycerol cholinephosphotransferase** (cholinephosphotransferase)
+    - Located on ER
+        - also golgi, MAM, nuclear
+    - Never been purified
+    - Branchpint in metabolism of DG
+        - Conversion to PE, TG and PA
+    - Excess of activity, not limiting
+    - Regulated by substrate supply (upstream CT)
+    - DG supply regulated by upstream fatty acids
+    - Excess DG stored in liver as TG
 
+### Abbreviations
 
+- **CTP:phosphocholine cytidylyltransferase** (CT)
+- **Diacylglycerol** (DG)
+- **Diphosohatidylglycerol** (DPG) (Cardiolipin)
+- **Endoplasmic Reticulum** (ER)
+- **Glycoerol-3-phosphate acyltransferase** (GPAT)
+- **Mitochondrial associated membranes** (MAM)
+- **Phosphatidic acid** (PA)
+- **Phosphatidylcholine** (PC)
+- **Phosphatidylethanolamine** (PE)
+- **Phosphatidylethanolamine N-methyltransferase** (PEMT)
+- **Phosphatidylglycerol** (PG)
+- **Phosphatidylinositol** (PI)
+- **Phosphatidylserine** (PS)
+- **Sterol response element-binding protein** (SPREB)
+- **Triacylglycerol** (TG)
 
 Proteins
 --------
