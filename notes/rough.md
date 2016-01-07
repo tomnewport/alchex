@@ -162,7 +162,9 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 - **Choline Kinase**
     - **Choline** to **Choline-P**
     - Three isoforms
-        - &alpha;
+        - &alpha;1
+        - &alpha;2
+        - &alpha;3
 
 
 Proteins
