@@ -157,7 +157,12 @@ Vance - Phospholipid Biosynthesis in eukaryotes
         - Low afffinity
             - NA independent transporter
     - Once in cell, rapidly phosphorylated by **choline kinase**
-        - 
+    - In neurons converted to **acetylcholine** neurotransmitter.
+    - In liver and mitochondria oxidised to betaine
+- **Choline Kinase**
+    - **Choline** to **Choline-P**
+    - Three isoforms
+        - &alpha;
 
 
 Proteins
