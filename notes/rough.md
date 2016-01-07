@@ -216,4 +216,33 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 Proteins
 --------
 
+Soluable
+========
+
 - Choline Kinase
+    - PDB Entries 
+        - 4R77 + others
+- GPAT
+    - PDB Entries
+        - 1K30
+        - 1IUQ
+- PEMT
+- SREBP
+    - PDB Entries
+        - 1UKL
+        - related 4YHC
+
+Membrane Associated
+===================
+
+-
+
+Integral Membrane
+=================
+
+- Phosphatidate cytidyltransferase
+    - PDB:4Q2E (MemProtMD)
+    - PDB:4Q2G (MemProtMD)
+- DAG Kinase
+    - PDB:2KDC (MemProtMD)
+    - PDB:3ZE3 (MemProtMD)
