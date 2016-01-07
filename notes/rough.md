@@ -163,8 +163,17 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - **Choline** to **Choline-P**
     - Three isoforms
         - &alpha;1
+            - Most abundant in testes
         - &alpha;2
+            - Splice varient of &alpha;1
         - &alpha;3
+- **CTP:Phosphocholine cytidylyltransferase** (CT)
+    - Homodimer
+    - Active when membrane associated
+    - Two genes (Pcyt1a, Pcyt1b) - encode two isoforms
+        - CT&alpha; 
+        - CT&beta;
+
 
 
 Proteins
