@@ -392,7 +392,7 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Linoleate is preferred fatty acid
 
 Vance - Phospholipid Synthesis and Transport in Mammalian Cells
-------------------------------------------------------------
+----------------------------------------------------------------
 
 
 
