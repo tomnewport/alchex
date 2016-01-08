@@ -250,7 +250,44 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Lipid composition change mediates initial CT binding
     - Deletion of phosphorylation domain does not impair survival
 - Transcriptional and post-transcriptional regulation of CT&alpha;
-    - 
+    - Most studies do not indicate expression regulation
+    - Translocation is usual regulator
+    - Some possible regulatory elements
+
+### Phospharidylethanolamine biosynthesis
+
+- Historical background
+    - Kephalin differentiated from lecithin - 1884
+    - Four pathways
+        - CDP-ethanolamine pathway
+            - de novo synthesis of PE
+            - ER membrane
+        - decarboxylation of PS
+            - external leaflet of mitochondrial inner membranes
+        - acylation of lyso-PE
+        - base-exchange
+            - ethanolamine for serine of PS
+    - Possibly separate pools of PE, mitochondrial and ER
+    - Rat liver, CDP-ethanolamine is >80%
+- Enzymes of the CDP-ethanolamine pathway
+    - Parralel CDP-choline pathway for PC
+        - Ethanolamine is obligatory precursor
+            - From diet 
+            - PE degradation
+            - degradation of sphingosine-P by sphingosine-P lyase
+        - Serine-ethanolamine decarboxylation not seen in mammalian cells
+            - seen in A. thaliana
+    - Ethanolamine first phosphorylated
+        - **Ethanolamine kinase**
+        - 4 related genes, 2 for choline
+        - higher eukaryotes have ethanolamine specific proteins
+    - Phoephoethanolamine to CDP-ethanolamine
+        - **CTP:phosphoethanolamine cytidyltransferase**
+        - Primarily cytosol, some rough ER
+    - PE made by reactinf CDP-ethanolamine and DG
+        - **CDP-ethanolamine:1,2-DG ethanolaminephosphotransferase**
+            - IMP of ER membranes
+
 
 
 
