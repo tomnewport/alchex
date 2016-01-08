@@ -436,7 +436,104 @@ Vance - Phospholipid Synthesis and Transport in Mammalian Cells
     - alterations of composition not well tolerated
     - different organelles differ
     - Question: ```How is uniqie composition established and maintained?```
-    
+- Mammalian cells
+    - PC is 40-50%
+    - PE is second, enriched in inner mitochondrial membranes (35-40% vs. 17-25%)
+    - PS is lower in mitochondria than ER, nucleus, golgi and plasma membrane
+    - CL present only in mirochondria
+    - Plasma enriched in SM and cholesterol
+    - Many glycospingolipid species
+- Mechanisms for diversity
+    - Enzyme of synthesis localised in organelle?
+    - Enzymes degrading less active?
+    - Transport of phospholipid?
+- Mechanisms for asymmetry
+    - Mammalian cells, PE and PS enriched in inner leaflet, SM and PC in outer leaflet
+    - Apoptosis
+        - PS exposed on external leaflet, targets PS receptors on macrophages
+        - PS movement to outer membrane of platelets reqired for blood clotting
+    - Active sites mostly on cytosolic face of ER
+        - lipids found on both sides
+    - Transbilayer movement energetically unfavourable
+        - Flippases, floppases, scrambellases
+
+### Phospholipid biosynthetic pathways in mammalian cells
+
+- Biosynthesis of phospholipid precursorediacylglycerol and CDP-diacylglycerol
+    - Synthesis requires acquisition of diacylglycerol unit or CDP-diacylglycerol
+    - generated fron PA
+        - 1-acylglycerol-3-phosphate (lyso-phosphatidic acid/lyso-PA) made from either
+            - glycerol-3-phosphate 
+                - via glycerol-3-phosphate acyltransferase
+            - acylation of dihydroxyacetone phosphate
+                - and reduction of 1-acyl-dihydroxyacetone phosphate to 1-acylglycerol-3-P
+            - ER and mitochondria have distinct isoforms of glycerol-3-phosphate acyltransferase (GPAT)
+        - 1-acylglycerol-3-phosphate converted to phosphatidic acid by acyltransferase
+        - diacylglycerol generated from phosphatidic acid by phosphatidic acid phosphatase-1
+        = CDP-diacylglycerol synthase in mitochondrial membranes
+- Biosynthesis of phosphatidylcholine
+    - All nucleated cells make PC via CDP-choline pathway
+        - extracellular choline imported
+        - phosphorylated to phosphocholine
+            - cytosolic enzyme choline kinase
+        - CTP:phosphocholine cytidyltransferase
+            - generates CDP-choline
+            - rate-limiting reaction in most situations
+            - &alpha; and &beta; isoforms
+            - &alpha; not &beta; has nuclear localisation signal
+    - sphingomyelin enriched in plasmam membrane
+    - synthesised from ceramide and PC
+        - made in ER and transported to Golgi
+        - SM made by SM synthase-1 in Golgi
+        - SM synthase-2 in plasma membrane
+        - SM synthase-R in ER
+- Biosynthesis of phosphatidylserine and phosphatidylethanolamine
+    - PS synthesised by PS synthase-1 and PS synthase-2
+    - Enriched in MAM of ER
+    - Catalyse base-exchange reactions
+        - serine replaces choline or ethanolamine head group
+        - PS synthase-1 for PC
+        - PS synthase-2 for PE
+    -Yeast PS made by CDP-diacylglycerol reaction with serine
+        - not detected in mammalian cells
+    - PE made by two pathways
+        - ER
+            - CDP-ethanolamine (final step on ER membrane)
+            - Parralel CDP-choline pathway
+                - Ethanolamine phosphorylated
+                    - Phosphoethanolamine
+                    - by cytosolic ethanolamine kinase
+                - CTP reacts with phosphoethanolamine
+                    - CTP:phosphoethanolamine cytidyltransferase
+                - ER membrane protein CDP-ethanolamine:1,2-diacylglycerol ethanolaminephosphotransferase
+                    - concerts CDP-ethanolamine and diacylglycerol to PE
+        - mitochondria
+            - PS decarboxylase
+                - PS to PE
+        - some made by acylation of lyso-PE (yeast MAM)
+        - Compartmentalised pools
+            - Both pools needed
+            - MAM goes to mitochondrial inner memranes
+- Biosynthesis of phospholipids from CDP-diacylglycerol
+    - CDP-diacylglycerol procides diacylglycerol for PI
+    - PI made by PI synthase in ER from myo-inositol and CDP-diacylglycerol
+    - PG and friends
+        - PG-phosphate made from G3P and CDP-DAG
+            - catalysed by PG-P synthase
+            - both ER and mitochondrial membranes
+        - PG-P dephosphorylated to PG by PG-P phosphatase
+    - Cardiolipin from PG
+        - PG combines with CDP-DAG
+            - catalysed by CL synthase
+    - lyso (bis-phosphatidic acid)
+        - enriched in membranes of multicellular bodies in lumen of late endosomes
+        - complex pathway
+        - isomerisation reaction
+        - deacylation/reacylation steps
+        - little known
+
+
+
 
 
 Proteins
