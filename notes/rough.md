@@ -391,13 +391,6 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - prefers monolyso-DPG and PC
     - Linoleate is preferred fatty acid
 
-Vance - Phospholipid Synthesis and Transport in Mammalian Cells
-----------------------------------------------------------------
-
-### Introduction
-
-
-
 ### Abbreviations
 - **CDP:Choline: 1,2-diacylglycerol cholinephosphotransferase** (CPT)
 - **CTP:phosphocholine cytidylyltransferase** (CT)
@@ -415,6 +408,12 @@ Vance - Phospholipid Synthesis and Transport in Mammalian Cells
 - **Phosphatidylserine** (PS)
 - **Sterol response element-binding protein** (SPREB)
 - **Triacylglycerol** (TG)
+
+Vance - Phospholipid Synthesis and Transport in Mammalian Cells
+----------------------------------------------------------------
+
+### Introduction
+
 
 Proteins
 ========
