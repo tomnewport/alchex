@@ -221,7 +221,36 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 - Translocation Hypothesis
     - CT both in cytosol and microsomal membranes
     - Correlation between CT activity on membranes and PC synthesis
-    - CT translocated from 
+    - CT translocated from cytosol to membrane
+        - Electrostatic absorbtion
+        - Hydrophobic interactions
+            - Intercalation of protein to non-polar core
+    - Viscous gel-phase lipids
+    - Binds electrostatically but not activated
+    - Properties promote insertion
+        - Interfacial packing defects - small headgroups in membrane
+        - Low lateral surface area (loose packing - highly curved membranes)
+        - Acyl chain disorder caused by oxidation of fatty acid chains
+        - Curvature strain caused by PE and DG
+        - PC synthesis reverses properties
+        - *TN: nice regulatory mechanism*
+- Regulation of phosphatidylcholine biosynthesis by lipids
+    - DG alters rate of PC synthesis by modulating CT binding
+    - Increase in DG content of membranes enhances CT binding in vitro
+    - Sec14p transfers PI or PC between membranes
+        - Preference for PI
+    - PC-bound Sec14p inhibits CDP-choline pathway via CT
+    - PI-bound Sec14p has minimal inhibition
+    - Feedback inhibition
+    - CTP may also regulate
+- Phosphorylation of cytidylyltransferase
+    - CT&alpha; is phosphorylated - phosphorylation affects CT activity.
+    - CT bound to membranes is less phosphorylated
+    - CT binds when phosphorylated, dephosphorylated subsequently
+    - Lipid composition change mediates initial CT binding
+    - Deletion of phosphorylation domain does not impair survival
+- Transcriptional and post-transcriptional regulation of CT&alpha;
+    - 
 
 
 
@@ -245,6 +274,10 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 
 Proteins
 ========
+
+- Sec14p
+    - PDB Entries
+        - 1AUA
 
 Soluable
 --------
