@@ -532,6 +532,82 @@ Vance - Phospholipid Synthesis and Transport in Mammalian Cells
         - deacylation/reacylation steps
         - little known
 
+### Mechanisms Proposed for Inter-Organelle Phospholipid Transport
+
+- General mechanistic considerations
+    - Final step mostly on ER membranes
+    - Transport must exist
+    - SM enriched in plasma membrane
+        - synthesised on golgi
+    - CL biosynthesis in mitochondria, restricted to mitochondria
+        - Precursor made in both ER and mitochondria
+    - more PG made in mitochondria than ER
+    - phospholipids do not freely equilibrate
+    - most phospholipids poorly soluable in water
+    - some hydrophilic PS species more readily transported to mitochondria
+    - spontaneous diffusion cannot be excluded
+    - 1.5 hour half-time for PC transfer between plasma lipoproteins
+    - mechanisms
+        - soluable transport proteins
+        - vesicles
+        - close contact between membranes
+- Inter-organelle phospholipid transport via cytosolic lipid transfer proteins
+    - Intuitively shuttle process
+        - Protein extracts PC monomer from ER, transports to target organelle
+        - Specificity of lipid and target
+        - experiments show 5 mins to get from ER to plasma membrane and mitochondria
+            - PE 2 hours
+            - Phospholipid transport proteins from cytosol
+    - Several proteins characterised
+        - accelerate PC exchange
+        - START motif implicated in lipid metabolism
+        - PC transfer protein proposed to mediate PC transport from ER to other organelles
+        - High concentration in liver and lung 
+            - mediates PC transport for bile secretion in liver
+            - surfactant in lungs
+            - not compromised in knockout
+        - function unknown - not major role
+    - non-specific lipid transfer protein (sterol carrier protein-2)
+        - cytosol and peroxysomes
+        - major role for import of fatty acids to peroxisome
+        - elimination did not alter lipid composition
+    - PI Transfer protein PITP
+        - soluable cytosolic proteins
+        - bind and transger PI and PC
+        - similar to yeast Sec14
+        - Associates with golgi membranes
+        - may transfer PI from Er to plasma membrane
+        - KO is lethal
+- Via vesicles
+    - bud from ER and transport protein through golgi stacks
+    - trans-golgi exports and fuses with plasma membrane
+    - expected to deliver lipids
+        - mammalian fibroblasts
+            - pathways for transport of PC and cholesterol distinct from vesicle mediated pathway
+            - disruption affects protein half-time, not lipids
+    - different vesicles?
+    - PE from ER to plasma membrane investigated
+        - cytoskeleton disruption did not impede PE transport
+    - not a single mechanism
+- Via membrane contact sites
+    - close juxtaposition of membranes
+    - multiprotein tethering complexes
+    - EM studies confirm existance
+    - 20% of HeLA cell mitochondeia closely apposed to ER
+    - 10-30nm separation - protein bridge?
+    - PS from ER to mitochondria
+        - MAM may mediate transfer of phospholipids
+        - transfer appears rate-limiting for conversion of PS to PE
+    - PE from ER to mitochondria
+        - not established
+
+Hankins Role of Flippases, Scramblases and Transfer Proteins in Phosphatidylserine Subcellular Distribution
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
