@@ -215,6 +215,13 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - Bacteria generally not PC
         - Some bacteria convert PE to PC 
             - Enzyme has little homology with PEMT
+### Regulation of phosphatidylcholine biosynthesis
+- Rate-Limiting Reaction
+    - CT reaction usually limits rate of PC biosynthesis
+- Translocation Hypothesis
+    - CT both in cytosol and microsomal membranes
+    - Correlation between CT activity on membranes and PC synthesis
+    - CT translocated from 
 
 
 
@@ -237,10 +244,10 @@ Vance - Phospholipid Biosynthesis in eukaryotes
 - **Triacylglycerol** (TG)
 
 Proteins
---------
+========
 
 Soluable
-========
+--------
 
 - Choline Kinase
     - PDB Entries 
@@ -255,12 +262,12 @@ Soluable
         - related 4YHC
 
 Membrane Associated
-===================
+-------------------
 
 -
 
 Integral Membrane
-=================
+-----------------
 
 - Phosphatidate cytidyltransferase
     - PDB:4Q2E (MemProtMD)
@@ -269,3 +276,8 @@ Integral Membrane
     - 15 PDB Structures
         - PDB:2KDC (MemProtMD) + others
 - PEMT
+
+Interesting Questions
+=====================
+
+- How does CT translocate and what does that do to the protein?
