@@ -414,6 +414,30 @@ Vance - Phospholipid Synthesis and Transport in Mammalian Cells
 
 ### Introduction
 
+- Phosphatidylcholine (PC) is most abundant in mammalian cells
+- Also:
+    - Phosphatidylethanolamine (PE)
+    - Phosphatidylserine (PE)
+    - Phosphatidylserine (PS)
+    - Sphingomylein (SM)
+    - Cardiolipin (CL/DPG)
+    - Phosphatidylinositol (PI)
+- Plus
+    - Cholesterol
+    - Glycosphingolipids
+- Yeast mostly similar
+    - Lack SM and cholesterol (have other sterols)
+- E. coli
+    - No PC, SM, PI or cholesterol
+    - Mostly PE
+    - Outer membrane is lipopolysaccharides
+    - also have lipid A
+- Actions of proteins depend on membrane phospholipid composition
+    - alterations of composition not well tolerated
+    - different organelles differ
+    - Question: ```How is uniqie composition established and maintained?```
+    
+
 
 Proteins
 ========
