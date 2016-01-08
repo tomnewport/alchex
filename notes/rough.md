@@ -391,9 +391,8 @@ Vance - Phospholipid Biosynthesis in eukaryotes
     - prefers monolyso-DPG and PC
     - Linoleate is preferred fatty acid
 
-Vance - Phospholipid Synthesis and Transport
-in Mammalian Cells
-----------------------------------------------------------
+Vance - Phospholipid Synthesis and Transport in Mammalian Cells
+------------------------------------------------------------
 
 
 
