@@ -8,11 +8,13 @@ DAG Kinase
 
 > `DAG_kinase/2KDC`
 
-NMR Structure
-
 ### 3ZE4
 
+> `DAG_kinase/3ZE4`
+
 ### 4D2E
+
+> `DAG_kinase/4D2E`
 
 Rough
 =====
