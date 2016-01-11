@@ -11,6 +11,7 @@ Diacylglycerol Kinase
 - **Organism** E. Coli
 - **Method** Solution NMR
 - **Year** 2009
+- **Resolution** Solution NMR
 
 CDP-DAG Synthase
 ----------------
