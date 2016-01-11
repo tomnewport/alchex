@@ -34,7 +34,18 @@ Inactive Mutant
 PIP Synthase
 ------------
 
+### 5D91
 
+> `PIP_synthase/5D91`
+
+TMEM16 Scramblase
+-----------------
+
+### 4WIS
+
+> `scramblase/4WIS`
+
+Form 1
 
 Rough
 =====
