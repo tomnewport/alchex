@@ -1,6 +1,12 @@
 Source Proteins
 ===============
 
+- **DAG Kinase** `ATP` + `1,2-diacyl-sn-glycerol` <-> `ADP` + `1,2-diacylglycerol 3-phosphate`
+
+- **CDP-DAG Synthase** `CTP` + `phosphatidate` <-> `diphosphate` + `CDP-diacylglycerol`
+
+- **PIP Synthase** `CDP-DAG` + `Inositol Phosphate` -> `PIP` + `CMP`
+
 DAG Kinase
 ----------
 
