@@ -16,6 +16,26 @@ DAG Kinase
 
 > `DAG_kinase/4D2E`
 
+CDP DAG Synthase
+----------------
+
+### 4Q2E
+
+> `CDP_DAG_synthase/4Q2E`
+
+Active Mutant
+
+### 4Q2G
+
+> `CDP_DAG_synthase/4Q2G`
+
+Inactive Mutant
+
+PIP Synthase
+------------
+
+
+
 Rough
 =====
 
