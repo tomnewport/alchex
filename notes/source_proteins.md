@@ -6,7 +6,7 @@ DAG Kinase
 
 ### 2KDC
 
-```DAG_kinase/2KDC```
+`DAG_kinase/2KDC`
 
 NMR Structure
 
