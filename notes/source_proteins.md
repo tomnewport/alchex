@@ -16,11 +16,18 @@ Diacylglycerol Kinase
 ### 3ZE4
 
 - **Organism**: E. Coli
-- **Method**: Solution NMR
-- **Year**: 2009
+- **Method**: XRC
+- **Year**: 2012
 - **Resolution**: 3.1&#8491;
 
-Wild-type is 3ZE4, also 3ZE3 - &delta;7 and 3ZE5 - &delta;8
+Very nice structure. Wild-type is 3ZE4, also 3ZE3 - &delta;7 and 3ZE5 - &delta;8
+
+### 4BPD
+
+- **Organism**: E. Coli
+- **Method**: XRC
+- **Year**: 2012
+- **Resolution**: 3.1&#8491;
 
 CDP-DAG Synthase
 ----------------
