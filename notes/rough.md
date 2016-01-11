@@ -662,7 +662,7 @@ Transports long-chain fatty acids
 
 ### Lipid A export ATP-binding/permease protein MsbA
 
-**3B5W, 3B5X, 3B5Y, 3B5Z, 3B60, 3QF4, 4Q4A, 4Q4H, 4Q4J, 
+**3B5W, 3B5X, 3B5Y, 3B5Z, 3B60, 3QF4, 4Q4A, 4Q4H, 4Q4J**
 
 Forms a pore and exports lipid A
 
