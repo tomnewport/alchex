@@ -615,6 +615,71 @@ Hankins Role of Flippases, Scramblases and Transfer Proteins in Phosphatidylseri
 Proteins
 ========
 
+MemProtMD
+---------
+
+### Phosphatidate cytidyltransferase
+
+**4Q2E/4Q2G**
+
+AKA CDP- diacylglycerol synthase, CTP + Phosphate <-> diphosphate + CDP-DAG
+
+### DAG Kinase
+
+**2KDC, 3ZE3/4/5, 4BPD, 4BRB/4BRR/4CJZ, 4CK0, 4D2E, 4UP6, 4UXW/4UXX, 4UXZ, 4UYO** 
+
+CTP + 1,2-diacyl-sn-glycerol <-> CDP + 1,2-diacyl-sn-glycerol 3-phosphate
+
+### PIP Synthase 
+
+**5D91/2**
+
+CDP-DAG as donor, inositol or inositol phosphate as acceptor
+
+### Phospholipase A1
+
+**1FW2/3, 1ILD/1ILZ/1IM0, 1QD5/6**
+
+Removes 1-acyl from phospholipid
+
+### Tmem16 Scramblase
+
+**4WIS 4WIT**
+
+Translocates between two monolayers - not flippase
+
+### stearoyl-CoA desaturase
+
+**4YMK, 4YZO**
+
+Forms double bond in Stearoyl-CoA
+
+### Long chain fatty acid transport protein
+
+**1T16, 1T1L, 2R4L 2R4N 2R4O 2R4P 2R88 2R89 2R8A 3DWN**
+
+Transports long-chain fatty acids
+
+### Lipid A export ATP-binding/permease protein MsbA
+
+**3B5W, 3B5X, 3B5Y, 3B5Z, 3B60, 3QF4, 4Q4A, 4Q4H, 4Q4J, 
+
+Forms a pore and exports lipid A
+
+### Acyl-CoA desaturase 1
+
+**4YMK, 4ZYO**
+
+Introduces double bond to fatty acyl-CoA
+
+### Lipid A palmitoyltransferase PagP
+
+**1MM4, 1MM5, 1THQ, 3GP6**
+
+palmitate chain from a phospholipid is incorporated into lipid A by an outer membrane enzyme PagP
+
+
+
 - Sec14p
     - PDB Entries
         - 1AUA
