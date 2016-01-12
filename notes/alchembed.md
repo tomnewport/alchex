@@ -19,3 +19,12 @@ grompp   -f common-files/em-$ff.mdp\
          -o $protein/$ff/$protein-$ff-em\
          -maxwarn 1
 ```
+
+So we need:
+
+- **-f** Parameters (as mdp)
+- **-c** A structure (as pdb)
+- **-p** A topology (as top)
+- **-n** An index (as ndx)
+- **-po** An output mdp
+- **-o** An output tpr
