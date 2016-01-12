@@ -161,3 +161,89 @@ The Van der Waals interactions are turned off and the charges are zero at lambda
 `couple-lambda1       = vdw`
 
 The charges are zero (no Coulomb interactions) at lambda=0
+
+**So in conclusion.**
+
+It looks like our major parameter is couple-moltype. This is defined in the topology, which could make things interesting.
+
+The Problem
+===========
+
+I have a population of molecules which I want to replace with a second population of molecules.
+
+Limitations
+-----------
+
+- Alchembed must fade in an entire molecule type as defined in the topology file, Therefore at least one alchembed operation is required per residue type.
+
+Solution
+--------
+
+1. Source molecules are mapped to destination molecules.
+1. For each residue type, starting with the largest:
+    1. The residues to be faded in will be designated resname ALCH
+    1. While there are still residues outside cutoff distance of selected residues:
+        1. A source residue group will be selected.
+        1. The ALCH residue is aligned to the source residue
+        1. The source residue is deleted
+    1. If residues are still available a second residue type may be added.
+    1. Alchembed is then run and the process is repeated until all residues are converted.
+
+The most basic grammar required is as follows:
+
+```json
+{
+"replacements":
+    {"POPC" : {
+        "CARD" : .2,
+        "DPPG" : .1
+        }
+    },
+"verify":{
+    "CARD" : .2,
+    "DPPG" : .1,
+    "POPC" : .7
+    }
+}
+```
+
+More things to consider are:
+
+- More advanced mappings, including
+    - n:n mapping
+    - alignment
+
+So an improved grammar would be:
+
+``json
+{
+    "replacements" : 
+    [
+        {
+            "source" : 
+                {
+                    "selector" : "resname DPPC",
+                    "ratio"    : 1
+                },
+            "destination" : 
+                {
+                    "selector" : "resname CARD",
+                    "ratio"    : 2
+                },
+            "alignment"  : 
+                {
+                    "type"     : ("volume" or "regression")
+                    "point1"   : {
+                        "source": "name GLH",
+                        "destination" : "name GLH"
+                    }
+                    (etc.)
+                }
+        }
+    ]
+}
+```
+
+For lipids this could be made into a shorthand with ease.
+
+As a worst-case fallback, several isolated points may need to be deleted. This is not ideal.
