@@ -59,3 +59,15 @@ And run:
 mdrun    -deffnm $protein/$ff/$protein-$ff-alchembed\
          -ntmpi 1
 ```
+
+The important parts are all within MDP files.
+
+Let's look at em-cg.mdp:
+
+```python
+integrator               = steep
+emstep                   = 0.001
+emtol                    = 1000
+nsteps                   = 100
+```
+
