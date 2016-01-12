@@ -31,3 +31,31 @@ And we get:
 
 - **-po** An output mdp
 - **-o** An output tpr
+
+The energy minimisation then gets run:
+
+```bash
+mdrun_d  -deffnm $protein/$ff/$protein-$ff-em\
+         -ntmpi 1
+```
+
+It then gets re-grompped:
+
+```bash
+# Now, prepare the ALCHEMBED TPR file
+grompp   -f common-files/alchembed-$ff.mdp\
+         -c $protein/$ff/$protein-$ff-em.gro\
+         -p common-files/$protein-$ff.top\
+         -n common-files/$protein-$ff.ndx\
+         -po $protein/$ff/$protein-$ff-alchembed.mdp\
+         -o $protein/$ff/$protein-$ff-alchembed\
+         -maxwarn 2
+```
+
+And run:
+
+```bash
+# ..and run on a single core. 
+mdrun    -deffnm $protein/$ff/$protein-$ff-alchembed\
+         -ntmpi 1
+```
