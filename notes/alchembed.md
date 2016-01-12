@@ -9,7 +9,7 @@ So... how does alchembed work?
 
 Let's look at `try-alchembed.sh`. 
 
-```
+```bash
 # First, prepare a TPR file for energy minimisation
 grompp   -f common-files/em-$ff.mdp\
          -c common-files/$protein-$ff.pdb\
