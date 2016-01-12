@@ -125,11 +125,19 @@ couple-lambda1       = vdw
 Important parts seem to be the free energy:
 
 `free_energy          = yes`
-init_lambda          = 0.00
-delta_lambda         = 1e-3
-sc-alpha             = 0.1000
-sc-power             = 1
-sc-r-power           = 6
-couple-moltype       = PROTEIN
-couple-lambda0       = none
-couple-lambda1       = vdw
+
+`init_lambda          = 0.00`
+
+`delta_lambda         = 1e-3`
+
+`sc-alpha             = 0.1000`
+
+`sc-power             = 1`
+
+`sc-r-power           = 6`
+
+`couple-moltype       = PROTEIN`
+
+`couple-lambda0       = none`
+
+`couple-lambda1       = vdw`
