@@ -1,3 +1,5 @@
+I was planning to simulate them in an E.Coli inner membrane (75% POPE, 20% POPG, 5% CL) modified to include phosphatidic acid, diacylglycerol (PVDG - C16:0/18:1 DAG), PIP3 (C16:0/18:1 POP3).
+
 DAG Kinase
 ----------
 
