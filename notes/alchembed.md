@@ -26,5 +26,8 @@ So we need:
 - **-c** A structure (as pdb)
 - **-p** A topology (as top)
 - **-n** An index (as ndx)
+
+And we get:
+
 - **-po** An output mdp
 - **-o** An output tpr
