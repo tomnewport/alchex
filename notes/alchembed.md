@@ -124,20 +124,40 @@ couple-lambda1       = vdw
 
 Important parts seem to be the free energy:
 
+From the gromacs manual:
+
 `free_energy          = yes`
+
+Interpolate between topology A (lambda=0) to topology B (lambda=1) and write the derivative of the Hamiltonian with respect to lambda (as specified with dhdl-derivatives), or the Hamiltonian differences with respect to other lambda values (as specified with foreign-lambda) to the energy file and/or to dhdl.xvg, where they can be processed by, for example g_bar. The potentials, bond-lengths and angles are interpolated linearly as described in the manual. When sc-alpha is larger than zero, soft-core potentials are used for the LJ and Coulomb interactions.
 
 `init_lambda          = 0.00`
 
+Starting value for lambda (float). Generally, this should only be used with slow growth (i.e. nonzero delta-lambda). In other cases, init-lambda-state should be specified instead. Must be greater than or equal to 0.
+
 `delta_lambda         = 1e-3`
+
+increment per time step for lambda
 
 `sc-alpha             = 0.1000`
 
+The soft-core alpha parameter, a value of 0 results in linear interpolation of the LJ and Coulomb interactions
+
 `sc-power             = 1`
+
+The power for lambda in the soft-core function, only the values 1 and 2 are supported
 
 `sc-r-power           = 6`
 
+The power of the radial term in the soft-core equation. Possible values are 6 and 48. 6 is more standard, and is the default. When 48 is used, then sc-alpha should generally be much lower (between 0.001 and 0.003).
+
 `couple-moltype       = PROTEIN`
+
+Here one can supply a molecule type (as defined in the topology) for calculating solvation or coupling free energies. There is a special option system that couples all molecule types in the system. This can be useful for equilibrating a system starting from (nearly) random coordinates. free-energy has to be turned on. The Van der Waals interactions and/or charges in this molecule type can be turned on or off between lambda=0 and lambda=1, depending on the settings of couple-lambda0 and couple-lambda1. If you want to decouple one of several copies of a molecule, you need to copy and rename the molecule definition in the topology.
 
 `couple-lambda0       = none`
 
+The Van der Waals interactions are turned off and the charges are zero at lambda=0; soft-core interactions will be required to avoid singularities.
+
 `couple-lambda1       = vdw`
+
+The charges are zero (no Coulomb interactions) at lambda=0
