@@ -253,7 +253,7 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True):
     transformation_matrix.matrix = translation_matrix.dot(rotation_matrix)
 
     if test:
-        operand_4d =numpy. pad(
+        operand_4d =numpy.pad(
             operand_points,
             pad_width= ((0,0),) * (1) + ((0,1),), 
             mode="constant", 
