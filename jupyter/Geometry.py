@@ -119,7 +119,7 @@ class PointCloud:
                 plottable.points[:,1], 
                 plottable.points[:,2], 
                  lw = 0,
-                alpha=0.1,
+                alpha=0.7,
                 c=cols,
                 s=50
             )
