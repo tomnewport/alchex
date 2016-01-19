@@ -1,0 +1,20 @@
+TITLE     GROningen Mixture of Alchemy and Childrens' Stories
+REMARK    THIS IS A SIMULATION BOX
+CRYST1   49.660   50.630   65.080  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  B1  SQD     1      21.880  28.530  45.800  1.00  0.00            
+ATOM      2  B2  SQD     1      23.560  29.740  42.690  1.00  0.00            
+ATOM      3  B3  SQD     1      24.850  29.970  45.640  1.00  0.00            
+ATOM      4  GL1 SQD     1      25.270  30.210  38.230  1.00  0.00            
+ATOM      5  GL2 SQD     1      23.770  27.620  36.210  1.00  0.00            
+ATOM      6  C1A SQD     1      27.900  30.130  34.160  1.00  0.00            
+ATOM      7  C2A SQD     1      30.030  27.460  31.030  1.00  0.00            
+ATOM      8  C3A SQD     1      28.570  24.310  28.010  1.00  0.00            
+ATOM      9  C4A SQD     1      26.850  23.240  23.910  1.00  0.00                       
+ATOM     11  C1B SQD     1      25.180  23.470  35.310  1.00  0.00            
+ATOM     12  C2B SQD     1      23.920  20.880  31.980  1.00  0.00            
+ATOM     13  C3B SQD     1      23.200  22.450  27.970  1.00  0.00            
+ATOM     14  C4B SQD     1      21.850  22.330  24.030  1.00  0.00                        
+ATOM     16  S1  SQD     1      19.000  28.130  45.620  1.00  0.00            
+TER
+ENDMDL

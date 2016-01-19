@@ -1,0 +1,14 @@
+TITLE     Giving Russians Opium May Alter Current Situation
+REMARK    THIS IS A SIMULATION BOX
+CRYST1   23.266   25.786   37.455  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  P1A TOC A 301      13.216  12.530  12.258  1.00 14.17           C
+ATOM      2  P2A TOC A 301      11.492  10.976  13.050  1.00 15.98           C
+ATOM      3  P3A TOC A 301      12.729  12.313  14.615  1.00 13.81           C
+ATOM      4  P4A TOC A 301      10.992  10.719  15.577  1.00 15.03           C
+ATOM      5  P5A TOC A 301      12.018  12.535  16.945  1.00 13.26           C
+ATOM      6  C1A TOC A 301      11.819  13.046  22.053  1.00 19.69           C
+ATOM      7  C2A TOC A 301      10.850  14.520  25.608  1.00 25.80           C
+ATOM      8  C3A TOC A 301       9.950  16.505  29.713  1.00 28.48           C
+TER
+ENDMDL
