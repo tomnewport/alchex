@@ -10,7 +10,7 @@ Get started
 ### 1. Install Alchex
 
 ```bash
-git clone this repo
+git clone https://github.com/tomnewport/alchex.git
 ```
 
 ### 2. Test installation
