@@ -7,6 +7,18 @@ Alchex uses GROMACS to robustly exchange one molecule for another using a method
 Get started
 -----------
 
+### 1. Install Alchex
+
+```bash
+git clone this repo
+```
+
+### 2. Test installation
+
+```python
+import alchex
+```
+
 References
 ----------
 
