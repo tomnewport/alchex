@@ -1,0 +1,2 @@
+class AtomMismatchException(Exception):
+    pass

@@ -246,4 +246,4 @@ So an improved grammar would be:
 
 For lipids this could be made into a shorthand with ease.
 
-As a worst-case fallback, several isolated points may need to be deleted. This is not ideal.
+As a worst-case fallback, several isolated points may need to be deleted. This is not ideal, but it isn't a disaster either.

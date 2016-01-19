@@ -1,0 +1,19 @@
+TITLE     Gyas ROwers Mature At Cryogenic Speed
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  160.000  160.000  100.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      2  NCO POP     1      21.880  19.150  39.380  1.00  0.00
+ATOM      3  PO4 POP     1      23.590  19.180  34.510  1.00  0.00
+ATOM      4  GL1 POP     1      21.660  21.470  31.150  1.00  0.00
+ATOM      5  GL2 POP     1      20.700  25.710  30.910  1.00  0.00
+ATOM      6  C1A POP     1      24.400  27.290  28.690  1.00  0.00
+ATOM      7  C2A POP     1      25.940  30.300  25.450  1.00  0.00
+ATOM      8  C3A POP     1      28.220  33.920  23.540  1.00  0.00
+ATOM      9  C4A POP     1      30.820  37.690  22.620  1.00  0.00
+ATOM     10  C1B POP     1      22.620  22.640  26.830  1.00  0.00
+ATOM     11  C2B POP     1      25.160  25.150  24.040  1.00  0.00
+ATOM     12  D3B POP     1      29.370  26.760  23.920  1.00  0.00
+ATOM     13  C4B POP     1      29.970  29.950  20.800  1.00  0.00
+ATOM     14  C5B POP     1      32.240  33.740  19.560  1.00  0.00
+TER
+ENDMDL
