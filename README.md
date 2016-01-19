@@ -2,7 +2,7 @@ Alchex ⚛⚗🎚
 ===========
 _(Alk-Ex)_
 
-Alchex uses GROMACS to robustly exchange one molecule for another using a method based on EXCHANGE LIPIDS by Heidi Koldsø and removes clashes using the Alchembed method developed by 
+Alchex uses GROMACS to robustly exchange one molecule for another using a method based on [Exchange Lipids](#exchange-lipids) and removes clashes using the [Alchembed method](#alchembed) developed by 
 
 Get started
 -----------
