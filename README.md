@@ -12,5 +12,8 @@ References
 
 ### Alchembed
 
-**[Alchembed: A Computational Method for Incorporating Multiple Proteins into Complex Lipid Geometries](http://pubs.acs.org/doi/abs/10.1021/ct501111d)** Elizabeth Jefferys, Zara A. Sands, Jiye Shi, Mark S. P. Sansom, and Philip W. Fowler
+#### [Alchembed: A Computational Method for Incorporating Multiple Proteins into Complex Lipid Geometries](http://pubs.acs.org/doi/abs/10.1021/ct501111d)
 
+Elizabeth Jefferys, Zara A. Sands, Jiye Shi, Mark S. P. Sansom, and Philip W. Fowler
+
+### Exchange Lipids by Heidi Koldsø
