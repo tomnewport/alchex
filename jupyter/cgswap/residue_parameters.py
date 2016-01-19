@@ -1,4 +1,4 @@
-from knowledge import martini_type_similarity
+from knowledge import martini_atom_similarity
 from itertools import product
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -91,14 +91,14 @@ class ResidueParameters(object):
         # Start with dictionaries of atoms and what type they're connected to:
         from_atoms = {
             k:(
-                atom.attrs["type"], 
-                [x.attrs["type"] for x in atom.bonded()]
+                atom, 
+                atom.bonded()
             ) for k, atom in self.atoms.items()
         }
         to_atoms = {
             k:(
-                atom.attrs["type"], 
-                [x.attrs["type"] for x in atom.bonded()]
+                atom, 
+                atom.bonded()
             ) for k, atom in other.atoms.items()
         }
         # These will hold our maps as they're grown
@@ -106,15 +106,15 @@ class ResidueParameters(object):
         done_maps = list()
         # Find common subgraphs to start from (of size >= 3)
         # Iterate over pairs of from atoms and to atoms:
-        for from_atom_id, (from_atom_type, from_connected_types) in from_atoms.items():
-            for to_atom_id, (to_atom_type, to_connected_types) in to_atoms.items():
-                if martini_type_similarity(from_atom_type, to_atom_type) > 0.5:
+        for from_atom_id, (from_atom, from_connected_atoms) in from_atoms.items():
+            for to_atom_id, (to_atom, to_connected_atoms) in to_atoms.items():
+                if martini_atom_similarity(from_atom, to_atom) > 0.5:
                     # Atom types are similar
                     candidate_map = {from_atom_id:to_atom_id}
                     connected_similarity = 0
                     # Sum up compatible connected nodes
-                    for fc_type, tc_type in product(from_connected_types, to_connected_types):
-                        similarity = martini_type_similarity(fc_type, tc_type)
+                    for fc_atom, tc_atom in product(from_connected_atoms, to_connected_atoms):
+                        similarity = martini_atom_similarity(fc_atom, tc_atom)
                         connected_similarity += similarity                           
                     if connected_similarity > 1:
                         # If total is greater than 1, add it to the queue
@@ -139,7 +139,7 @@ class ResidueParameters(object):
                 for a_bonded_atom in a_bonded_atoms:
                     for b_bonded_atom in b_bonded_atoms:
                         # Check if similar
-                        if martini_type_similarity(a_bonded_atom.attrs["type"], b_bonded_atom.attrs["type"]) > 0.5:
+                        if martini_atom_similarity(a_bonded_atom, b_bonded_atom) > 0.5:
                             # Copy the dictionary
                             new_map = {x:y for x, y in a_b_map.items()}
                             # Add to the copied dictionary

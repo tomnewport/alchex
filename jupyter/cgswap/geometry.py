@@ -267,3 +267,24 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True):
         return transformation_matrix, rmse, transformed_operand
     else:
         return transformation_matrix
+
+
+def plot_3d(*pointclouds):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_aspect('equal')
+    hues = numpy.linspace(0,0.8,len(pointclouds))
+    for hue, plottable in zip(hues, pointclouds):
+        print(plottable.points)
+        cols = hsv_to_rgb(hue,1,1)
+        ax.scatter(
+                plottable.points[:,0], 
+                plottable.points[:,1], 
+                plottable.points[:,2], 
+                 lw = 0,
+                alpha=0.7,
+                c=cols,
+                s=100
+            )
+    ax.set_aspect('equal')
+    plt.show()

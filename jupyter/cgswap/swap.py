@@ -24,23 +24,32 @@ chol_pdb       = mda.Universe("../data/chol.pdb")
 chol_residue   = chol_pdb.select_atoms("resname CHO").residues[0]
 chol_structure = ResidueStructure(chol_residue, chol)
 
+dlpg_pdb       = mda.Universe("../data/DLPG-em.gro")
+dlpg_residue   = dlpg_pdb.select_atoms("resname DLPG").residues[0]
+dlpg_structure = ResidueStructure(dlpg_residue, dlpg)
+
 z = ExchangeMap()
 z.new(from_itp=dppc, to_itp=chol, method="martini.static_planar_alignment", draw=False, clusters=[
         [
-            ["PO4", "NC3", "GL1"],
+            ["PO4", "NC3"],
             ["ROH"],
             1
         ],
         [
-            ["C3A"],
-            ["R2", "C2"],
+            ["C1B", "C2A"],
+            ["R2", "R4"],
             1
         ],
         [
-            ["C3B"],
-            ["R3","C2"],
+            ["C4B", "C4A"],
+            ["C2"],
             1
         ]
     ])
 
 z.run(dppc_structure, chol_structure)
+
+y = ExchangeMap()
+y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
+
+y.run(dppc_structure, dlpg_structure)

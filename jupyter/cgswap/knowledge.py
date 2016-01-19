@@ -1,9 +1,21 @@
-def martini_type_similarity(type1, type2):
-    if type1 == type2:
-        return 1
+def is_number(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
+
+def martini_atom_similarity(atom1, atom2):
+    similarity = 0
+    if atom1.attrs["type"] == atom2.attrs["type"]:
+        similarity += 1
     else:
+        key = ".".join(sorted([atom1.attrs["type"] , atom2.attrs["type"]]))
         differences = {
             "C1.C3" : 0.6,
             "P4.P5" : 0.6
         }
-        return getattr(differences, ".".join(sorted([type1, type2])), 0)
+        similarity += getattr(differences, key, 0)
+    if atom1.attrs["atom"] == atom2.attrs["atom"]:
+        similarity += 1
+    return similarity
