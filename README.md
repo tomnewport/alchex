@@ -28,4 +28,6 @@ References
 
 Elizabeth Jefferys, Zara A. Sands, Jiye Shi, Mark S. P. Sansom, and Philip W. Fowler
 
-### Exchange Lipids by Heidi Koldsø
+### Exchange Lipids 
+
+Heidi Koldsø
