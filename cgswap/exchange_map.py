@@ -206,7 +206,8 @@ class ExchangeMap(object):
                     params = action
                     )
             elif action["method"] == "scale_match_vector":
-                new_residue.scale_match_vector(from_residue, action)
+                pass
+                #new_residue.scale_match_vector(from_residue, action)
             elif action["method"] == "simple_bridge":
                 new_residue.build_bridge(from_residue, to_residue, action)
             else:
