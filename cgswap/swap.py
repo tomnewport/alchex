@@ -52,4 +52,4 @@ z.run(dppc_structure, chol_structure)
 y = ExchangeMap()
 y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
 
-y.run(dppc_structure, dlpg_structure)
+#y.run(dppc_structure, dlpg_structure)

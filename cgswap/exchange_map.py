@@ -4,6 +4,7 @@ from itertools import product
 import networkx as nx
 from cgswap.geometry import PointCloud, TransformationMatrix, plot_3d
 import matplotlib.pyplot as plt
+from workarounds import WAEditableResidue
 
 
 class ExchangeMap(object):
@@ -173,12 +174,13 @@ class ExchangeMap(object):
         from_pointcloud = PointCloud(3)
         to_pointcloud = PointCloud(3)
         # Special case - start with the to residue
-        new_residue = to_residue.clone()
-        for from_cluster, to_cluster, weight in action["clusters"]:
-            from_pointcloud.add_points([from_residue.position(from_cluster).mean(axis=0)])
-            to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
-        transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
-        new_residue.transform(transformation)
+        new_residue.import_mdanalysis_atoms(to_residue)
+        #new_residue = to_residue.clone()
+        #for from_cluster, to_cluster, weight in action["clusters"]:
+        #    from_pointcloud.add_points([from_residue.position(from_cluster).mean(axis=0)])
+        #    to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
+        #transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
+        #new_residue.transform(transformation)
         #plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.point_cloud())
         #plt.show()
     def _run_direct_overlay(self, action, from_residue, to_residue, new_residue):
@@ -188,7 +190,7 @@ class ExchangeMap(object):
         print(action)
     def run(self, from_residue, to_residue):
         # Takes two MDAnalysis residues and replaces one with the other
-        new_residue = from_residue.clone()
+        new_residue = WAEditableResidue(resname=to_residue.resname, resid=to_residue.resid)
         #new_residue.change_residue_name(to_residue.resname)
         #new_residue.change_residue_id(to_residue.resid)
         for action in self.actions:
