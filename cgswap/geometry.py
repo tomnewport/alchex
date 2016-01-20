@@ -3,6 +3,10 @@ from colorsys import hsv_to_rgb
 import matplotlib.pyplot as plt
 from random import randint, random
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.spatial.distance import cdist, squareform
+import seaborn as sns
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class TransformationMatrix:
     def __init__(self, dimensions=2):
@@ -17,6 +21,11 @@ class TransformationMatrix:
         for axis, axistranslation in enumerate(axes):
             transmatrix[axis,-1] += axistranslation
         self.matrix = self.matrix.dot(transmatrix)
+    def scale(self, *axes):
+        scalematrix = numpy.zeros([self.dimensions+1, self.dimensions+1])
+        axes = list(axes) + [1]
+        numpy.fill_diagonal(scalematrix, axes)
+        self.matrix = self.matrix.dot(scalematrix)
     def randomise_3d(self):
         self.rotate_3d(random(), [random(), random(), random()])
         self.translate(random(), random(), random())
@@ -72,6 +81,23 @@ class PointCloud:
         self.dimensions = dimensions
         self.points = numpy.zeros((0,self.dimensions+1))
         self.lines  = []
+    def find_friends(self, other, n_friends, distance_cutoff=15):
+        distance_matrix = cdist(self.points, other.points)
+        distance_matrix[distance_matrix==0] = 1000000000
+        distance_ranks = numpy.argsort(-distance_matrix, axis=None)
+        #sns.distplot(distance_matrix.min(axis=0))
+        #sns.plt.show()
+        friends = []
+        used = set()
+        depth = 0
+        while len(friends) < n_friends and depth < distance_matrix.shape[0] ** 2:
+            depth += 1
+            p1, p2 = numpy.unravel_index(distance_ranks[-depth], distance_matrix.shape)
+            #p1, p2 = pair[0]
+            if p1 not in used and p2 not in used:
+                used.update({p1, p2})
+                friends.append((p1, p2, distance_matrix[p1, p2]))
+        return friends
     def randomsetup(self, points=10, lines=10, size=1):
         self.add_points(numpy.random.randn(points,self.dimensions) * size)
         attempts = 0
@@ -178,8 +204,10 @@ class PointCloud:
             longer = self
             shorter = other
         return distance.cdist(longer, shorter).min(axis=0).mean()
-    def centroid(self):
-        return numpy.mean(self.points, axis=0)
+    def centroid(self, centroid_weighting=None):
+        if centroid_weighting is None:
+            centroid_weighting = [1]*self.points.shape[0]
+        return numpy.average(self.points, axis=0, weights=centroid_weighting)
     def bounding_box(self, extent=True):
         mins = self.points.min(axis=0)
         maxs = self.points.max(axis=0)
@@ -216,7 +244,6 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True, ce
     assert len(operand_points) == len(reference_points)
 
     n_points = operand_points.shape[0]
-    print(centroid_weighting)
     if centroid_weighting is None:
         centroid_weighting = [1] * n_points
     operand_centroid = numpy.average(operand_points, axis=0, weights=centroid_weighting)
@@ -288,8 +315,8 @@ def plot_3d(*pointclouds):
                 plottable.points[:,0], 
                 plottable.points[:,1], 
                 plottable.points[:,2], 
-                 lw = 0,
-                alpha=0.7,
+                lw = 0,
+                alpha=0.5,
                 c=cols,
                 s=100
             )

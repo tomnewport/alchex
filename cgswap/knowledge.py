@@ -15,7 +15,7 @@ def martini_atom_similarity(atom1, atom2):
             "C1.C3" : 0.6,
             "P4.P5" : 0.6
         }
-        similarity += getattr(differences, key, 0)
+        similarity += differences.get(key, 0)
     if atom1.attrs["atom"] == atom2.attrs["atom"]:
         similarity += 1
     return similarity

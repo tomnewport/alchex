@@ -24,7 +24,7 @@ class GromacsITPFile(object):
                             table_columns = colnames[table_name]
                         else:
                             table_columns = None
-                    elif line[0] == ";" and sectionline == 1:
+                    elif stripline[0] == ";" and sectionline == 1:
                         pass
                         #table_columns = line[1:].split()
                     elif in_table:
@@ -33,7 +33,7 @@ class GromacsITPFile(object):
                                 correct_section = True
                             else:
                                 correct_section = False
-                        if table_name in ["atoms", "bonds", "angles"] and correct_section and stripline[0] != "#":
+                        if table_name in ["atoms", "bonds", "angles"] and correct_section and stripline[0] not in ["#", ";"]:
                             if table_name not in tables:
                                 tables[table_name] = []
                             tables[table_name].append({key: value for key, value in zip(table_columns, stripline.split())})

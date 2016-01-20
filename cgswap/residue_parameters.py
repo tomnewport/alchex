@@ -2,6 +2,7 @@ from knowledge import martini_atom_similarity
 from itertools import product
 import matplotlib.pyplot as plt
 import networkx as nx
+from copy import deepcopy
 
 class RPAtom(object):
     def __init__(self, attrs):
@@ -11,6 +12,8 @@ class RPAtom(object):
         self.i_angled = []
         self.j_angled = []
         self.k_angled = []
+    def prefix(self, prefix):
+        self.attrs["id"] = prefix + self.attrs["id"]
     def bonded(self):
         ba = []
         for bond in self.i_bonded:
@@ -48,6 +51,18 @@ class ResidueParameters(object):
         self.angles = []
         self._graph = None
         self._atom_to_id_dict = None
+    def clone(self):
+        return deepcopy(self)
+    def merge(self, other):
+        self.atoms = {k:v for k, v in self.atoms.items() + other.atoms.items()}
+        self.bonds += other.bonds
+        self.angles += other.angles
+        self._graph = None
+        self._atom_to_id_dict = None
+    def prefix(self, prefix):
+        self.atoms = {prefix+k:v for k,v in self.atoms.items()}
+        for atom in self.atoms.values():
+            atom.prefix(prefix)
     def add_atom(self, id, attributes):
         self.atoms[id] = RPAtom(attributes)
     def add_bond(self, i, j, attributes):
@@ -156,6 +171,7 @@ class ResidueParameters(object):
                     done_maps = sorted(done_maps, key=lambda x : -len(x))[:1000]
         sorted_maps = sorted(done_maps, key=lambda x : -len(x))
         longest = sorted_maps[0]
+
         return [candidate for candidate in sorted_maps if len(candidate) >= len(longest) * threshold]
     def centre_node(self):
         return [x[0] for x in sorted(nx.eccentricity(self.graph()).items(), key=lambda x : x[1])][0][0]

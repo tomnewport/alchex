@@ -15,6 +15,8 @@ chol_itp = GromacsITPFile("../data/chol.itp")
 chol = chol_itp.read_residue("CHOL")
 dppc_itp = GromacsITPFile("../data/dppc.itp")
 dppc = dppc_itp.read_residue("DPPC")
+popc_itp = GromacsITPFile("../data/popc_patch/popc_ac.itp")
+popc = popc_itp.read_residue("POPC")
 
 dppc_pdb       = mda.Universe("../data/dppc.pdb")
 dppc_residue   = dppc_pdb.select_atoms("resname DPP").residues[0]
@@ -27,6 +29,12 @@ chol_structure = ResidueStructure(chol_residue, chol)
 dlpg_pdb       = mda.Universe("../data/DLPG-em.gro")
 dlpg_residue   = dlpg_pdb.select_atoms("resname DLPG").residues[0]
 dlpg_structure = ResidueStructure(dlpg_residue, dlpg)
+
+cdl_pdb       = mda.Universe("../data/CDL0.gro")
+cdl_residue   = cdl_pdb.select_atoms("resname CDL").residues[0]
+cdl_structure = ResidueStructure(cdl_residue, cdl)
+
+popc_pdb      = mda.Universe("../data/popc_patch/sample.gro")
 
 z = ExchangeMap()
 z.new(from_itp=dppc, to_itp=chol, method="martini.static_planar_alignment", draw=False, clusters=[
@@ -46,10 +54,54 @@ z.new(from_itp=dppc, to_itp=chol, method="martini.static_planar_alignment", draw
             1
         ]
     ])
-
+'''
 z.run(dppc_structure, chol_structure)
 
 y = ExchangeMap()
 y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
 
 y.run(dppc_structure, dlpg_structure)
+
+x = ExchangeMap()
+x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=False)
+
+hgs = popc_pdb.select_atoms(x.actions[1]["from_selector"])
+
+from cgswap.geometry import PointCloud, plot_3d
+
+a = PointCloud(3)
+a.add_points(hgs.coordinates())
+b = PointCloud(3)
+b.add_points(hgs.coordinates())
+#plot_3d(a)
+
+d = a.find_friends(b, 1)
+
+a_resid1, a_resid2, _ = d[0]
+
+resid1 = hgs.atoms[a_resid1].resid
+resid2 = hgs.atoms[a_resid2].resid
+
+popc_residue1   = popc_pdb.select_atoms("resid " + str(resid1))
+popc_residue2   = popc_pdb.select_atoms("resid " + str(resid2))
+popc_structure1 = ResidueStructure(popc_residue1, popc)
+popc_structure2 = ResidueStructure(popc_residue2, popc)
+
+from cgswap.residue import MultiResidueStructure
+
+a = MultiResidueStructure([popc_structure1, popc_structure2])
+
+x.run(a, cdl_structure)
+'''
+g = ExchangeMap()
+g.new(from_itp=popc, to_itp=dlpg, method="martini.lipid", draw=False)
+
+popc_residues   = popc_pdb.select_atoms("resname POPC")
+
+lines = []
+for popc_residue in popc_residues.residues:
+    popc_structure = ResidueStructure(popc_residue, popc)
+    swapped = g.run(popc_structure, dlpg_structure)
+    lines.append(swapped.as_pdb())
+with open("../output.pdb", "w") as ofile:
+    ofile.write("\n".join(lines))

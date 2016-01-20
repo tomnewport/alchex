@@ -5,6 +5,7 @@ import networkx as nx
 from cgswap.geometry import PointCloud, TransformationMatrix, plot_3d
 import matplotlib.pyplot as plt
 from workarounds import WAEditableResidue
+from cgswap.residue import MultiResidueStructure
 
 
 class ExchangeMap(object):
@@ -53,7 +54,6 @@ class ExchangeMap(object):
                     cc_nodes.update(set(to_g.neighbors(c_node)))
                 cc_nodes = list(set(cc_nodes).intersection(mapped) - set(connected))
                 connected += cc_nodes[:3 - len(connected)]
-            print(to_from_map)
             fragment["reference"] = [[to_from_map[to_node], to_node] for to_node in connected]
             fragment["centroid_weighting"] = [1,0,0]
             fragments.append(fragment)
@@ -125,23 +125,29 @@ class ExchangeMap(object):
             )
         lipid_1_bridge = [x for x in most_central if x in card_lipid_1.values()][0]
         lipid_2_bridge = [x for x in most_central if x in card_lipid_2.values()][0]
+        l1_bridge_id = str(lipid_card_1[lipid_1_bridge])
+        l1_bridge_name = self.from_itp.atoms[l1_bridge_id].attrs["atom"]
+        l2_bridge_id = str(lipid_card_2[lipid_2_bridge])
+        l2_bridge_name = self.from_itp.atoms[l2_bridge_id].attrs["atom"]
         bridge = nx.shortest_path(card_g, lipid_1_bridge, lipid_2_bridge)
         if draw:
             card.draw(orange=[lipid_1_bridge], cyan=[lipid_2_bridge], yellow=bridge[1:-1])
         combined_map = {k:v for k,v in [("2."+x[0],x[1]) for x in card_lipid_2.items()] + [("1."+x[0],x[1]) for x in card_lipid_1.items()]}
         self.actions = []
         self.actions.append({
-                "method"   : "simple_bridge",
-                "from"  : "1." + str(lipid_card_1[lipid_1_bridge]),
-                "to"    : "2." + str(lipid_card_2[lipid_2_bridge]),
-                "atoms" : bridge
-            })
-        self.actions.append({
                 "method"  : "direct_overlay",
                 "map"    : combined_map
             })
+        self.actions.append({
+                "method"   : "simple_bridge",
+                "from"  : combined_map["1." + l1_bridge_id],
+                "to"    : combined_map["2." + l2_bridge_id],
+                "from_selector" : "resname " + self.from_itp.resname + " and name " + l1_bridge_name, 
+                "to_selector"   : "resname " + self.from_itp.resname + " and name " + l2_bridge_name, 
+                "atoms" : bridge
+            })
         remaining = [x for x in card.atoms if x not in combined_map.values() and x not in bridge]
-        remaining_g = card_g.subgraph(remaining)
+        fragments = self._new_map_fragment_alignment(remaining, combined_map.values() + bridge, combined_map)
         self.actions += self._new_map_fragment_alignment(remaining, combined_map.values() + bridge, combined_map)
         self.actions += self._new_map_distort_cg_lipid_tails(overlay_map = combined_map)
         #print(remaining)
@@ -194,13 +200,16 @@ class ExchangeMap(object):
                     to_residue=to_residue, 
                     mapping = action["map"])
             elif action["method"] == "fragment_align":
-                print(action)
                 new_residue.align_fragment(
                     from_residue = from_residue,
                     to_residue = to_residue,
                     params = action
                     )
+            elif action["method"] == "scale_match_vector":
+                new_residue.scale_match_vector(from_residue, action)
+            elif action["method"] == "simple_bridge":
+                new_residue.build_bridge(from_residue, to_residue, action)
             else:
                 print(action["method"])
-        plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.coordinates)
+        #plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.coordinates)
         return new_residue
