@@ -62,7 +62,6 @@ class WAEditableResidue(object):
         node_points = PointCloud(3)
         tp = []
         for node in nodes:
-            print(node)
             t_index = to_residue.mda_index(node)
             tp.append(to_residue.mda_object.atoms[t_index].position)
             self.ids.append(node)
@@ -136,17 +135,20 @@ class WAEditableResidue(object):
             points.append(point)
         self.coordinates.add_points(points)
     def as_pdb(self):
+        lines = []
         for atom_id in self.ids:
+            print atom_id
             atom, coordinates = self.get_atom_by_id(atom_id)
             line = "ATOM    {id} {name} {resname} {resid}      {xpos}  {ypos}  {zpos}  1.00  0.00           N"
-            return line.format(
+            lines.append(line.format(
                 id=str(atom_id).rjust(3), 
                 name=atom["name"].rjust(4), 
                 resname=self.resname.rjust(4),
                 resid = str(self.resid).rjust(4), 
                 xpos=str(coordinates[0])[:6].ljust(6),
                 ypos=str(coordinates[1])[:6].ljust(6),
-                zpos=str(coordinates[2])[:6].ljust(6))
+                zpos=str(coordinates[2])[:6].ljust(6)))
+        return lines
         
 
 

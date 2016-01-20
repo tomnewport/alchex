@@ -102,6 +102,6 @@ lines = []
 for popc_residue in popc_residues.residues:
     popc_structure = ResidueStructure(popc_residue, popc)
     swapped = g.run(popc_structure, dlpg_structure)
-    lines.append(swapped.as_pdb())
+    lines += swapped.as_pdb()
 with open("../output.pdb", "w") as ofile:
     ofile.write("\n".join(lines))
