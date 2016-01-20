@@ -31,7 +31,9 @@ class ExchangeMap(object):
             else:
                 sc += "☐"
         return sc
-    def _new_map_fragment_alignment(self, remaining, mapped):
+    def _new_map_fragment_alignment(self, remaining, mapped, mapping):
+        # Given a list of the remaining <to> and mapped <to>
+        to_from_map = {v:k for k, v in mapping.items()}
         to_g = self.to_itp.graph()
         remaining_g = to_g.subgraph(remaining)
         fragment_subgraphs = nx.connected_component_subgraphs(remaining_g)
@@ -51,7 +53,8 @@ class ExchangeMap(object):
                     cc_nodes.update(set(to_g.neighbors(c_node)))
                 cc_nodes = list(set(cc_nodes).intersection(mapped) - set(connected))
                 connected += cc_nodes[:3 - len(connected)]
-            fragment["reference"] = connected
+            print(to_from_map)
+            fragment["reference"] = [[to_from_map[to_node], to_node] for to_node in connected]
             fragment["centroid_weighting"] = [1,0,0]
             fragments.append(fragment)
         return fragments
@@ -91,7 +94,7 @@ class ExchangeMap(object):
         # These atoms can be directly replaced
         aligned = set(direct_overlay.values())
         remaining = set(self.to_itp.atoms.keys()) - aligned
-        fragments = self._new_map_fragment_alignment(remaining, aligned)
+        fragments = self._new_map_fragment_alignment(remaining, aligned, direct_overlay)
         self.actions = [{"method":"direct_overlay", "map" : direct_overlay}] + fragments
         self.actions += self._new_map_distort_cg_lipid_tails(overlay_map=direct_overlay)
     def _new_martini_lipid_to_card(self, draw=False):
@@ -139,7 +142,7 @@ class ExchangeMap(object):
             })
         remaining = [x for x in card.atoms if x not in combined_map.values() and x not in bridge]
         remaining_g = card_g.subgraph(remaining)
-        self.actions += self._new_map_fragment_alignment(remaining, combined_map.values() + bridge)
+        self.actions += self._new_map_fragment_alignment(remaining, combined_map.values() + bridge, combined_map)
         self.actions += self._new_map_distort_cg_lipid_tails(overlay_map = combined_map)
         #print(remaining)
         #print(self)
@@ -173,33 +176,31 @@ class ExchangeMap(object):
     def _run_molecule_align(self, action, from_residue, to_residue, new_residue):
         from_pointcloud = PointCloud(3)
         to_pointcloud = PointCloud(3)
-        # Special case - start with the to residue
         new_residue.import_mdanalysis_atoms(to_residue)
-        #new_residue = to_residue.clone()
-        #for from_cluster, to_cluster, weight in action["clusters"]:
-        #    from_pointcloud.add_points([from_residue.position(from_cluster).mean(axis=0)])
-        #    to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
-        #transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
-        #new_residue.transform(transformation)
-        #plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.point_cloud())
-        #plt.show()
-    def _run_direct_overlay(self, action, from_residue, to_residue, new_residue):
-        for from_atom, to_atom in action["map"].items():
-            new_residue.overlay(to_residue=to_residue, from_atom=from_atom, to_atom=to_atom)
-    def _run_fragment_align(self, action, from_residue, to_residue, new_residue):
-        print(action)
+        for from_cluster, to_cluster, weight in action["clusters"]:
+            from_pointcloud.add_points([from_residue.position(from_cluster).mean(axis=0)])
+            to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
+        transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
+        new_residue.transform(transformation)
     def run(self, from_residue, to_residue):
         # Takes two MDAnalysis residues and replaces one with the other
         new_residue = WAEditableResidue(resname=to_residue.resname, resid=to_residue.resid)
-        #new_residue.change_residue_name(to_residue.resname)
-        #new_residue.change_residue_id(to_residue.resid)
         for action in self.actions:
             if action["method"] == "molecule_align":
                 self._run_molecule_align(action, from_residue, to_residue, new_residue)
             elif action["method"] == "direct_overlay":
-                self._run_direct_overlay(action, from_residue, to_residue, new_residue)
+                new_residue.overlay(
+                    from_residue=from_residue, 
+                    to_residue=to_residue, 
+                    mapping = action["map"])
             elif action["method"] == "fragment_align":
-                self._run_fragment_align(action, from_residue, to_residue, new_residue)
+                print(action)
+                new_residue.align_fragment(
+                    from_residue = from_residue,
+                    to_residue = to_residue,
+                    params = action
+                    )
             else:
                 print(action["method"])
+        plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.coordinates)
         return new_residue

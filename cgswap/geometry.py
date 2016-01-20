@@ -161,13 +161,13 @@ class PointCloud:
                 c=cols,
                 s=100
             )
-    def paired_3d_align(self, other, inv=True):
+    def paired_3d_align(self, other, inv=True, centroid_weighting=None):
         # inv = True  - move this pointcloud to the other
         #       False - move the other pointcloud to this
         if inv:
-            return solve_3d_transformation(self, other)
+            return solve_3d_transformation(self, other, centroid_weighting=centroid_weighting)
         else:
-            return solve_3d_transformation(other, self)
+            return solve_3d_transformation(other, self, centroid_weighting=centroid_weighting)
     def n_points(self):
         return self.points.shape[0]
     def unpaired_3d_rmse(self, other):
@@ -206,7 +206,7 @@ class PointCloud:
 def pairwise_rmse(points1, points2):
     return numpy.sqrt((numpy.square(points1 - points2)).mean())
 
-def solve_3d_transformation(operand, reference, subselection=None, test=True):
+def solve_3d_transformation(operand, reference, subselection=None, test=True, centroid_weighting=None):
     if subselection is None:
         operand_points = numpy.mat(operand.points[:,:3])
         reference_points = numpy.mat(reference.points[:,:3])
@@ -216,9 +216,11 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True):
     assert len(operand_points) == len(reference_points)
 
     n_points = operand_points.shape[0]
-
-    operand_centroid = numpy.mean(operand_points, axis=0)
-    reference_centroid = numpy.mean(reference_points, axis=0)
+    print(centroid_weighting)
+    if centroid_weighting is None:
+        centroid_weighting = [1] * n_points
+    operand_centroid = numpy.average(operand_points, axis=0, weights=centroid_weighting)
+    reference_centroid = numpy.average(reference_points, axis=0, weights=centroid_weighting)
     
     # centre the points
     operand_centred   = operand_points - numpy.tile(operand_centroid, (n_points, 1))
@@ -274,8 +276,13 @@ def plot_3d(*pointclouds):
     ax = fig.add_subplot(111, projection='3d')
     ax.set_aspect('equal')
     hues = numpy.linspace(0,0.8,len(pointclouds))
+    xmin = 10000000
+    ymin = 10000000
+    zmin = 10000000
+    xmax = -10000000
+    ymax = -10000000
+    zmax = -10000000
     for hue, plottable in zip(hues, pointclouds):
-        print(plottable.points)
         cols = hsv_to_rgb(hue,1,1)
         ax.scatter(
                 plottable.points[:,0], 
@@ -286,5 +293,19 @@ def plot_3d(*pointclouds):
                 c=cols,
                 s=100
             )
+        xmin = min(xmin, plottable.points[:,0].min())
+        xmax = max(xmax, plottable.points[:,0].max())
+        ymin = min(ymin, plottable.points[:,1].min())
+        ymax = max(ymax, plottable.points[:,1].max())
+        zmin = min(zmin, plottable.points[:,2].min())
+        zmax = max(zmax, plottable.points[:,2].max())
+    box = max(xmax - xmin, ymax - ymin, zmax - zmin)
+    xmid = (xmax + xmin) / 2.0
+    ymid = (ymax + ymin) / 2.0
+    zmid = (zmax + zmin) / 2.0
+    ax.scatter(
+        [xmid-box/1.8, xmid+box/1.8, xmid-box/1.8, xmid+box/1.8, xmid-box/1.8, xmid+box/1.8, xmid-box/1.8, xmid+box/1.8],
+        [ymid-box/1.8, ymid-box/1.8, ymid+box/1.8, ymid+box/1.8, ymid-box/1.8, ymid-box/1.8, ymid+box/1.8, ymid+box/1.8],
+        [zmid-box/1.8, zmid-box/1.8, zmid-box/1.8, zmid-box/1.8, zmid+box/1.8, zmid+box/1.8, zmid+box/1.8, zmid+box/1.8])
     ax.set_aspect('equal')
     plt.show()

@@ -15,13 +15,6 @@ class ResidueStructure(object):
             return [self.mda_object[int(x)-1] for x in val]
         else:
             return self.mda_object[int(val[0])-1]
-    def overlay(self, to_residue, from_atom, to_atom):
-        # When called on new_residue, this method
-        # determines the name of the to_atom in to_residue
-        # and renames from_atom of self.mda_object accordingly
-        from_atom_id = int(from_atom) - 1
-        to_atom = to_residue.parameters.atoms[to_atom]
-        self.mda_object[from_atom_id].name = to_atom.attrs["atom"]
     def transform(self,matrix):
         p = self.point_cloud()
         p.transform(matrix)
@@ -37,7 +30,6 @@ class ResidueStructure(object):
         else:
             return numpy.array([self[x].position for x in atom_id])
     def verify_residues(self):
-        self.residue_numbering = {}
         for atom_id, atom in enumerate(self.mda_object.atoms):
             param_id = str(atom_id + 1)
             valid = True
@@ -48,6 +40,8 @@ class ResidueStructure(object):
             if not valid:
                 print(atom.name)
                 raise AtomMismatchException()
+    def mda_index(self, atom_id):
+        return int(atom_id) - 1
     def change_residue_name(self, resname):
         self.resname = resname
         for atom in self.mda_object.atoms:
