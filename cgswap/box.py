@@ -1,15 +1,82 @@
 import MDAnalysis as mda
+from random import shuffle
+from cgswap.residue import ResidueStructure
+
+def gro_to_dict(groline):
+    #residue number (5 positions, integer)
+    resid = groline[:5]
+    #residue name (5 characters)
+    resname = groline[5:10]
+    #atom name (5 characters)
+    atomname = groline[10:15]
+    #atom number (5 positions, integer)
+    atomid = groline[15:20]
+    #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
+    posx = groline[20:28]
+    posy = groline[28:36]
+    posz = groline[36:44]
+    #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
+    velx = groline[44:52]
+    vely = groline[52:60]
+    velz = groline[60:68]
+    return {
+        "resid":resid, 
+        "resname":resname, 
+        "atomname":atomname, 
+        "atomid":atomid, 
+        "posx":posx, 
+        "posy":posy, 
+        "posz":posz, 
+        "velx":velx, 
+        "vely":vely, 
+        "velz":velz}
 
 class Replacement(object):
     def __init__(self, simulation_box, selection_string, composition_name):
         self.simulation_box = simulation_box
+        self.config = self.simulation_box.alchex_config
         self.selection_string = selection_string
-        self.composition = self.simulation_box.alchex_config.compositions[composition_name]
+        self.composition = self.config.compositions[composition_name]
         self.source_residues = self.simulation_box.mda_universe.select_atoms(selection_string).residues
         self.plan_replacements()
     def plan_replacements(self):
+        self.replacements = []
+        available = list(range(len(self.source_residues)))
+        shuffle(available)
         asc_composition = sorted(self.composition.items(), key=lambda x : x[1])
-        
+        for resname, fraction in asc_composition:
+            ideal_number = int(round(fraction * len(self.source_residues)))
+            res_idxs = []
+            if ideal_number >= 1:
+                res_idxs = available[:ideal_number]
+                available = available[ideal_number:]
+            for res_idx in res_idxs:
+                self.replacements.append((res_idx, resname))
+    def perform_replacements(self):
+        delete = []
+        added = []
+        for res_idx, resname in self.replacements:
+            from_structure = self.source_residues[res_idx]
+            from_resname = from_structure.atoms[0].resname
+            from_residue = ResidueStructure(from_structure, self.config.parameters[from_resname])
+            to_residue = self.config.get_reference_structure(resname)
+            rep_map = self.config.exchange_maps[from_resname][resname]
+            exchange = rep_map.run(from_residue, to_residue, new_resid=from_structure.atoms[0].resid)
+            delete.append({"resname": from_structure.atoms[0].resname})
+            added.append(exchange.resid)
+        self.delete_conditions = delete
+        self.add    = added
+    def apply_modifications_gro(self, output_gro):
+        resultant = []
+        with open(self.simulation_box.input_filename, "r") as input_fh:
+            with open(output_gro, "w") as output_fh:
+                for line in input_fh:
+                    write_line = True
+                    try:
+                        d = gro_to_dict(line)
+                        for del_condition in self.delete:
+                    except:
+                        pass
 
 
 
@@ -21,15 +88,24 @@ class SimulationBox(object):
         self.mda_universe = None
         self.replacements = {}
     def load_universe(self, universe_filename):
+        self.input_filename = universe_filename
         self.mda_universe = mda.Universe(universe_filename)
     def add_replacement(self, selection_string, composition_name, replacement_name="default"):
         self.replacements[replacement_name] = Replacement(self, selection_string, composition_name)
-    def perform_replacement(self, replacement_name="default"):
+    def perform_replacement(self, output_file, replacement_name="default"):
         rep = self.replacements[replacement_name]
+        rep.perform_replacements()
+        rep.apply_modifications_gro(output_file)
 
+'''
+popc_residues   = popc_pdb.select_atoms("resname POPC")
 
-
-
+lines = []
+for popc_residue in popc_residues.residues:
+    popc_structure = ResidueStructure(popc_residue, popc)
+    swapped = g.run(popc_structure, dlpg_structure)
+    lines += swapped.as_pdb()
+'''
 
 
 

@@ -187,9 +187,9 @@ class ExchangeMap(object):
             to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
         transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
         new_residue.transform(transformation)
-    def run(self, from_residue, to_residue):
+    def run(self, from_residue, to_residue, new_resid=1):
         # Takes two MDAnalysis residues and replaces one with the other
-        new_residue = WAEditableResidue(resname=to_residue.resname, resid=to_residue.resid)
+        new_residue = WAEditableResidue(resname=to_residue.resname, resid=new_resid)
         for action in self.actions:
             if action["method"] == "molecule_align":
                 self._run_molecule_align(action, from_residue, to_residue, new_residue)

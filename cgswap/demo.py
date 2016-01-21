@@ -51,10 +51,12 @@ config.build_exchange_map(
     to_resname="DLPG",
     exchange_model="martini.lipid")
 
+config.add_reference_structure("DLPG","../data/DLPG-em.gro")
+
 config.add_composition( "all_dlpg", DLPG=1)
 
 popc_patch = SimulationBox(config)
 
 popc_patch.load_universe("../data/popc_patch/sample.gro")
 popc_patch.add_replacement("resname POPC", "all_dlpg")
-popc_patch.perform_replacement()
+popc_patch.perform_replacement("output.gro")
