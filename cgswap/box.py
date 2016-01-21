@@ -8,7 +8,8 @@ class Replacement(object):
         self.source_residues = self.simulation_box.mda_universe.select_atoms(selection_string).residues
         self.plan_replacements()
     def plan_replacements(self):
-        print(self.composition)
+        asc_composition = sorted(self.composition.items(), key=lambda x : x[1])
+        
 
 
 

@@ -26,4 +26,6 @@ class AlchexConfig(object):
         self.exchange_maps[from_parameters][to_parameters] = newmap
         print(newmap)
     def add_composition(self, name, **resname_fractions):
+        n_val = sum(resname_fractions.values())
+        resname_fractions = {k, v/n_val for k, v in resname_fractions}
         self.compositions[name] = resname_fractions
