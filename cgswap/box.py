@@ -19,7 +19,7 @@ def gro_to_dict(groline):
     velx = groline[44:52]
     vely = groline[52:60]
     velz = groline[60:68]
-    return {
+    return {k: v.strip() for k, v in {
         "resid":resid, 
         "resname":resname, 
         "atomname":atomname, 
@@ -29,7 +29,7 @@ def gro_to_dict(groline):
         "posz":posz, 
         "velx":velx, 
         "vely":vely, 
-        "velz":velz}
+        "velz":velz}.items()}
 
 class Replacement(object):
     def __init__(self, simulation_box, selection_string, composition_name):
@@ -53,8 +53,7 @@ class Replacement(object):
             for res_idx in res_idxs:
                 self.replacements.append((res_idx, resname))
     def perform_replacements(self):
-        delete = []
-        added = []
+        self.replace_groups = []
         for res_idx, resname in self.replacements:
             from_structure = self.source_residues[res_idx]
             from_resname = from_structure.atoms[0].resname
@@ -62,21 +61,30 @@ class Replacement(object):
             to_residue = self.config.get_reference_structure(resname)
             rep_map = self.config.exchange_maps[from_resname][resname]
             exchange = rep_map.run(from_residue, to_residue, new_resid=from_structure.atoms[0].resid)
-            delete.append({"resname": from_structure.atoms[0].resname})
-            added.append(exchange.resid)
-        self.delete_conditions = delete
-        self.add    = added
+            self.replace_groups.append(({"resid": [str(from_structure.atoms[0].resid)]}, exchange))
     def apply_modifications_gro(self, output_gro):
-        resultant = []
+        rep_made = [False for x in self.replace_groups]
         with open(self.simulation_box.input_filename, "r") as input_fh:
             with open(output_gro, "w") as output_fh:
+                atoms_started=False
                 for line in input_fh:
-                    write_line = True
-                    try:
-                        d = gro_to_dict(line)
-                        for del_condition in self.delete:
-                    except:
-                        pass
+                    writeable = line
+                    d = gro_to_dict(line)
+                    atoms_started = True
+                    for idx, (condition, residue) in enumerate(self.replace_groups):
+                        added = rep_made[idx]
+                        c_sat = True
+                        for k, v in condition.items():
+                            if (k not in d) or (d[k] not in v):
+                                c_sat = False
+                                break
+                        if c_sat:
+                            writeable = ""
+                            if not rep_made[idx]:
+                                writeable = "\n".join(residue.as_gro()) + "\n"
+                            rep_made[idx] = True
+                            break
+                    output_fh.write(writeable)
 
 
 

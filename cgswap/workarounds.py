@@ -133,13 +133,13 @@ class WAEditableResidue(object):
             #residue name (5 characters)
             line += str(self.resname).ljust(5)
             #atom name (5 characters)
-            line += str(atom["name"]).ljust(5)
+            line += str(atom["name"]).rjust(5)
             #atom number (5 positions, integer)
             line += str(atom_id).rjust(5)
             #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
-            line += [str(x)[:8].rjust(8) for x in coordinates]
+            line += "".join([str(x)[:6].rjust(8) for x in coordinates])
             #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
-            line += [str(x)[:8].rjust(8) for x in [0,0,0]]
+            line += "".join([str(x)[:6].rjust(8) for x in [0,0,0]])
             lines.append(line)
         return lines
         
