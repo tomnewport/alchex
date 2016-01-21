@@ -187,7 +187,7 @@ class ExchangeMap(object):
             to_pointcloud.add_points([to_residue.position(to_cluster).mean(axis=0)])
         transformation, rmse, aligned = from_pointcloud.paired_3d_align(to_pointcloud, inv=False)
         new_residue.transform(transformation)
-    def run(self, from_residue, to_residue, new_resid=1):
+    def run(self, from_residue, to_residue, new_resid=1, plot=False):
         # Takes two MDAnalysis residues and replaces one with the other
         new_residue = WAEditableResidue(resname=to_residue.resname, resid=new_resid)
         for action in self.actions:
@@ -210,5 +210,6 @@ class ExchangeMap(object):
                 new_residue.build_bridge(from_residue, to_residue, action)
             else:
                 print(action["method"])
-        #plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.coordinates)
+        if plot:
+            plot_3d(from_residue.point_cloud(), to_residue.point_cloud(), new_residue.coordinates)
         return new_residue

@@ -56,16 +56,16 @@ z.new(from_itp=dppc, to_itp=chol, method="martini.static_planar_alignment", draw
             1
         ]
     ])
-'''
-z.run(dppc_structure, chol_structure)
+
+z.run(dppc_structure, chol_structure,  plot=True)
 
 y = ExchangeMap()
 y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
 
-y.run(dppc_structure, dlpg_structure)
+y.run(dppc_structure, dlpg_structure, plot=True)
 
 x = ExchangeMap()
-x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=False)
+x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=True)
 
 hgs = popc_pdb.select_atoms(x.actions[1]["from_selector"])
 
@@ -93,8 +93,8 @@ from cgswap.residue import MultiResidueStructure
 
 a = MultiResidueStructure([popc_structure1, popc_structure2])
 
-x.run(a, cdl_structure)
-'''
+x.run(a, cdl_structure, plot=True)
+
 g = ExchangeMap()
 g.new(from_itp=popc, to_itp=dlpg, method="martini.lipid", draw=False)
 
