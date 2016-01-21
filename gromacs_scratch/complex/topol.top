@@ -11,18 +11,15 @@
 ; Then include the file(s) containing the topologies of other
 ; molecules present in your system.
 
-#include "DLPG.itp"
-#include "CT3-Me2b.itp"
-#include "martini_v2.0_ions.itp"
-
 ; Define a name for your system
 
 [ system ]
-10 mol % CT3-Me2b Chol in angle-corrected POPC
+Test EM
 
 ; Define the composition of your system
 ; The molecule names should correspond to those defined in the itp file(s).
 
 [ molecules ]
-POPC 360
+DLPG 360
 CHOL 40
+W 5134

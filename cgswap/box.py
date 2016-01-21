@@ -62,32 +62,35 @@ class Replacement(object):
             rep_map = self.config.exchange_maps[from_resname][resname]
             exchange = rep_map.run(from_residue, to_residue, new_resid=from_structure.atoms[0].resid)
             self.replace_groups.append(({"resid": [str(from_structure.atoms[0].resid)]}, exchange))
-    def apply_modifications_gro(self, output_gro):
+    def save_grofile(self, output_gro):
+        out_lines = []
         rep_made = [False for x in self.replace_groups]
         with open(self.simulation_box.input_filename, "r") as input_fh:
-            with open(output_gro, "w") as output_fh:
-                atoms_started=False
-                for line in input_fh:
-                    writeable = line
-                    d = gro_to_dict(line)
-                    atoms_started = True
-                    for idx, (condition, residue) in enumerate(self.replace_groups):
-                        added = rep_made[idx]
-                        c_sat = True
-                        for k, v in condition.items():
-                            if (k not in d) or (d[k] not in v):
-                                c_sat = False
-                                break
-                        if c_sat:
-                            writeable = ""
-                            if not rep_made[idx]:
-                                writeable = "\n".join(residue.as_gro()) + "\n"
-                            rep_made[idx] = True
+            atoms_started=False
+            atom_count = 0
+            for line in input_fh:
+                writeable = [line.split("\n")[0]]
+                d = gro_to_dict(line)
+                atoms_started = True
+                for idx, (condition, residue) in enumerate(self.replace_groups):
+                    added = rep_made[idx]
+                    c_sat = True
+                    for k, v in condition.items():
+                        if (k not in d) or (d[k] not in v):
+                            c_sat = False
                             break
-                    output_fh.write(writeable)
-
-
-
+                    if c_sat:
+                        writeable = []
+                        if not rep_made[idx]:
+                            writeable = residue.as_gro()
+                        rep_made[idx] = True
+                        break
+                out_lines += writeable
+        out_lines[1] = str(len(out_lines) - 3)
+        for d in range(2, len(out_lines)-1):
+            out_lines[d] = out_lines[d][:15] + str(d-1).rjust(5) + out_lines[d][20:]
+        with open(output_gro, "w") as output_fh:
+            output_fh.write("\n".join(out_lines))
 
 
 class SimulationBox(object):

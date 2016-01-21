@@ -1,5 +1,3 @@
-
-
 import MDAnalysis as mda
 import sys
 sys.path.append("../")
@@ -57,13 +55,14 @@ z.new(from_itp=dppc, to_itp=chol, method="martini.static_planar_alignment", draw
         ]
     ])
 
-z.run(dppc_structure, chol_structure,  plot=True)
+z.run(dppc_structure, chol_structure,  plot=False)
 
 y = ExchangeMap()
 y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
 
-y.run(dppc_structure, dlpg_structure, plot=True)
-
+a = y.run(dppc_structure, dlpg_structure, plot=False)
+print("\n".join(a.as_gro()))
+'''
 x = ExchangeMap()
 x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=True)
 
@@ -107,3 +106,4 @@ for popc_residue in popc_residues.residues:
     lines += swapped.as_pdb()
 with open("../output.pdb", "w") as ofile:
     ofile.write("\n".join(lines))
+    '''
