@@ -20,7 +20,7 @@ class ExchangeMap(object):
             "fragment_align", 
             "molecule_align", 
             "simple_bridge", 
-            "scale_match_vector"]
+            "stretch_interpolate"]
     def used_actions(self):
         return set([x["method"] for x in self.actions])
     def scorecard(self):
@@ -81,8 +81,7 @@ class ExchangeMap(object):
                             distortions.append(
                                 {"from"  :from_tail, 
                                  "to"    :to_tail,
-                                 "method":"scale_match_vector",
-                                 "pins" : {0:0, -1:-1}
+                                 "method":"stretch_interpolate"
                                 }
                             )
                             break
@@ -205,9 +204,8 @@ class ExchangeMap(object):
                     to_residue = to_residue,
                     params = action
                     )
-            elif action["method"] == "scale_match_vector":
-                pass
-                #new_residue.scale_match_vector(from_residue, action)
+            elif action["method"] == "stretch_interpolate":
+                new_residue.stretch_interpolate(from_residue, action)
             elif action["method"] == "simple_bridge":
                 new_residue.build_bridge(from_residue, to_residue, action)
             else:

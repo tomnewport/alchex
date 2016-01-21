@@ -7,6 +7,17 @@ from scipy.spatial.distance import cdist, squareform
 import seaborn as sns
 import networkx as nx
 import matplotlib.pyplot as plt
+from math import floor
+
+def linear_weights(coordinate, length):
+    w = numpy.zeros(length)
+    v_index = coordinate * (length-1)
+    f = int(floor(v_index))
+    c = f+1
+    w[f] = c - v_index
+    if c <= (length-1):
+        w[c] = v_index - f
+    return w
 
 class TransformationMatrix:
     def __init__(self, dimensions=2):
@@ -98,6 +109,14 @@ class PointCloud:
                 used.update({p1, p2})
                 friends.append((p1, p2, distance_matrix[p1, p2]))
         return friends
+    def interpolate_1d(self, coordinate, weighting_function="linear"):
+        if weighting_function == "linear":
+            weights = linear_weights(coordinate, self.points.shape[0])
+        return self.centroid(centroid_weighting=weights)
+    def interpolate_1d_list(self, coordinates, weighting_function="linear"):
+        r = PointCloud(self.dimensions)
+        r.points = numpy.array([self.interpolate_1d(c, weighting_function=weighting_function) for c in coordinates])
+        return r
     def randomsetup(self, points=10, lines=10, size=1):
         self.add_points(numpy.random.randn(points,self.dimensions) * size)
         attempts = 0

@@ -1,4 +1,5 @@
 from cgswap.geometry import PointCloud, TransformationMatrix, plot_3d
+import numpy
 
 def mda_atom_to_dict(mda_atom):
     return {
@@ -81,43 +82,16 @@ class WAEditableResidue(object):
             for atom_id in subset:
                 idx = self.ids.index(atom_id)
                 self.coordinates.points[idx, :] = tcoords.points[idx, :]
-    def scale_match_vector(self, from_residue, action):
-        # We first need the from_vector from the original molecule
-        # and the to_vector from the current molecule
-        (from_pin1, to_pin1), (from_pin2, to_pin2) = action["pins"].items()
-        # From pins are references to the from_residue. These coordinates
-        # are correct.
-        # To pins are references to the to_residue. These coordinates should be
-        # taken from this object instead.
-        to_atoms = action["to"]
-        from_atoms = action["from"]
-        # Convert slice to atom ids
-        from_pin1 = from_atoms[from_pin1]
-        from_pin2 = from_atoms[from_pin2]
-        to_pin1 = to_atoms[to_pin1]
-        to_pin2 = to_atoms[to_pin2]
-
-        f1_pos = from_residue.get_mda_atom(from_pin1).position
-        f2_pos = from_residue.get_mda_atom(from_pin2).position
-        _, t1_pos = self.get_atom_by_id(to_pin1)
-        _, t2_pos = self.get_atom_by_id(to_pin2)
-
-        # We want operand_vector to equal operand_vector after scaling
-        reference_vector = f1_pos - f2_pos
-        operand_vector   = t1_pos - t2_pos
-        check = PointCloud(3)
-        check.add_points([f1_pos, f2_pos, t1_pos, t2_pos])
-        origin = list(t1_pos)
-        translation = list(-t1_pos)
-        t = TransformationMatrix(3)
-        t.translate(*translation)
-        s = TransformationMatrix(3)
-        s.scale(*list(reference_vector/operand_vector))
-        rt = TransformationMatrix(3)
-        rt.translate(*origin)
-        self.transform(t, subset=to_atoms)
-        self.transform(s, subset=to_atoms)
-        self.transform(rt, subset=to_atoms)
+    def stretch_interpolate(self, from_residue, action):
+        # First extract the from_residue points:
+        from_points = []
+        for fpid in action["from"]:
+            from_points.append(from_residue.get_mda_atom(fpid).position)
+        from_pc = PointCloud(3)
+        from_pc.add_points(from_points)
+        new_pc = from_pc.interpolate_1d_list(numpy.linspace(0,1,len(action["to"])))
+        for idx, new_atom_id in enumerate(action["to"]):
+            self.coordinates.points[self.ids.index(new_atom_id),:] = new_pc.points[idx,:]
     def build_bridge(self, from_residue, to_residue, action):
         from_atom = action["from"]
         to_atom = action["to"]
