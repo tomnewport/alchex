@@ -124,7 +124,7 @@ class WAEditableResidue(object):
                 zpos=str(coordinates[2])[:6].ljust(6)))
         return lines
     def as_gro(self):
-        lines = []
+        lines = {}
         for atom_id in self.ids:
             atom, coordinates = self.get_atom_by_id(atom_id)
             line = ""
@@ -137,11 +137,12 @@ class WAEditableResidue(object):
             #atom number (5 positions, integer)
             line += str(atom_id).rjust(5)
             #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
-            line += "".join([str(x)[:6].rjust(8) for x in coordinates])
+            line += "".join(["{:8.4f}".format(x) for x in coordinates/10])
             #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
-            line += "".join([str(x)[:6].rjust(8) for x in [0,0,0]])
-            lines.append(line)
-        return lines
+            line += "".join(["{:8.4f}".format(x) for x in [0,0,0]])
+            lines[int(atom_id)] = line
+        lines = sorted(lines.items(), key=lambda x : x[0])
+        return [x[1] for x in lines]
         
 
 
