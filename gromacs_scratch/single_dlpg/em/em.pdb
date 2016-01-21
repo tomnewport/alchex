@@ -1,0 +1,16 @@
+TITLE     Test EM
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  107.340  107.340   97.627  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GLH DLPG    1      12.920   8.430  34.090  1.00  0.00            
+ATOM      2  PO4 DLPG    1      12.280   9.030  29.500  1.00  0.00            
+ATOM      3  GL1 DLPG    1      11.530  10.020  25.020  1.00  0.00            
+ATOM      4  GL2 DLPG    1      10.310  14.370  23.890  1.00  0.00            
+ATOM      5  C1A DLPG    1      11.700  10.690  20.460  1.00  0.00            
+ATOM      6  C2A DLPG    1      12.120  12.100  16.060  1.00  0.00            
+ATOM      7  C3A DLPG    1      12.170  13.320  11.590  1.00  0.00            
+ATOM      8  C1B DLPG    1      10.570  15.780  19.420  1.00  0.00            
+ATOM      9  C2B DLPG    1      10.090  16.830  14.930  1.00  0.00            
+ATOM     10  C3B DLPG    1       9.700  17.800  10.330  1.00  0.00            
+TER
+ENDMDL

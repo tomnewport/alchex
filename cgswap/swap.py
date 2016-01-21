@@ -61,8 +61,8 @@ y = ExchangeMap()
 y.new(from_itp=dppc, to_itp=dlpg, method="martini.lipid", draw=False)
 
 a = y.run(dppc_structure, dlpg_structure, plot=False)
-print("\n".join(a.as_gro()))
-'''
+
+
 x = ExchangeMap()
 x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=True)
 
@@ -89,10 +89,10 @@ popc_structure1 = ResidueStructure(popc_residue1, popc)
 popc_structure2 = ResidueStructure(popc_residue2, popc)
 
 from cgswap.residue import MultiResidueStructure
-
+print(popc_structure1, popc_structure2)
 a = MultiResidueStructure([popc_structure1, popc_structure2])
 
-x.run(a, cdl_structure, plot=True)
+cdl = x.run(a, cdl_structure, plot=True)
 
 g = ExchangeMap()
 g.new(from_itp=popc, to_itp=dlpg, method="martini.lipid", draw=False)
@@ -106,4 +106,5 @@ for popc_residue in popc_residues.residues:
     lines += swapped.as_pdb()
 with open("../output.pdb", "w") as ofile:
     ofile.write("\n".join(lines))
-    '''
+
+print("\n".join(cdl.as_gro()))
