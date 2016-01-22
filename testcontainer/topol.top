@@ -1,8 +1,0 @@
-#include "martini_v2.1.itp"
-
-
-[ system ]
-Test EM
-
-[ molecules ]
-DLPG 1

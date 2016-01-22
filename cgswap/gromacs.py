@@ -2,7 +2,7 @@ from cgswap.residue_parameters import ResidueParameters
 import re
 import threading
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
-from shutil import copy, copyfile
+from shutil import copy, copyfile, rmtree
 from os import path, makedirs
 '''
 class AsyncOSCommand(object):
@@ -40,7 +40,7 @@ class GromacsWrapper(object):
             if command.waiting:
                 command.run()
     def cd(self, cwd):
-        self.cwd = path.abspath(path.join(self.cwd, cwd))
+        self._cwd = path.abspath(path.join(self._cwd, cwd))
     def __getattr__(self, name):
         def unknown_call(args=[], kwargs={}):
             return self.generic_gromacs_call(name, args, kwargs)
@@ -61,7 +61,7 @@ class GromacsWrapper(object):
     def shell(self, process, args=[], kwargs={}):
         command = self.build_command(process, args=args, kwargs=kwargs)
         try:
-            output = check_output(command, shell=True, cwd=self.cwd, stderr=STDOUT)
+            output = check_output(command, shell=True, cwd=self._cwd, stderr=STDOUT)
             retcode = 0
         except CalledProcessError as cpe:
             output = cpe.output
@@ -85,8 +85,8 @@ class GromacsWrapper(object):
 class SimulationContainer(object):
     def __init__(self, root_path, gromacs_wrapper):
         self._root = path.abspath(root_path)
-        self.makedirs("/")
         self.gromacs = gromacs_wrapper
+        self.makedirs("/")
         self.cd()
     def delete_folder(self, delpath="/"):
         rmtree(self.resolve_path(delpath))
@@ -116,19 +116,25 @@ class SimulationContainer(object):
         elif newpath[0] == "/":
             return path.join(self._root, newpath[1:])
         else:
-            return newpath
+            return path.join(self.gromacs._cwd, newpath)
 
 c = SimulationContainer("testcontainer", GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"))
 c.delete_folder()
 c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/dlpg.gro")
 c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/topol.top")
-c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/martini_v2.1.itp", rename="martini.itp")
+c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/martini_v2.1.itp")
 c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/em.mdp")
-c.makedirs("/test")
-c.copy_file("/em.mdp","/test")
-c.copy_file("/dlpg.gro","/test")
-c.copy_file("/martini.itp", "/test")
-
+c.makedirs("em")
+c.copy_file("em.mdp","em")
+c.copy_file("dlpg.gro","em")
+c.copy_file("martini_v2.1.itp", "em")
+c.copy_file("topol.top", "em")
+c.copy_file("em.mdp", "em")
+c.makedirs("em/run")
+c.cd("em")
+c.gromacs.grompp(kwargs={"-f":"em.mdp", "-c":"dlpg.gro", "-p":"topol.top", "-o":"run/em.tpr","-maxwarn":"1"})
+c.cd("run")
+c.gromacs.mdrun(kwargs={"-deffnm":"em"})
 '''
 a = GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
 a.cd("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg")
