@@ -1,4 +1,5 @@
 from cgswap.residue_parameters import ResidueParameters
+import re
 
 class GromacsITPFile(object):
     def __init__(self, filename):
@@ -61,6 +62,33 @@ class GromacsMDPFile(object):
         with open(filename, "w") as file_handle:
             for k, v in self.attrs.items():
                 file_handle.write(k.ljust(25) + "= " + str(v) + "\n")
+
+class GromacsTOPFile(object):
+    def __init__(self):
+        self.lines = []
+    def from_file(self, filename):
+        with open(filename) as file_handle:
+            file_data = file_handle.read()
+        self.lines = file_data.split("\n")
+    def get_includes(self):
+        r = []
+        for line_idx, line in enumerate(self.lines):
+            if "#include" in line:
+                r.append((line_idx, line))
+    def get_tables(self, table_name):
+        table_head = re.compile(r'^\s*\[\s*([\w\s]+)\s*\]\s*$')
+        for line in lines:
+            th_search = table_head.search(line)
+            
+
+
+
+
+
+a = GromacsTOPFile()
+a.from_file("martini_v2.1.itp")
+
+
 '''Testing code
 a = GromacsMDPFile()
 
