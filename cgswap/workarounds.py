@@ -143,11 +143,108 @@ class WAEditableResidue(object):
             lines[int(atom_id)] = line
         lines = sorted(lines.items(), key=lambda x : x[0])
         return [x[1] for x in lines]
-        
+
+def gro_to_dict(groline):
+    #residue number (5 positions, integer)
+    resid = groline[:5].strip()
+    #residue name (5 characters)
+    resname = groline[5:10].strip()
+    #atom name (5 characters)
+    atomname = groline[10:15].strip()
+    #atom number (5 positions, integer)
+    atomid = groline[15:20].strip()
+    #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
+    posx = float(groline[20:28])
+    posy = float(groline[28:36])
+    posz = float(groline[36:44])
+    #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
+    velx = float(groline[44:52])
+    vely = float(groline[52:60])
+    velz = float(groline[60:68])
+    return {
+            "resid"  :resid, 
+            "resname":resname, 
+            "name"   :atomname, 
+            "atomid" :atomid, 
+            "posx"   :posx, 
+            "posy"   :posy, 
+            "posz"   :posz, 
+            "velx"   :velx, 
+            "vely"   :vely, 
+            "velz"   :velz}
+
+def dict_to_gro(dictionary):
+    line = ""
+    #residue number (5 positions, integer)
+    line += str(dictionary["resid"]).rjust(5)
+    #residue name (5 characters)
+    line += str(dictionary["resname"]).ljust(5)
+    #atom name (5 characters)
+    line += str(dictionary["name"]).rjust(5)
+    #atom number (5 positions, integer)
+    line += str(dictionary["atomid"]).rjust(5)
+    #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
+    line += "".join(["{:8.4f}".format(x) for x in [dictionary["posx"], dictionary["posy"], dictionary["posz"]]])
+    #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
+    line += "".join(["{:8.4f}".format(x) for x in [dictionary["velx"], dictionary["vely"], dictionary["velz"]]])
+    return line
+
+class WAEditableGrofile(object):
+    def __init__(self):
+        self.sysname = "Edited Gro File"
+        self.residues = []
+        self.box_vector = [0,0,0]
+    def from_file(self, filename):
+        with open(filename, "r") as fh:
+            lines = [x for x in fh.read().split("\n") if x.strip() != ""]
+        self.sysname = lines[0].strip()
+        for line in lines[2:-1]:
+            atom_data = gro_to_dict(line)
+            coordinates = [[
+                10*float(atom_data["posx"]), 
+                10*float(atom_data["posy"]), 
+                10*float(atom_data["posz"])
+                ]]
+            if atom_data["resid"] not in self.residues:
+                self.residues.append(WAEditableResidue(resid=atom_data["resid"], resname=atom_data["resname"]))
+                res_start = int(atom_data["atomid"])
+            self.residues[-1].coordinates.add_points(coordinates)
+            atom_id = str(1 + int(atom_data["atomid"]) - res_start)
+            self.residues[-1].ids.append(atom_id)
+            self.residues[-1].atoms.append(atom_data)
+        self.box_vector = [10*float(x) for x in lines[-1].split()]
+    def list_residues(self):
+        rlist = []
+        for residue in self.residues:
+            if len(rlist) == 0 or residue.resname != rlist[-1][0]:
+                rlist.append([residue.resname, 0])
+            rlist[-1][1] += 1
+        return rlist
+    def to_file(self, filename):
+        atom_count = sum([len(x.ids) for x in self.residues])
+        with open(filename, "w") as file_handle:
+            file_handle.write(self.sysname + "\n")
+            file_handle.write(str(atom_count).rjust(5)+ "\n")
+            atom_id = 0
+            for residue in self.residues:
+                for idx, atom_data in enumerate(residue.atoms):
+                    atom_id += 1
+                    atom = {}
+                    position = residue.coordinates.points[idx,:3]
+                    atom["posx"], atom["posy"], atom["posz"] = position/10
+                    atom["atomid"]  = str(atom_id)
+                    atom["resid"]   = residue.resid
+                    atom["resname"] = residue.resname
+                    atom["name"]    = atom_data["name"]
+                    atom["velx"]    = atom_data.get("velx", 0)
+                    atom["vely"]    = atom_data.get("vely", 0)
+                    atom["velz"]    = atom_data.get("velz", 0)
+                    file_handle.write(dict_to_gro(atom) + "\n")
+            file_handle.write("".join([str(x/10).rjust(10) for x in self.box_vector])+"\n")
 
 
 
 
-
-
-
+a = WAEditableGrofile()
+a.from_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/data/popc_patch/sample.gro")
+a.to_file("test.gro")
