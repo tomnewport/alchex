@@ -47,3 +47,25 @@ class GromacsITPFile(object):
         for angle in tables["angles"]:
             rp.add_angle(angle["i"], angle["j"], angle["k"], angle)
         return rp
+
+class GromacsMDPFile(object):
+    def __init__(self):
+        self.attrs = {}
+    def from_file(self, filename):
+        with open(filename, "r") as file_handle:
+            for line in file_handle:
+                if "=" in line and line[0] != ";":
+                    k, v = line.split("=")
+                    self.attrs[k.strip()] = v.strip()
+    def to_file(self, filename):
+        with open(filename, "w") as file_handle:
+            for k, v in self.attrs.items():
+                file_handle.write(k.ljust(25) + "= " + v
+
+
+
+
+
+
+
+
