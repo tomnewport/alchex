@@ -118,6 +118,7 @@ class SimulationContainer(object):
         else:
             return path.join(self.gromacs._cwd, newpath)
 
+'''
 c = SimulationContainer("testcontainer", GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"))
 c.delete_folder()
 c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/dlpg.gro")
@@ -135,6 +136,7 @@ c.cd("em")
 c.gromacs.grompp(kwargs={"-f":"em.mdp", "-c":"dlpg.gro", "-p":"topol.top", "-o":"run/em.tpr","-maxwarn":"1"})
 c.cd("run")
 c.gromacs.mdrun(kwargs={"-deffnm":"em"})
+'''
 '''
 a = GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
 a.cd("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg")
