@@ -60,7 +60,13 @@ class GromacsMDPFile(object):
     def to_file(self, filename):
         with open(filename, "w") as file_handle:
             for k, v in self.attrs.items():
-                file_handle.write(k.ljust(25) + "= " + v
+                file_handle.write(k.ljust(25) + "= " + str(v) + "\n")
+'''Testing code
+a = GromacsMDPFile()
+
+a.from_file("/Users/tom/github_repos/alchex/gromacs_scratch/em.mdp")
+a.attrs["test"] = "success"
+a.to_file("test.mdp")
 
 
 
@@ -68,4 +74,4 @@ class GromacsMDPFile(object):
 
 
 
-
+'''
