@@ -1,6 +1,6 @@
-Log file opened on Thu Jan 21 20:28:05 2016
-Host: derp.local  pid: 51217  rank ID: 0  number of ranks:  1
-                   :-) GROMACS - gmx mdrun, VERSION 5.1.1 (-:
+Log file opened on Fri Jan 22 16:10:06 2016
+Host: draculin  pid: 28564  rank ID: 0  number of ranks:  1
+                    :-) GROMACS - gmx mdrun, VERSION 5.1 (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,58 +25,61 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.1.1
-Executable:   /usr/local/gromacs/bin/gmx
-Data prefix:  /usr/local/gromacs
+GROMACS:      gmx mdrun, VERSION 5.1
+Executable:   /sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse
+Data prefix:  /sbcb/packages/opt/Linux_x86_64/gromacs/5.1
 Command line:
-  gmx mdrun -deffnm em
+  gmx_sse mdrun -deffnm em
 
-GROMACS version:    VERSION 5.1.1
+GROMACS version:    VERSION 5.1
 Precision:          single
 Memory model:       64 bit
 MPI library:        thread_mpi
-OpenMP support:     disabled
-GPU support:        disabled
+OpenMP support:     enabled (GMX_OPENMP_MAX_THREADS = 32)
+GPU support:        enabled
 OpenCL support:     disabled
 invsqrt routine:    gmx_software_invsqrt(x)
-SIMD instructions:  AVX2_256
+SIMD instructions:  SSE4.1
 FFT library:        fftw-3.3.4-sse2
 RDTSCP usage:       enabled
-C++11 compilation:  enabled
+C++11 compilation:  disabled
 TNG support:        enabled
 Tracing support:    disabled
-Built on:           Thu Jan 21 19:57:00 GMT 2016
-Built by:           tom@derp.local [CMAKE]
-Build OS/arch:      Darwin 15.2.0 x86_64
+Built on:           Wed Nov  4 23:44:41 GMT 2015
+Built by:           fedsoft@dcd [CMAKE]
+Build OS/arch:      Linux 3.13.0-32-generic x86_64
 Build CPU vendor:   GenuineIntel
-Build CPU brand:    Intel(R) Core(TM) i7-4558U CPU @ 2.80GHz
-Build CPU family:   6   Model: 69   Stepping: 1
-Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-C compiler:         /usr/bin/cc Clang 7.0.0.7000072
-C compiler flags:    -march=core-avx2    -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O3 -DNDEBUG  
-C++ compiler:       /usr/bin/c++ Clang 7.0.0.7000072
-C++ compiler flags:  -march=core-avx2   -std=c++0x  -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O3 -DNDEBUG  
-Boost version:      1.55.0 (external)
+Build CPU brand:    Intel(R) Xeon(R) CPU E5-1650 0 @ 3.20GHz
+Build CPU family:   6   Model: 45   Stepping: 7
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+C compiler:         /sbcb/packages/opt/Linux_x86_64/gcc/4.8.3/bin/gcc GNU 4.8.3
+C compiler flags:    -msse4.1    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter  -O3 -DNDEBUG -funroll-all-loops -fexcess-precision=fast  -Wno-array-bounds 
+C++ compiler:       /sbcb/packages/opt/Linux_x86_64/gcc/4.8.3/bin/g++ GNU 4.8.3
+C++ compiler flags:  -msse4.1    -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function  -O3 -DNDEBUG -funroll-all-loops -fexcess-precision=fast  -Wno-array-bounds 
+Boost version:      1.55.0 (internal)
+CUDA compiler:      /sbcb/packages/opt/Linux_x86_64/cuda/6.5.14/bin/nvcc nvcc: NVIDIA (R) Cuda compiler driver;Copyright (c) 2005-2014 NVIDIA Corporation;Built on Thu_Jul_17_21:41:27_CDT_2014;Cuda compilation tools, release 6.5, V6.5.12
+CUDA compiler flags:-gencode;arch=compute_20,code=sm_20;-gencode;arch=compute_30,code=sm_30;-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_50,code=compute_50;-use_fast_math;; ;-msse4.1;-Wextra;-Wno-missing-field-initializers;-Wpointer-arith;-Wall;-Wno-unused-function;-O3;-DNDEBUG;-funroll-all-loops;-fexcess-precision=fast;-Wno-array-bounds;
+CUDA driver:        6.50
+CUDA runtime:       6.50
 
 
-Running on 1 node with total 4 logical cores
+Running on 1 node with total 6 cores, 12 logical cores, 1 compatible GPU
 Hardware detected:
   CPU info:
     Vendor: GenuineIntel
-    Brand:  Intel(R) Core(TM) i7-4558U CPU @ 2.80GHz
-    Family:  6  model: 69  stepping:  1
+    Brand:  Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz
+    Family:  6  model: 63  stepping:  2
     CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
     SIMD instructions most likely to fit this hardware: AVX2_256
-    SIMD instructions selected at GROMACS compile time: AVX2_256
+    SIMD instructions selected at GROMACS compile time: SSE4.1
+  GPU info:
+    Number of GPUs detected: 1
+    #0: NVIDIA GeForce GTX 980, compute cap.: 5.2, ECC:  no, stat: compatible
 
 
-++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
-M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, E.
-Lindahl
-GROMACS: High performance molecular simulations through multi-level
-parallelism from laptops to supercomputers
-SoftwareX 1 (2015) pp. 19-25
--------- -------- --- Thank You --- -------- --------
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: SSE4.1
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -126,7 +129,7 @@ Comp. Phys. Comm. 91 (1995) pp. 43-56
 -------- -------- --- Thank You --- -------- --------
 
 
-Changing rlist from 1.05 to 1 for non-bonded 4x4 atom kernels
+Changing rlist from 1.05 to 1 for non-bonded 8x4 atom kernels
 
 Input Parameters:
    integrator                     = steep
@@ -138,7 +141,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = 3102029590
+   ld-seed                        = 2310726389
    emtol                          = 1000
    emstep                         = 0.001
    niter                          = 20
@@ -295,17 +298,22 @@ annealing-npoints:           0
    energygrp-flags[  0]: 0
 
 Using 1 MPI thread
+Using 12 OpenMP threads 
+
+1 compatible GPU is present, with ID 0
+1 GPU auto-selected for this run.
+Mapping of GPU ID to the 1 PP rank in this node: 0
+
 Cut-off's:   NS: 1   Coulomb: 1   LJ: 1
 System total charge: -1.000
 Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00, Coulomb -1e+00
 
-Using AVX2_256 4x8 non-bonded kernels
-
-Using full Lennard-Jones parameter combination matrix
+Using GPU 8x8 non-bonded kernels
 
 Removing pbc first time
+Pinning threads with an auto-selected logical core stride of 1
 Initiating Steepest Descents
-Started Steepest Descents on rank 0 Thu Jan 21 20:28:05 2016
+Started Steepest Descents on rank 0 Fri Jan 22 16:10:07 2016
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e+03
@@ -334,36 +342,50 @@ Norm of force     =  1.9121950e+02
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               0.000136           0.001    13.0
- NxN RF Elec. + LJ [V&F]                  0.000016           0.001     9.2
- NxN LJ [V&F]                             0.000096           0.004    44.0
- NxN RF Electrostatics [V&F]              0.000016           0.001     6.1
- Shift-X                                  0.000010           0.000     0.6
- Bonds                                    0.000009           0.001     5.7
- Angles                                   0.000006           0.001    10.7
- Virial                                   0.000055           0.001    10.6
+ Pair Search distance check               0.000160           0.001    10.0
+ NxN RF Elec. + LJ [V&F]                  0.000192           0.010    72.0
+ Shift-X                                  0.000010           0.000     0.4
+ Bonds                                    0.000009           0.001     3.7
+ Angles                                   0.000006           0.001     7.0
+ Virial                                   0.000055           0.001     6.9
 -----------------------------------------------------------------------------
- Total                                                       0.009   100.0
+ Total                                                       0.014   100.0
 -----------------------------------------------------------------------------
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
-On 1 MPI rank
+On 1 MPI rank, each using 12 OpenMP threads
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.000          0.000   0.8
- Force                  1    1          1       0.000          0.000   0.3
- NB X/F buffer ops.     1    1          1       0.000          0.000   0.0
- Rest                                           0.008          0.044  98.9
+ Neighbor search        1   12          1       0.001          0.092   5.6
+ Launch GPU ops.        1   12          1       0.000          0.023   1.4
+ Force                  1   12          1       0.000          0.008   0.5
+ Wait GPU local         1   12          1       0.000          0.001   0.1
+ NB X/F buffer ops.     1   12          1       0.000          0.000   0.0
+ Rest                                           0.018          1.499  92.4
 -----------------------------------------------------------------------------
- Total                                          0.008          0.044 100.0
+ Total                                          0.019          1.622 100.0
 -----------------------------------------------------------------------------
 
+ GPU timings
+-----------------------------------------------------------------------------
+ Computing:                         Count  Wall t (s)      ms/step       %
+-----------------------------------------------------------------------------
+ Pair list H2D                          1       0.001        0.675    87.2
+ X / q H2D                              1       0.000        0.011     1.4
+ Nonbonded F+ene+prune k.               1       0.000        0.048     6.1
+ F D2H                                  1       0.000        0.040     5.2
+-----------------------------------------------------------------------------
+ Total                                          0.001        0.774   100.0
+-----------------------------------------------------------------------------
+
+Force evaluation time GPU/CPU: 0.774 ms/0.089 ms = 8.660
+
                Core t (s)   Wall t (s)        (%)
-       Time:        0.008        0.008      100.0
+       Time:        0.059        0.019      308.2
                (steps/hour)
-Performance:       457089.5
-Finished mdrun on rank 0 Thu Jan 21 20:28:05 2016
+Performance:       186703.9
+Finished mdrun on rank 0 Fri Jan 22 16:10:07 2016

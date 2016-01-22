@@ -1,5 +1,143 @@
 from cgswap.residue_parameters import ResidueParameters
 import re
+import threading
+from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
+from shutil import copy, copyfile
+from os import path, makedirs
+'''
+class AsyncOSCommand(object):
+    def __init__(self, command, cwd="."):
+        self.cwd      = cwd
+        self.command  = command
+        self.thread   = None
+        self.waiting  = True
+        self.complete = False
+    def run(self, callback, callback_args):
+        self.waiting = False
+        def threaded_run(callback, command, cwd):
+            try:
+                process = check_output(command, shell=True, cwd=cwd, stderr=STDOUT)
+                self.returncode = 0
+                self.output = process
+            except CalledProcessError as err:
+                self.returncode = err.returncode
+                self.output = err.output
+            callback()
+            self.complete = True
+            return
+        def _callback():
+            callback(*callback_args)
+        self.thread = threading.Thread(target = threaded_run, args=(callback, self.command, self.cwd))
+        self.thread.start()
+'''
+class GromacsWrapper(object):
+    def __init__(self, _exec_gmx=""):
+        self._exec_gmx = _exec_gmx
+        self._cwd = "."
+    def run(self):
+        batch = []
+        for idx, command in enumerate(self._todo):
+            if command.waiting:
+                command.run()
+    def cd(self, cwd):
+        self.cwd = path.abspath(path.join(self.cwd, cwd))
+    def __getattr__(self, name):
+        def unknown_call(args=[], kwargs={}):
+            return self.generic_gromacs_call(name, args, kwargs)
+        return unknown_call
+    def arg_encode(self, args):
+        argstring = ""
+        for argname, argvalue in args.items():
+            if argvalue is not None and argvalue is not True:
+                argstring += "{name} {value} ".format(name=argname, value=argvalue)
+            elif argvalue is True:
+                argstring += "{name} ".format(name=argname)
+        return argstring[:-1]
+    def _stdin(self,stdin):
+        if stdin != []:
+            return 'echo "' + " ".join([str(x) for x in stdin]) + '" | '
+        else:
+            return ""
+    def shell(self, process, args=[], kwargs={}):
+        command = self.build_command(process, args=args, kwargs=kwargs)
+        try:
+            output = check_output(command, shell=True, cwd=self.cwd, stderr=STDOUT)
+            retcode = 0
+        except CalledProcessError as cpe:
+            output = cpe.output
+            retcode = cpe.returncode
+        return retcode, output
+    def build_command(self, process, args=[], kwargs={}):
+        stdin = ""
+        if "_stdin" in kwargs:
+            stdin = self._stdin(kwargs["_stdin"])
+        command = "{stdin}{process} {args} {kwargs}".format(
+            stdin = stdin, 
+            process = process,
+            args=" ".join([str(x) for x in args]), 
+            kwargs=self.arg_encode(kwargs)
+            )
+        return command
+    def generic_gromacs_call(self, command, args, kwargs):
+        args = [command] + list(args)
+        return self.shell(self._exec_gmx, args=args, kwargs=kwargs)
+
+class SimulationContainer(object):
+    def __init__(self, root_path, gromacs_wrapper):
+        self._root = path.abspath(root_path)
+        self.makedirs("/")
+        self.gromacs = gromacs_wrapper
+        self.cd()
+    def delete_folder(self, delpath="/"):
+        rmtree(self.resolve_path(delpath))
+    def add_file(self, source_file, destination="/", rename=False):
+        destination_folder = self.makedirs(destination)
+        if rename is False:
+            copy(source_file, destination_folder)
+        else:
+            copyfile(source_file, path.join(destination_folder, rename))
+    def copy_file(self, source_path, destination_path, rename=False):
+        source_path      = self.resolve_path(source_path)
+        destination_path = self.resolve_path(destination_path)
+        if rename is False:
+            copy(source_path, destination_path)
+        else:
+            copyfile(source_path, path.join(destination_path, rename))
+    def makedirs(self, dirpath):
+        path_to_make = self.resolve_path(dirpath)
+        if not path.exists(path_to_make):
+            makedirs(path_to_make)
+        return path_to_make
+    def cd(self, newpath="/"):
+        self.gromacs.cd(self.resolve_path(newpath))
+    def resolve_path(self, newpath):
+        if newpath == "/":
+            return self._root
+        elif newpath[0] == "/":
+            return path.join(self._root, newpath[1:])
+        else:
+            return newpath
+
+c = SimulationContainer("testcontainer", GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"))
+c.delete_folder()
+c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/dlpg.gro")
+c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/topol.top")
+c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/martini_v2.1.itp", rename="martini.itp")
+c.add_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg/em.mdp")
+c.makedirs("/test")
+c.copy_file("/em.mdp","/test")
+c.copy_file("/dlpg.gro","/test")
+c.copy_file("/martini.itp", "/test")
+
+'''
+a = GromacsWrapper(_exec_gmx="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
+a.cd("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/gromacs_scratch/single_dlpg")
+a.shell("mkdir test")
+a.grompp(kwargs={"-f":"em.mdp", "-c":"dlpg.gro", "-p":"topol.top", "-o":"test/em.tpr","-maxwarn":"1"})[1]
+a.cd("test")
+a.mdrun(kwargs={"-deffnm":"em"})
+'''
+
 
 class GromacsITPFile(object):
     def __init__(self, filename):
@@ -133,27 +271,3 @@ class GromacsTOPFile(object):
                 for bond in rows:
                     rp.add_bond(bond["i"], bond["j"], bond)
         return rp
-       
-class GromacsGROFile()
-
-
-
-
-a = GromacsTOPFile()
-a.from_file("martini_v2.1.itp")
-
-
-'''Testing code
-a = GromacsMDPFile()
-
-a.from_file("/Users/tom/github_repos/alchex/gromacs_scratch/em.mdp")
-a.attrs["test"] = "success"
-a.to_file("test.mdp")
-
-
-
-
-
-
-
-'''
