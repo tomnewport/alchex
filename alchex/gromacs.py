@@ -1,4 +1,4 @@
-from cgswap.residue_parameters import ResidueParameters
+from alchex.residue_parameters import ResidueParameters
 import re
 import threading
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT

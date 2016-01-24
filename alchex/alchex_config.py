@@ -1,6 +1,6 @@
-from cgswap.gromacs import GromacsITPFile
-from cgswap.exchange_map import ExchangeMap
-from cgswap.residue import ResidueStructure
+from alchex.gromacs import GromacsITPFile
+from alchex.exchange_map import ExchangeMap
+from alchex.residue import ResidueStructure
 import MDAnalysis as mda
 from random import choice
 

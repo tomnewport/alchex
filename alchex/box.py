@@ -1,6 +1,6 @@
 import MDAnalysis as mda
 from random import shuffle
-from cgswap.residue import ResidueStructure
+from alchex.residue import ResidueStructure
 
 def gro_to_dict(groline):
     #residue number (5 positions, integer)
@@ -126,9 +126,9 @@ for popc_residue in popc_residues.residues:
 import MDAnalysis as mda
 import sys
 sys.path.append("../")
-from cgswap.residue import ResidueStructure
-from cgswap.gromacs import GromacsITPFile
-from cgswap.exchange_map import ExchangeMap
+from alchex.residue import ResidueStructure
+from alchex.gromacs import GromacsITPFile
+from alchex.exchange_map import ExchangeMap
 
 dlpg_itp = GromacsITPFile("../data/DLPG.itp")
 dlpg = dlpg_itp.read_residue("DLPG")
@@ -193,7 +193,7 @@ x.new(from_itp=popc, to_itp=cdl, method="martini.lipid_to_card", draw=False)
 
 hgs = popc_pdb.select_atoms(x.actions[1]["from_selector"])
 
-from cgswap.geometry import PointCloud, plot_3d
+from alchex.geometry import PointCloud, plot_3d
 
 a = PointCloud(3)
 a.add_points(hgs.coordinates())
@@ -213,7 +213,7 @@ popc_residue2   = popc_pdb.select_atoms("resid " + str(resid2))
 popc_structure1 = ResidueStructure(popc_residue1, popc)
 popc_structure2 = ResidueStructure(popc_residue2, popc)
 
-from cgswap.residue import MultiResidueStructure
+from alchex.residue import MultiResidueStructure
 
 a = MultiResidueStructure([popc_structure1, popc_structure2])
 

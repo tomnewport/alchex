@@ -1,7 +1,7 @@
 import MDAnalysis as mda
 import numpy
-from cgswap.errors import AtomMismatchException
-from cgswap.geometry import PointCloud
+from alchex.errors import AtomMismatchException
+from alchex.geometry import PointCloud
 from copy import deepcopy
 
 class ResidueStructure(object):

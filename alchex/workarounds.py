@@ -1,4 +1,4 @@
-from cgswap.geometry import PointCloud, TransformationMatrix, plot_3d
+from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
 import numpy
 
 def mda_atom_to_dict(mda_atom):

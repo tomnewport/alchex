@@ -2,10 +2,10 @@
 
 from itertools import product
 import networkx as nx
-from cgswap.geometry import PointCloud, TransformationMatrix, plot_3d
+from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
 import matplotlib.pyplot as plt
 from workarounds import WAEditableResidue
-from cgswap.residue import MultiResidueStructure
+from alchex.residue import MultiResidueStructure
 
 
 class ExchangeMap(object):

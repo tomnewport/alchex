@@ -1,8 +1,8 @@
 import sys
 sys.path.append("../")
 
-from cgswap.alchex_config import AlchexConfig
-from cgswap.box import SimulationBox
+from alchex.alchex_config import AlchexConfig
+from alchex.box import SimulationBox
 
 config = AlchexConfig()
 
