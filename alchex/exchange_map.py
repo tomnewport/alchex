@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from itertools import product
 import networkx as nx
 from alchex.geometry import PointCloud, TransformationMatrix, plot_3d

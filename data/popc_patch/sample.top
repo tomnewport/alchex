@@ -12,7 +12,6 @@
 ; molecules present in your system.
 
 #include "CT3-Me2b.itp"
-#include "martini_v2.0_ions.itp"
 
 ; Define a name for your system
 

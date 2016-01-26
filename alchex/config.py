@@ -1,4 +1,4 @@
-from alchex.gromacs_interface import GromacsITPFile
+from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile
 from alchex.exchange_map import ExchangeMap
 from alchex.residue import ResidueStructure
 from alchex.errors import ExchangeMapMissingException
@@ -19,6 +19,7 @@ class AlchexConfig(object):
             self.exchange_maps = {}
             self.compositions = {}
             self.reference_structures = {}
+            self.grompp_parameters = {}
     def load_itp_file(self, filename, resname):
         itp        = GromacsITPFile(filename)
         parameters = itp.read_residue(resname)
@@ -38,7 +39,6 @@ class AlchexConfig(object):
         if from_resname not in self.exchange_maps:
             self.exchange_maps[from_resname] = {}
         self.exchange_maps[from_resname][to_resname] = newmap
-        print(newmap)
     def get_exchange_map(self, from_resname, to_resname):
         if from_resname in self.exchange_maps and to_resname in self.exchange_maps[from_resname]:
             return self.exchange_maps[from_resname][to_resname]
@@ -48,17 +48,26 @@ class AlchexConfig(object):
         n_val = sum(resname_fractions.values()) * 1.0
         resname_fractions = {k: v/n_val for k, v in resname_fractions.items()}
         self.compositions[name] = resname_fractions
-    def add_reference_structure(self, resname, structure_file):
+    def add_reference_structure(self, resname, structure_file, selection=None):
         ref_universe  = mda.Universe(structure_file)
         if resname not in self.reference_structures:
             self.reference_structures[resname] = []
-        for residue in ref_universe.select_atoms("resname "+resname).residues:
+        if selection is None:
+            selection = "resname " + resname
+        for residue in ref_universe.select_atoms(selection).residues:
+            residue.name = resname
+            for atom in residue.atoms:
+                atom.resname = resname
             structure = ResidueStructure(mda.Merge(residue), self.parameters[resname])
             self.reference_structures[resname].append(structure)
+    def add_grompp_parameters(self, name, mdp_file):
+        params = GromacsMDPFile()
+        params.from_file(mdp_file)
+        self.grompp_parameters[name] = params.attrs
 
 def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
-    defaultconfig = AlchexConfig(folder=folder)
+    defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
@@ -106,7 +115,10 @@ def default_configuration():
     to_resname="DLPG",
     exchange_model="martini.lipid")
 
-    defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
+    #defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
+    defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
+    defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
 
+    defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
 
     return defaultconfig

@@ -7,7 +7,10 @@ from copy import deepcopy
 class ResidueStructure(object):
     def __init__(self, mdanalysis_residue, residue_parameters):
         self.parameters = residue_parameters
-        self.mda_object = mdanalysis_residue
+        if type(mdanalysis_residue) is mda.Universe:
+            self.mda_object = mdanalysis_residue.select_atoms("all")
+        else:
+            self.mda_object = mdanalysis_residue
         self.resname = self.mda_object.atoms[0].resname
         self.resid = self.mda_object.atoms[0].resid
         self.verify_residues()
@@ -40,7 +43,6 @@ class ResidueStructure(object):
             elif self.parameters.atoms[param_id].attrs["atom"] != atom.name:
                 valid = False
             if not valid:
-                print(atom.name)
                 raise AtomMismatchException()
     def mda_to_atom_id(self, mda_index):
         return str(mda_index + 1)

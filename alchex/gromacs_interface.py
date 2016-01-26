@@ -226,12 +226,29 @@ class GromacsTOPFile(object):
         with open(filename) as file_handle:
             file_data = file_handle.read()
         self.lines = file_data.split("\n")
+    def to_file(self, filename):
+        with open(filename, "w") as file_handle:
+            file_handle.write("\n".join(self.lines))
     def get_includes(self):
         r = []
         for line_idx, line in enumerate(self.lines):
             if "#include" in line:
                 r.append((line_idx, line, re.findall('"([^"]*)"', line)[0]))
         return r
+    def modify_molecules(self, new_molecules):
+        table_head = re.compile(r'^\s*\[\s*molecules\s*\]\s*$')
+        startline = None
+        endline = None
+        for line_id, line in enumerate(self.lines):
+            if startline is None:
+                if table_head.search(line):
+                    startline = line_id
+            else:
+                stripline = line.strip()
+                if len(stripline) == 0 or stripline[0] == "[":
+                    endline = line_id
+        newlines = [resname.ljust(5) + str(rescount) for resname, rescount in new_molecules]
+        self.lines = self.lines[:startline+1] + newlines + self.lines[endline:]
     def get_tables(self):
         table_head = re.compile(r'^\s*\[\s*(\w[\w\s]\w*)\s*\]\s*$')
         tables = []
