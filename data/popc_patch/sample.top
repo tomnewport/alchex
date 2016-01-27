@@ -11,9 +11,7 @@
 ; Then include the file(s) containing the topologies of other
 ; molecules present in your system.
 
-#include "DLPG.itp"
 #include "CT3-Me2b.itp"
-#include "martini_v2.0_ions.itp"
 
 ; Define a name for your system
 

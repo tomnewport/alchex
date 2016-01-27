@@ -1,0 +1,11 @@
+#include "martini_v2.1.itp"
+#include "CT3-Me2b.itp"
+#include "CDL.itp"
+
+
+[ system ]
+Test Patch
+
+
+[ molecules ]
+CDL0 59

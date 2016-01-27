@@ -1,8 +1,9 @@
 from alchex.residue_parameters import ResidueParameters
 import re
 import threading
+import MDAnalysis as mda
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
-from shutil import copy, copyfile, rmtree
+from shutil import copy, copyfile, rmtree, copytree
 from os import path, makedirs
 '''
 class AsyncOSCommand(object):
@@ -31,8 +32,8 @@ class AsyncOSCommand(object):
         self.thread.start()
 '''
 class GromacsWrapper(object):
-    def __init__(self, _exec_gmx=""):
-        self._exec_gmx = _exec_gmx
+    def __init__(self, gromacs_executable):
+        self._exec_gmx = gromacs_executable
         self._cwd = "."
     def run(self):
         batch = []
@@ -88,6 +89,11 @@ class SimulationContainer(object):
         self.gromacs = gromacs_wrapper
         self.makedirs("/")
         self.cd()
+        self.universes = {}
+    def universe(self, filename):
+        if filename not in self.universes:
+            self.universes[filename] = mda.Universe(self.resolve_path(filename))
+        return self.universes[filename]
     def delete_folder(self, delpath="/"):
         rmtree(self.resolve_path(delpath))
     def add_file(self, source_file, destination="/", rename=False):
@@ -96,6 +102,10 @@ class SimulationContainer(object):
             copy(source_file, destination_folder)
         else:
             copyfile(source_file, path.join(destination_folder, rename))
+    def copy_folder(self, source_path, destination_path):
+        source_path      = self.resolve_path(source_path)
+        destination_path = self.resolve_path(destination_path)
+        copytree(source_path, destination_path)
     def copy_file(self, source_path, destination_path, rename=False):
         source_path      = self.resolve_path(source_path)
         destination_path = self.resolve_path(destination_path)
@@ -216,12 +226,29 @@ class GromacsTOPFile(object):
         with open(filename) as file_handle:
             file_data = file_handle.read()
         self.lines = file_data.split("\n")
+    def to_file(self, filename):
+        with open(filename, "w") as file_handle:
+            file_handle.write("\n".join(self.lines))
     def get_includes(self):
         r = []
         for line_idx, line in enumerate(self.lines):
             if "#include" in line:
-                r.append((line_idx, line))
+                r.append((line_idx, line, re.findall('"([^"]*)"', line)[0]))
         return r
+    def modify_molecules(self, new_molecules):
+        table_head = re.compile(r'^\s*\[\s*molecules\s*\]\s*$')
+        startline = None
+        endline = None
+        for line_id, line in enumerate(self.lines):
+            if startline is None:
+                if table_head.search(line):
+                    startline = line_id
+            else:
+                stripline = line.strip()
+                if len(stripline) == 0 or stripline[0] == "[":
+                    endline = line_id
+        newlines = [resname.ljust(5) + str(rescount) for resname, rescount in new_molecules]
+        self.lines = self.lines[:startline+1] + newlines + self.lines[endline:]
     def get_tables(self):
         table_head = re.compile(r'^\s*\[\s*(\w[\w\s]\w*)\s*\]\s*$')
         tables = []

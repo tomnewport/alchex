@@ -1,5 +1,9 @@
 from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
+from scipy.spatial.distance import cdist
 import numpy
+import networkx as nx
+from itertools import combinations
+from copy import deepcopy
 
 def mda_atom_to_dict(mda_atom):
     return {
@@ -194,6 +198,47 @@ class WAEditableGrofile(object):
         self.sysname = "Edited Gro File"
         self.residues = []
         self.box_vector = [0,0,0]
+    def top_molecules(self):
+        molecules = []
+        for residue in self.residues:
+            if len(molecules) == 0 or molecules[-1][0] != residue.resname:
+                molecules.append((residue.resname, 1))
+            else:
+                molecules[-1] = (residue.resname, molecules[-1][1] + 1)
+        return molecules
+    def clashgraph(self, distance_tolerance=1):
+        graph = nx.Graph()
+        graph.add_nodes_from(range(len(self.residues)))
+        for n1, n2 in combinations(graph, 2):
+            p1 = self.residues[n1].coordinates
+            p2 = self.residues[n2].coordinates
+            distance = cdist(p1.points, p2.points).min()
+            if distance < distance_tolerance:
+                graph.add_edge(n1, n2)
+        return graph
+    def declash(self, distance_tolerance=1):
+        graphs = []
+        clashgraph = self.clashgraph(distance_tolerance)
+        for node in clashgraph:
+            found = False
+            edges = set([x[1] for x in clashgraph.edges(node)])
+            for graph, clashes in graphs:
+                if node not in clashes:
+                    found = True
+                    graph.append(node)
+                    clashes.update(edges)
+                    break
+            if not found:
+                graphs.append(([node],edges))
+        declashed = []
+        for idx, (nodes, _) in enumerate(graphs):
+            new_grofile = WAEditableGrofile()
+            new_grofile.sysname = self.sysname + " (declash "+str(idx)+")"
+            new_grofile.box_vector = self.box_vector
+            for node in nodes:
+                new_grofile.residues.append(self.residues[node])
+            declashed.append(new_grofile)
+        return declashed
     def from_file(self, filename):
         with open(filename, "r") as fh:
             lines = [x for x in fh.read().split("\n") if x.strip() != ""]
@@ -241,10 +286,3 @@ class WAEditableGrofile(object):
                     atom["velz"]    = atom_data.get("velz", 0)
                     file_handle.write(dict_to_gro(atom) + "\n")
             file_handle.write("".join([str(x/10).rjust(10) for x in self.box_vector])+"\n")
-
-
-
-
-a = WAEditableGrofile()
-a.from_file("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/phosynth/data/popc_patch/sample.gro")
-a.to_file("test.gro")

@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from itertools import product
 import networkx as nx
 from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
@@ -13,6 +12,7 @@ class ExchangeMap(object):
         self.from_resname = ""
         self.from_count = 0
         self.to_resname = ""
+        self.grouping = None
         self.to_count = 0
         self.actions = []
         self.methods_implemented = [
@@ -101,11 +101,15 @@ class ExchangeMap(object):
         lipid = self.from_itp
         # There should be two clear analogues of lipid within card
         candidates = lipid.mcs(card, threshold=0.7)
+        # Generate the first mapping of lipid1 atom : card atom
         card_lipid_1 = candidates[0]
+        # Remove any overlapping maps
         candidates = [x for x in candidates if 
                       len(set(x.values()).intersection(set(card_lipid_1.values()))
                          ) == 0]
+        # Get the second mapping of lipid2 atom : card atom
         card_lipid_2 = candidates[0]
+        # Generate reverse mappings (card atom : lipid atom)
         lipid_card_1 = {v:k for k, v in card_lipid_1.items()}
         lipid_card_2 = {v:k for k, v in card_lipid_2.items()}
         if draw:
@@ -124,6 +128,10 @@ class ExchangeMap(object):
             )
         lipid_1_bridge = [x for x in most_central if x in card_lipid_1.values()][0]
         lipid_2_bridge = [x for x in most_central if x in card_lipid_2.values()][0]
+        self.grouping = {
+            "method" : "symmetric",
+            "atom"   : lipid.atoms[lipid_card_1[lipid_1_bridge]].attrs["atom"]
+        }
         l1_bridge_id = str(lipid_card_1[lipid_1_bridge])
         l1_bridge_name = self.from_itp.atoms[l1_bridge_id].attrs["atom"]
         l2_bridge_id = str(lipid_card_2[lipid_2_bridge])

@@ -3,11 +3,12 @@ from colorsys import hsv_to_rgb
 import matplotlib.pyplot as plt
 from random import randint, random
 from mpl_toolkits.mplot3d import Axes3D
-from scipy.spatial.distance import cdist, squareform
-import seaborn as sns
+from scipy.spatial.distance import pdist, cdist, squareform
+#import seaborn as sns
 import networkx as nx
 import matplotlib.pyplot as plt
 from math import floor
+from alchex.algorithms import bruteforce_pair
 
 def linear_weights(coordinate, length):
     w = numpy.zeros(length)
@@ -92,6 +93,11 @@ class PointCloud:
         self.dimensions = dimensions
         self.points = numpy.zeros((0,self.dimensions+1))
         self.lines  = []
+    def group_points(self, group_size, **kwargs):
+        if group_size == 2:
+            return bruteforce_pair(self.points, **kwargs)
+        else:
+            raise NotImplementedError()
     def find_friends(self, other, n_friends, distance_cutoff=15):
         distance_matrix = cdist(self.points, other.points)
         distance_matrix[distance_matrix==0] = 1000000000
@@ -168,6 +174,10 @@ class PointCloud:
                 c=cols,
                 s=50
             )
+        for line in self.lines:
+            p1 = self.points[line[0],:]
+            p2 = self.points[line[1],:]
+            ax.plot([p1[0],p2[0]], [p1[1],p2[1]], [p1[2],p2[2]])
     def interpolate(self, other, l=0.5):
         interpolated = self.clone()
         interpolated.points = other.points * l + self.points * (1-l)
