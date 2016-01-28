@@ -474,5 +474,5 @@ class GromacsEditableTOPFile(object):
             for _ in range(moltype_count):
                 unified.topcat(self.moltypes[moltype_name])
         return unified
-                        
+
                             
