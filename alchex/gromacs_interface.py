@@ -5,6 +5,9 @@ import MDAnalysis as mda
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
 from shutil import copy, copyfile, rmtree, copytree
 from os import path, makedirs
+from collections import OrderedDict
+from copy import deepcopy
+
 '''
 class AsyncOSCommand(object):
     def __init__(self, command, cwd="."):
@@ -306,3 +309,170 @@ class GromacsTOPFile(object):
                 for bond in rows:
                     rp.add_bond(bond["i"], bond["j"], bond)
         return rp
+
+
+TOPFILE_FIELDS = {
+    "moleculetype" : ["name", "nrexcl"],
+    "atoms"        : ["id", "type", "resnr", "residue", "atom", "cgnr", "charge", "mass"],
+    "bonds"        : ["ai", "aj", "funct", "c0", "c1"],
+    "angles"       : ["ai", "aj", "ak", "funct", "c0", "c1"],
+    "dihedrals"    : ["ai", "aj", "ak", "al", "funct", "c0", "c1", "c2"],
+    "pairs"        : ["ai", "aj", "funct", "c1", "c1"],
+    "system"       : ["system_name"],
+    "molecules"    : ["moltype", "count"]
+}
+
+MOLTYPE_TABLES = {
+    "atoms", "bonds", "angles", "dihedrals", "pairs"
+}
+
+def gromacs_top_table_string(name, rows):
+    if len(rows) == 0:
+        return ""
+    else:
+        string = "[ {name} ]\n".format(name=name)
+        for row in rows:
+            string += "\t".join(row.values()) + "\n"
+        return string + "\n"
+        
+
+class GromacsTOPFileMoltype(object):
+    def __init__(self):
+        self.atoms = []
+        self.name = ""
+        self.bonds = []
+        self.angles = []
+        self.dihedrals = []
+        self.pairs = []
+        self.moleculetype = []
+    def renumber_atoms(self, renumber_map):
+        for row in self.atoms:
+            row["id"] = renumber_map[row["id"]]
+        for row in self.bonds:
+            row["ai"] = renumber_map[row["ai"]]
+            row["aj"] = renumber_map[row["aj"]]
+        for row in self.angles:
+            row["ai"] = renumber_map[row["ai"]]
+            row["aj"] = renumber_map[row["aj"]]
+            row["ak"] = renumber_map[row["ak"]]
+        for row in self.dihedrals:
+            row["ai"] = renumber_map[row["ai"]]
+            row["aj"] = renumber_map[row["aj"]]
+            row["ak"] = renumber_map[row["ak"]]
+            row["al"] = renumber_map[row["al"]]
+        for row in self.pairs:
+            row["ai"] = renumber_map[row["ai"]]
+            row["aj"] = renumber_map[row["aj"]]
+    def renumber_charge_groups(self, renumber_map):
+        for row in self.atoms:
+            row["cgnr"] = renumber_map[row["cgnr"]]
+    def renumber_residues(self, renumber_map):
+        for row in self.atoms:
+            row["resnr"] = renumber_map[row["resnr"]]
+    def topcat(self, cattop):
+        cattop = deepcopy(cattop)
+        if len(self.atoms) > 0:
+            last_atom_id = self.atoms[-1]["id"]
+            last_residue_id = self.atoms[-1]["resnr"]
+            last_charge_group = self.atoms[-1]["cgnr"]
+        else:
+            last_atom_id = 0
+            last_residue_id = 0
+            last_charge_group = 0
+        cattop_atom_ids = [x["id"] for x in cattop.atoms]
+        cattop_res_ids = [x["resnr"] for x in cattop.atoms]
+        cattop_charge_groups = [x["cgnr"] for x in cattop.atoms]
+        cattop.renumber_atoms({x: str(int(x) + int(last_atom_id)) for x in cattop_atom_ids})
+        cattop.renumber_residues({x: str(int(x) + int(last_residue_id)) for x in cattop_res_ids})
+        cattop.renumber_charge_groups({x: str(int(x) + int(last_charge_group)) for x in cattop_charge_groups})
+        self.atoms += cattop.atoms
+        self.bonds += cattop.bonds
+        self.angles += cattop.angles
+        self.dihedrals += cattop.dihedrals
+        self.pairs += cattop.pairs
+    def as_file(self):
+        return (
+              gromacs_top_table_string("moltype", [self.moleculetype])
+            + gromacs_top_table_string("atoms", self.atoms)
+            + gromacs_top_table_string("bonds", self.bonds)
+            + gromacs_top_table_string("angles", self.angles)
+            + gromacs_top_table_string("dihedrals", self.dihedrals)
+            + gromacs_top_table_string("pairs", self.pairs)
+            )
+            
+
+class GromacsEditableTOPFile(object):
+    '''
+    This TOPFile class can read and modify
+    gromacs topologies. It should eventually
+    be merged with the main TOPFile class but
+    needs:
+    get_includes       - list included scripts
+    residue_parameters - return a residue_parameters
+                         object
+    modify_molecules   - modify molecules table
+    '''
+    def __init__(self):
+        self.tables = OrderedDict()
+        self.moltypes = OrderedDict()
+    def preprocess_line(self, line):
+        if ";" in line:
+            line = line.split(";")[0]
+        line = line.strip()
+        return line
+    def from_file(self, filename):
+        table_header = re.compile('\[\s*(\w*)\s*\]')
+        with open(filename, "r") as file_handle:
+            for line in file_handle:
+                line = self.preprocess_line(line)
+                if line != "":
+                    th = table_header.search(line)
+                    if th is not None:
+                        table_name = th.group(1)
+                        if table_name in TOPFILE_FIELDS:
+                            table_columns = TOPFILE_FIELDS[table_name]
+                        else:
+                            table_columns = None
+                        if table_name == "moleculetype":
+                            moltype = GromacsTOPFileMoltype()
+                        elif table_columns is not None and not table_name in MOLTYPE_TABLES:
+                            self.tables[table_name] = []                            
+                    elif table_columns is not None:
+                        table_cells = line.split()
+                        table_cells += ["","","","",""]
+                        table_cells = table_cells[:len(table_columns)]
+                        table_row = OrderedDict(zip(table_columns, table_cells))
+                        if table_name == "moleculetype":
+                            moltype.moleculetype = table_row
+                            moltype.name = table_cells[0]
+                            self.moltypes[moltype.name] = moltype
+                        elif table_name == "atoms":
+                            moltype.atoms.append(table_row)
+                        elif table_name == "bonds":
+                            moltype.bonds.append(table_row)
+                        elif table_name == "angles":
+                            moltype.angles.append(table_row)
+                        elif table_name == "dihedrals":
+                            moltype.dihedrals.append(table_row)
+                        elif table_name == "pairs":
+                            moltype.pairs.append(table_row)
+                        else:
+                            self.tables[table_name].append(table_row)
+    def to_file(self, filename):
+        with open(filename, "w") as file_handle:
+            for moltype in self.moltypes.values():
+                file_handle.write(moltype.as_file())
+            for k, v in self.tables.items():
+                file_handle.write(gromacs_top_table_string(k, v))
+    def unify_moltype(self, name="unified", nrexcl="1"):
+        unified = GromacsTOPFileMoltype()
+        unified.moleculetype = OrderedDict([("name", name), ("nrexcl", nrexcl)])
+        unified.name = name
+        for line in self.tables["molecules"]:
+            moltype_name = line["moltype"]
+            moltype_count = int(line["count"])
+            for _ in range(moltype_count):
+                unified.topcat(self.moltypes[moltype_name])
+        return unified
+                        
+                            
