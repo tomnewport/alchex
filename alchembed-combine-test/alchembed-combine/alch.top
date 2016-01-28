@@ -1,0 +1,10 @@
+#include "alch.itp"
+#include "alch1.itp"
+#include "alch2.itp"
+[ system ]
+Alchex Alchembed
+
+[ molecules ]
+ALCHEX1	1
+ALCHEX2	1
+

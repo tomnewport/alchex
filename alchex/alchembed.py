@@ -1,9 +1,12 @@
 '''
 Alchembed Methods
 '''
-from alchex.gromacs_interface import GromacsEditableTOPFile, SimulationContainer, GromacsWrapper, GromacsMDPFile
+from alchex.gromacs_interface import GromacsEditableTOPFile, SimulationContainer, GromacsWrapper, GromacsMDPFile, GromacsEditableTOPFile
 from alchex.config import default_configuration
+from alchex.workarounds import WAEditableGrofile
 from copy import deepcopy
+from os import path
+from collections import OrderedDict
 
 config = default_configuration()
 
@@ -55,11 +58,159 @@ class AlchembedAccumulator(object):
 
 
 
+s = SimulationContainer("alchembed-combine-test", GromacsWrapper("gmx"))
+
+def alchembed_combine(
+	simulation_container,
+	alchex_config,
+	system_1_structure,
+	system_1_topology,
+	system_2_structure,
+	system_2_topology,
+	parameters={},
+	working_directory="/alchembed-combine"
+	):
+	simulation_container.delete_folder(working_directory)
+	simulation_container.makedirs(working_directory)
+
+	simulation_container.cd(working_directory)
+
+	alch_mdp = GromacsMDPFile()
+	alch_mdp.attrs = deepcopy(config.grompp_parameters["alchembed"])
+	alch_mdp.attrs["couple-moltype"] = "ALCHEX2"
+	alch_mdp.to_file(simulation_container.resolve_path("alch.mdp"))
+
+	prep_mdp = GromacsMDPFile()
+	prep_mdp.attrs = deepcopy(config.grompp_parameters["alchembed"])
+	del prep_mdp.attrs["couple-moltype"]
+	del prep_mdp.attrs["couple-lambda0"]
+	del prep_mdp.attrs["couple-lambda1"]
+	prep_mdp.to_file(simulation_container.resolve_path("preprocess.mdp"))
+
+	if simulation_container.gromacs.grompp(kwargs={
+		"-c" : simulation_container.resolve_path(system_1_structure),
+		"-p" : simulation_container.resolve_path(system_1_topology),
+		"-f" : "preprocess.mdp",
+		"-pp": simulation_container.resolve_path("alch1.top")
+	})[0] != 0:
+		return False
+
+	if simulation_container.gromacs.grompp(kwargs={
+		"-c" : simulation_container.resolve_path(system_2_structure),
+		"-p" : simulation_container.resolve_path(system_2_topology),
+		"-f" : "preprocess.mdp",
+		"-pp": simulation_container.resolve_path("alch2.top")
+	})[0] != 0:
+		return False
+
+	simulation_container.copy_file(
+		system_1_structure, 
+		working_directory, 
+		rename="alch1.gro"
+		)
+	simulation_container.copy_file(
+		system_2_structure, 
+		working_directory, 
+		rename="alch2.gro"
+		)
+
+	system1_top = GromacsEditableTOPFile()
+	system1_top.from_file(
+		simulation_container.resolve_path("alch1.top")
+		)
+
+	system1_unified_top = GromacsEditableTOPFile()
+	system1_unified_top.add_moltype(
+		system1_top.unify_moltype("ALCHEX1")
+		)
+	system1_unified_top.to_file(
+		simulation_container.resolve_path("alch1.itp")
+		)
+
+	system2_top = GromacsEditableTOPFile()
+	system2_top.from_file(
+		simulation_container.resolve_path("alch2.top")
+		)
+
+	system2_unified_top = GromacsEditableTOPFile()
+	system2_unified_top.add_moltype(
+		system2_top.unify_moltype("ALCHEX2")
+		)
+	system2_unified_top.to_file(
+		simulation_container.resolve_path("alch2.itp")
+		)
+
+	with open(
+		simulation_container.resolve_path("alch1.top"),
+		"r") as read_file_handle:
+		with open(
+			simulation_container.resolve_path("alch.itp"),
+			"w"
+			) as write_file_handle:
+			for line in read_file_handle:
+				if "system" in line and "[" in line:
+					break
+				else:
+					write_file_handle.write(line)
 
 
 
-s = SimulationContainer("alchembed-test", GromacsWrapper("/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse_d"))
+	alch_top = GromacsEditableTOPFile()
+	alch_top.includes.append("alch.itp")
+	alch_top.includes.append("alch1.itp")
+	alch_top.includes.append("alch2.itp")
 
+	alch_top.tables["system"] = [
+	    OrderedDict([("system_name", "Alchex Alchembed")])
+	]
+	alch_top.tables["molecules"] = [
+	    OrderedDict([("moltype", "ALCHEX1"),
+	    	         ("count", "1")]),
+	    OrderedDict([("moltype", "ALCHEX2"),
+	    	         ("count", "1")])
+	]
+
+	alch_top.to_file(
+		simulation_container.resolve_path("alch.top")
+		)
+
+	system1_structure = WAEditableGrofile()
+	system1_structure.from_file(
+		simulation_container.resolve_path("alch1.gro")
+		)
+	system2_structure = WAEditableGrofile()
+	system2_structure.from_file(
+		simulation_container.resolve_path("alch2.gro")
+		)
+
+	system1_structure.combine(system2_structure)
+	system1_structure.to_file(
+		simulation_container.resolve_path("alch.gro")
+		)
+
+	print simulation_container.gromacs.grompp(kwargs={
+		"-c" : "alch.gro",
+		"-p" : "alch.top",
+		"-f" : "alch.mdp",
+		"-o" : "alch-run.tpr",
+		"-maxwarn" : "1"
+	})[1]
+
+	print simulation_container.gromacs.mdrun(kwargs={
+		"-deffnm" : "alch-run",
+		"-rdd" : 1
+		})[1]
+
+print alchembed_combine(
+	s,
+	config,
+	"/inputs/alchex_component.0.em.gro",
+	"/inputs/alchex_component.0.top",
+	"/inputs/alchex_component.1.em.gro",
+	"/inputs/alchex_component.1.top"
+	)
+
+'''
 s.makedirs("em")
 
 s.gromacs.grompp(
@@ -81,3 +232,4 @@ alch_mdp.attrs = config.grompp_parameters["alchembed"]
 
 
 print alchembed(s, "em/em.gro", "cox1-cg.top", alch_mdp, name="messing_around", parameters={"couple-moltype":"PROTEIN"})[1]
+'''

@@ -162,9 +162,12 @@ def gro_to_dict(groline):
     posy = float(groline[28:36])
     posz = float(groline[36:44])
     #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
-    velx = float(groline[44:52])
-    vely = float(groline[52:60])
-    velz = float(groline[60:68])
+    if len(groline) > 45:
+        velx = float(groline[44:52])
+        vely = float(groline[52:60])
+        velz = float(groline[60:68])
+    else:
+        velx, vely, velz = 0,0,0
     return {
             "resid"  :resid, 
             "resname":resname, 
@@ -198,6 +201,8 @@ class WAEditableGrofile(object):
         self.sysname = "Edited Gro File"
         self.residues = []
         self.box_vector = [0,0,0]
+    def combine(self, other):
+        self.residues += other.residues
     def top_molecules(self):
         molecules = []
         for residue in self.residues:
@@ -243,6 +248,7 @@ class WAEditableGrofile(object):
         with open(filename, "r") as fh:
             lines = [x for x in fh.read().split("\n") if x.strip() != ""]
         self.sysname = lines[0].strip()
+        used_resids = set()
         for line in lines[2:-1]:
             atom_data = gro_to_dict(line)
             coordinates = [[
@@ -250,7 +256,8 @@ class WAEditableGrofile(object):
                 10*float(atom_data["posy"]), 
                 10*float(atom_data["posz"])
                 ]]
-            if atom_data["resid"] not in self.residues:
+            if atom_data["resid"] not in used_resids:
+                used_resids.add(atom_data["resid"])
                 self.residues.append(WAEditableResidue(resid=atom_data["resid"], resname=atom_data["resname"]))
                 res_start = int(atom_data["atomid"])
             self.residues[-1].coordinates.add_points(coordinates)

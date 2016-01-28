@@ -46,8 +46,8 @@ class GromacsWrapper(object):
     def cd(self, cwd):
         self._cwd = path.abspath(path.join(self._cwd, cwd))
     def __getattr__(self, name):
-        def unknown_call(args=[], kwargs={}):
-            return self.generic_gromacs_call(name, args, kwargs)
+        def unknown_call(args=[], kwargs={}, cwd=None):
+            return self.generic_gromacs_call(name, args=args, kwargs=kwargs, cwd=cwd)
         return unknown_call
     def arg_encode(self, args):
         argstring = ""
@@ -62,10 +62,12 @@ class GromacsWrapper(object):
             return 'echo "' + " ".join([str(x) for x in stdin]) + '" | '
         else:
             return ""
-    def shell(self, process, args=[], kwargs={}):
+    def shell(self, process, args=[], kwargs={}, cwd=None):
+        if cwd is None:
+            cwd = self._cwd
         command = self.build_command(process, args=args, kwargs=kwargs)
         try:
-            output = check_output(command, shell=True, cwd=self._cwd, stderr=STDOUT)
+            output = check_output(command, shell=True, cwd=cwd, stderr=STDOUT)
             retcode = 0
         except CalledProcessError as cpe:
             output = cpe.output
@@ -82,9 +84,9 @@ class GromacsWrapper(object):
             kwargs=self.arg_encode(kwargs)
             )
         return command
-    def generic_gromacs_call(self, command, args, kwargs):
+    def generic_gromacs_call(self, command, args, kwargs, cwd=None):
         args = [command] + list(args)
-        return self.shell(self._exec_gmx, args=args, kwargs=kwargs)
+        return self.shell(self._exec_gmx, args=args, kwargs=kwargs, cwd=cwd)
 
 class SimulationContainer(object):
     def __init__(self, root_path, gromacs_wrapper):
@@ -392,7 +394,7 @@ class GromacsTOPFileMoltype(object):
         self.pairs += cattop.pairs
     def as_file(self):
         return (
-              gromacs_top_table_string("moltype", [self.moleculetype])
+              gromacs_top_table_string("moleculetype", [self.moleculetype])
             + gromacs_top_table_string("atoms", self.atoms)
             + gromacs_top_table_string("bonds", self.bonds)
             + gromacs_top_table_string("angles", self.angles)
@@ -415,6 +417,9 @@ class GromacsEditableTOPFile(object):
     def __init__(self):
         self.tables = OrderedDict()
         self.moltypes = OrderedDict()
+        self.includes = []
+    def add_moltype(self, moltype):
+        self.moltypes[moltype.name] = moltype
     def preprocess_line(self, line):
         if ";" in line:
             line = line.split(";")[0]
@@ -460,6 +465,8 @@ class GromacsEditableTOPFile(object):
                             self.tables[table_name].append(table_row)
     def to_file(self, filename):
         with open(filename, "w") as file_handle:
+            for include in self.includes:
+                file_handle.write('#include "{include}"\n'.format(include=include))
             for moltype in self.moltypes.values():
                 file_handle.write(moltype.as_file())
             for k, v in self.tables.items():

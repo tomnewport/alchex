@@ -1,0 +1,16 @@
+# This file was created Thu Jan 28 22:22:12 2016
+# Created by:
+# GROMACS:      gmx mdrun, VERSION 5.0.1
+# Executable:   /usr/local/bin/gmx
+# Library dir:  /usr/local/share/gromacs/top
+# Command line:
+#   gmx mdrun -deffnm alch-run -rdd 1
+# gmx is part of G R O M A C S:
+#
+# GROwing Monsters And Cloning Shrimps
+#
+@    title "dH/d\xl\f{}"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "dH/d\xl\f{} (kJ/mol [\xl\f{}]\S-1\N)"
+@TYPE xy
+@ subtitle "T = 310 (K) "
