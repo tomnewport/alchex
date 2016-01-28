@@ -120,5 +120,6 @@ def default_configuration():
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
+    defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
     return defaultconfig
