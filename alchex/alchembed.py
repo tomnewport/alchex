@@ -20,10 +20,41 @@ class AlchembedAccumulator(object):
         self.simulations = simulation_container
         simulation_container.cd(working_directory)
 
-s = SimulationContainer("alchembed-test", GromacsWrapper("/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"))
+s = SimulationContainer("alchembed-test", GromacsWrapper("gmx"))
 
 em_mdp = GromacsMDPFile()
 em_mdp.attrs = config.grompp_parameters["alchembed"]
 em_mdp.to_file(s.resolve_path("alchembed.mdp"))
 
-s.gromacs.grompp(kwargs={"-f":"alchembed.mdp", "-p":"cox1-cg.top"})
+
+s.makedirs("em")
+
+s.gromacs.grompp(
+	kwargs={
+	"-f":"em-cg.mdp", 
+	"-p":"cox1-cg.top",
+	"-c":"cox1-cg.pdb",
+	"-o":"em/em.tpr",
+	"-maxwarn":"1"})
+
+s.cd("em")
+
+print s.gromacs.mdrun(kwargs={"-deffnm":"em"})[1]
+
+s.cd("../")
+
+s.makedirs("alchembed")
+
+s.gromacs.grompp(
+	kwargs={
+	"-f":"alchembed.mdp", 
+	"-p":"cox1-cg.top",
+	"-c":"em/em.gro",
+	"-o":"alchembed/alchembed.tpr",
+	"-maxwarn":"1"})
+
+s.cd("alchembed")
+
+print("--------------")
+
+print s.gromacs.mdrun(kwargs={"-deffnm":"alchembed"})[1]
