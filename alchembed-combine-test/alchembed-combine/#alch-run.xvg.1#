@@ -1,0 +1,38 @@
+# This file was created Fri Jan 29 15:54:06 2016
+# Created by:
+#                    :-) GROMACS - gmx mdrun, VERSION 5.1 (-:
+# 
+# Executable:   /sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse
+# Data prefix:  /sbcb/packages/opt/Linux_x86_64/gromacs/5.1
+# Command line:
+#   gmx_sse mdrun -deffnm alch-run -rdd 1
+# gmx mdrun is part of G R O M A C S:
+#
+# GROningen MAchine for Chemical Simulation
+#
+@    title "dH/d\xl\f{}"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "dH/d\xl\f{} (kJ/mol [\xl\f{}]\S-1\N)"
+@TYPE xy
+@ subtitle "T = 310 (K) "
+0.0000 -2931.8958
+0.5000 1106.0544
+1.0000 -873.08417
+1.5000 -1480.2775
+2.0000 -1531.1588
+2.5000 -1833.9491
+3.0000 -1888.4630
+3.5000 -1831.6576
+4.0000 -1650.9719
+4.5000 -1710.6133
+5.0000 -1765.1418
+5.5000 -1948.1462
+6.0000 -2050.8528
+6.5000 -2136.7178
+7.0000 -2304.6797
+7.5000 -2434.1602
+8.0000 -2532.9189
+8.5000 -2700.3713
+9.0000 -2859.2317
+9.5000 -2791.5854
+10.0000 -2945.6233
