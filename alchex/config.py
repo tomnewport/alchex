@@ -75,6 +75,8 @@ def default_configuration():
     defaultconfig.load_itp_file("data/CDL.itp", "CDL0")
     defaultconfig.load_itp_file("data/chol.itp", "CHOL")
     defaultconfig.load_itp_file("data/dppc.itp", "DPPC")
+    defaultconfig.load_itp_file("data/dppc.itp", "DPPC")
+    defaultconfig.load_itp_file("data/pi3p.itp", "PI3P")
     defaultconfig.load_itp_file("data/popc_patch/popc_ac.itp", "POPC")
 
     defaultconfig.build_exchange_map(
@@ -106,6 +108,11 @@ def default_configuration():
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    to_resname="PI3P",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
     from_resname="POPC",
     to_resname="CDL0",
     exchange_model="martini.lipid_to_card")
@@ -118,6 +125,7 @@ def default_configuration():
     #defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
     defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
+    defaultconfig.add_reference_structure("PI3P","data/pi3p.pdb", selection="resname PI3")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")

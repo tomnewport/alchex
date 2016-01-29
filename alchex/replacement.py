@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile
 from alchex.config import default_configuration
 from alchex.geometry import PointCloud
@@ -295,9 +298,10 @@ class ReplacementSystem(object):
         # Alchemically add in non-clashing groups of replaceable entites
         pass
 
-
+'''
 d = ReplacementSystem(
     input_structure_filename="data/testpatch/sample.gro",
     input_topology_filename="data/testpatch/sample.top")
 
 d.auto_replace(selection="resname POPC", composition={"DPPC" : 50, "CDL0" : 24})
+'''
