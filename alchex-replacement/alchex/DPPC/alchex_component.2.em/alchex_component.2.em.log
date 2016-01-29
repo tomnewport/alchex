@@ -1,5 +1,5 @@
 Log file opened on Fri Jan 29 11:44:26 2016
-Host: derp.local  pid: 53790  rank ID: 0  number of ranks:  1
+Host: derp.local  pid: 53788  rank ID: 0  number of ranks:  1
 GROMACS:    gmx mdrun, VERSION 5.0.1
 
 GROMACS is written by:
@@ -28,7 +28,7 @@ GROMACS:      gmx mdrun, VERSION 5.0.1
 Executable:   /usr/local/bin/gmx
 Library dir:  /usr/local/share/gromacs/top
 Command line:
-  gmx mdrun -deffnm alchex_component.0.em
+  gmx mdrun -deffnm alchex_component.2.em
 
 Gromacs version:    VERSION 5.0.1
 Precision:          single
@@ -100,7 +100,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = 604530070
+   ld-seed                        = 3019612513
    emtol                          = 1000
    emstep                         = 0.001
    niter                          = 20
@@ -247,7 +247,7 @@ qm-opts:
    userreal3                      = 0
    userreal4                      = 0
 grpopts:
-   nrdf:        5262
+   nrdf:          33
    ref-t:           0
    tau-t:           0
 annealing:          No
@@ -255,20 +255,7 @@ annealing-npoints:           0
    acc:	           0           0           0
    nfreeze:           N           N           N
    energygrp-flags[  0]: 0
-
-Initializing Domain Decomposition on 4 ranks
-Dynamic load balancing: no
-Will sort the charge groups at every domain (re)decomposition
-Initial maximum inter charge-group distances:
-    two-body bonded interactions: 0.612 nm, Bond, atoms 663 664
-  multi-body bonded interactions: 1.090 nm, G96Angle, atoms 1338 1341
-Minimum cell size due to bonded interactions: 1.199 nm
-Optimizing the DD grid for 4 cells with a minimum initial size of 1.199 nm
-The maximum allowed number of cells is: X 8 Y 8 Z 8
-Domain decomposition grid 4 x 1 x 1, separate PME ranks 0
-Domain decomposition rank 0, coordinates 0 0 0
-
-Using 4 MPI threads
+Using 1 MPI thread
 
 Detecting CPU SIMD instructions.
 Present hardware specification:
@@ -288,22 +275,7 @@ Using full Lennard-Jones parameter combination matrix
 
 Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00, Coulomb -1e+00
 Removing pbc first time
-
-Linking all bonded interactions to atoms
-
-The initial number of communication pulses is: X 1
-The initial domain decomposition cell size is: X 2.68 nm
-
-The maximum allowed distance for charge groups involved in interactions is:
-                 non-bonded interactions           1.000 nm
-            two-body bonded interactions  (-rdd)   1.887 nm
-          multi-body bonded interactions  (-rdd)   1.887 nm
-
-
-Making 1D domain decomposition grid 4 x 1 x 1, home cell index 0 0 0
-
 Initiating Steepest Descents
-Charge group distribution at step 0: 430 365 458 502
 Started Steepest Descents on rank 0 Fri Jan 29 11:44:26 2016
 
 Steepest Descents:
@@ -314,170 +286,15 @@ Steepest Descents:
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28157e+04    4.04545e+03    2.64302e+04    0.00000e+00    4.32913e+04
- Pressure (bar)
-    0.00000e+00
-
-DD  step 0 load imb.: force 39.0%
-
-           Step           Time         Lambda
-              1        1.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28157e+04    4.04537e+03    2.39056e+04    0.00000e+00    4.07666e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              2        2.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28157e+04    4.04527e+03    2.11743e+04    0.00000e+00    3.80353e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              3        3.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28157e+04    4.04514e+03    1.82718e+04    0.00000e+00    3.51326e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              4        4.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28156e+04    4.04498e+03    1.52482e+04    0.00000e+00    3.21088e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              5        5.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28156e+04    4.04476e+03    1.21659e+04    0.00000e+00    2.90263e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              6        6.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28155e+04    4.04447e+03    9.09422e+03    0.00000e+00    2.59542e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              7        7.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28154e+04    4.04409e+03    6.10118e+03    0.00000e+00    2.29607e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              8        8.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28152e+04    4.04355e+03    3.24599e+03    0.00000e+00    2.01047e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-              9        9.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28147e+04    4.04277e+03    5.75986e+02    0.00000e+00    1.74335e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             10       10.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28138e+04    4.04160e+03   -1.87068e+03    0.00000e+00    1.49847e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             11       11.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28118e+04    4.03977e+03   -4.06259e+03    0.00000e+00    1.27889e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             12       12.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.28072e+04    4.03672e+03   -5.98405e+03    0.00000e+00    1.08598e+04
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             13       13.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.27961e+04    4.03133e+03   -7.64547e+03    0.00000e+00    9.18196e+03
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             14       14.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.27671e+04    4.02114e+03   -9.09576e+03    0.00000e+00    7.69252e+03
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             15       15.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.26859e+04    4.00048e+03   -1.04195e+04    0.00000e+00    6.26688e+03
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             16       16.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.24406e+04    3.95580e+03   -1.16586e+04    0.00000e+00    4.73786e+03
- Pressure (bar)
-    0.00000e+00
-
-           Step           Time         Lambda
-             17       17.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.18121e+04    3.87534e+03   -1.25760e+04    0.00000e+00    3.11137e+03
+    3.85710e+01    1.27158e+01   -1.94299e+01    0.00000e+00    3.18568e+01
  Pressure (bar)
     0.00000e+00
 
 
-Steepest Descents converged to Fmax < 1000 in 18 steps
-Potential Energy  =  3.1113738e+03
-Maximum force     =  9.1628802e+02 on atom 501
-Norm of force     =  2.1607999e+02
+Steepest Descents converged to Fmax < 1000 in 1 steps
+Potential Energy  =  3.1856827e+01
+Maximum force     =  2.2807335e+02 on atom 11
+Norm of force     =  1.3265959e+02
 
 	M E G A - F L O P S   A C C O U N T I N G
 
@@ -488,49 +305,35 @@ Norm of force     =  2.1607999e+02
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               2.294930          20.654    19.3
- NxN LJ [V&F]                             1.843936          79.289    74.0
- Reset In Box                             0.031590           0.095     0.1
- CG-CoM                                   0.033345           0.100     0.1
- Bonds                                    0.030420           1.795     1.7
- Angles                                   0.026910           4.521     4.2
- Virial                                   0.034830           0.627     0.6
+ Pair Search distance check               0.000138           0.001    12.2
+ NxN RF Elec. + LJ [V&F]                  0.000032           0.002    17.0
+ NxN LJ [V&F]                             0.000096           0.004    40.5
+ Shift-X                                  0.000012           0.000     0.7
+ Bonds                                    0.000011           0.001     6.4
+ Angles                                   0.000008           0.001    13.2
+ Virial                                   0.000057           0.001    10.1
 -----------------------------------------------------------------------------
- Total                                                     107.081   100.0
+ Total                                                       0.010   100.0
 -----------------------------------------------------------------------------
-
-
-    D O M A I N   D E C O M P O S I T I O N   S T A T I S T I C S
-
- av. #atoms communicated per step for force:  2 x 715.9
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
-On 4 MPI ranks
+On 1 MPI rank
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Domain decomp.         4    1         18       0.013          0.297  14.7
- DD comm. load          4    1          1       0.000          0.001   0.1
- Neighbor search        4    1         18       0.006          0.132   6.5
- Force                  4    1         18       0.010          0.223  11.0
- Wait + Comm. F         4    1         18       0.011          0.235  11.6
- NB X/F buffer ops.     4    1         18       0.000          0.002   0.1
- Comm. energies         4    1         18       0.003          0.062   3.1
- Rest                                           0.048          1.073  53.0
+ Neighbor search        1    1          1       0.000          0.000   0.5
+ Force                  1    1          1       0.000          0.000   0.5
+ NB X/F buffer ops.     1    1          1       0.000          0.000   0.0
+ Rest                                           0.008          0.045  98.9
 -----------------------------------------------------------------------------
- Total                                          0.090          2.026 100.0
+ Total                                          0.008          0.046 100.0
 -----------------------------------------------------------------------------
-
-NOTE: 15 % of the run time was spent in domain decomposition,
-      6 % of the run time was spent in pair search,
-      you might want to increase nstlist (this has no effect on accuracy)
-
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.362        0.090      400.0
+       Time:        0.008        0.008      100.0
                (steps/hour)
-Performance:       716303.3
-Finished mdrun on rank 0 Fri Jan 29 11:44:27 2016
+Performance:       442372.3
+Finished mdrun on rank 0 Fri Jan 29 11:44:26 2016

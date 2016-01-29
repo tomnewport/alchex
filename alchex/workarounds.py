@@ -17,6 +17,8 @@ class WAEditableResidue(object):
         self.ids = []
         self.atoms = []
         self.coordinates = PointCloud(3)
+    def set_resid(self, resid):
+        self.resid = resid
     def import_mdanalysis_atoms(self, residue, id_mapping="direct"):
         if id_mapping == "direct":
             for atom_id, atom in enumerate(residue.mda_object.atoms):
@@ -24,6 +26,15 @@ class WAEditableResidue(object):
                 self.atoms.append(mda_atom_to_dict(atom))
             self.coordinates.add_points(residue.mda_object.coordinates())
             #plot_3d(self.coordinates)
+    def sort_atoms(self):
+        sorted_ids = sorted(self.ids, key=lambda x : int(x))
+        remap = dict([(x, self.ids.index(x)) for x in sorted_ids])
+        new_ids = sorted_ids
+        new_atoms = [self.atoms[remap[x]] for x in sorted_ids]
+        new_coordinates = [self.coordinates.points[remap[x],:] for x in sorted_ids]
+        self.ids = new_ids
+        self.atoms = new_atoms
+        self.coordinates.points=numpy.array(new_coordinates)
     def overlay(self, from_residue, to_residue, mapping):
         points = []
         for from_atom_id, to_atom_id in mapping.items():
@@ -278,7 +289,8 @@ class WAEditableGrofile(object):
             file_handle.write(self.sysname + "\n")
             file_handle.write(str(atom_count).rjust(5)+ "\n")
             atom_id = 0
-            for residue in self.residues:
+            for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+                residue.sort_atoms()
                 for idx, atom_data in enumerate(residue.atoms):
                     atom_id += 1
                     atom = {}
