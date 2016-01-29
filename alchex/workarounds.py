@@ -17,6 +17,8 @@ class WAEditableResidue(object):
         self.ids = []
         self.atoms = []
         self.coordinates = PointCloud(3)
+    def set_resid(self, resid):
+        self.resid = resid
     def import_mdanalysis_atoms(self, residue, id_mapping="direct"):
         if id_mapping == "direct":
             for atom_id, atom in enumerate(residue.mda_object.atoms):
@@ -24,6 +26,15 @@ class WAEditableResidue(object):
                 self.atoms.append(mda_atom_to_dict(atom))
             self.coordinates.add_points(residue.mda_object.coordinates())
             #plot_3d(self.coordinates)
+    def sort_atoms(self):
+        sorted_ids = sorted(self.ids, key=lambda x : int(x))
+        remap = dict([(x, self.ids.index(x)) for x in sorted_ids])
+        new_ids = sorted_ids
+        new_atoms = [self.atoms[remap[x]] for x in sorted_ids]
+        new_coordinates = [self.coordinates.points[remap[x],:] for x in sorted_ids]
+        self.ids = new_ids
+        self.atoms = new_atoms
+        self.coordinates.points=numpy.array(new_coordinates)
     def overlay(self, from_residue, to_residue, mapping):
         points = []
         for from_atom_id, to_atom_id in mapping.items():
@@ -162,9 +173,12 @@ def gro_to_dict(groline):
     posy = float(groline[28:36])
     posz = float(groline[36:44])
     #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
-    velx = float(groline[44:52])
-    vely = float(groline[52:60])
-    velz = float(groline[60:68])
+    if len(groline) > 45:
+        velx = float(groline[44:52])
+        vely = float(groline[52:60])
+        velz = float(groline[60:68])
+    else:
+        velx, vely, velz = 0,0,0
     return {
             "resid"  :resid, 
             "resname":resname, 
@@ -198,6 +212,8 @@ class WAEditableGrofile(object):
         self.sysname = "Edited Gro File"
         self.residues = []
         self.box_vector = [0,0,0]
+    def combine(self, other):
+        self.residues += other.residues
     def top_molecules(self):
         molecules = []
         for residue in self.residues:
@@ -243,6 +259,7 @@ class WAEditableGrofile(object):
         with open(filename, "r") as fh:
             lines = [x for x in fh.read().split("\n") if x.strip() != ""]
         self.sysname = lines[0].strip()
+        used_resids = set()
         for line in lines[2:-1]:
             atom_data = gro_to_dict(line)
             coordinates = [[
@@ -250,7 +267,8 @@ class WAEditableGrofile(object):
                 10*float(atom_data["posy"]), 
                 10*float(atom_data["posz"])
                 ]]
-            if atom_data["resid"] not in self.residues:
+            if atom_data["resid"] not in used_resids:
+                used_resids.add(atom_data["resid"])
                 self.residues.append(WAEditableResidue(resid=atom_data["resid"], resname=atom_data["resname"]))
                 res_start = int(atom_data["atomid"])
             self.residues[-1].coordinates.add_points(coordinates)
@@ -271,7 +289,8 @@ class WAEditableGrofile(object):
             file_handle.write(self.sysname + "\n")
             file_handle.write(str(atom_count).rjust(5)+ "\n")
             atom_id = 0
-            for residue in self.residues:
+            for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+                residue.sort_atoms()
                 for idx, atom_data in enumerate(residue.atoms):
                     atom_id += 1
                     atom = {}

@@ -104,6 +104,7 @@ class ReplaceableEntity(object):
     def replace(self):
         to_residue = self.replacement_system.alchex_config.get_reference_structure(self.exchange_model.to_resname)
         self.replacement = self.exchange_model.run(self.from_residue, to_residue)
+        self.replacement.resid = self.new_residue_ids
         return self.replacement
 
 
@@ -249,6 +250,8 @@ class ReplacementSystem(object):
             structure.residues = residues
             structure.sysname = "Alchex replacement component " + to_resname
             structure.box_vector = original.box_vector
+
+            structure.to_file("debug-"+to_resname+".gro")
             structures = structure.declash(4.5)
             for idx, dc_structure in enumerate(structures):
                 self.simulations.cd("/" + name + "/" + to_resname)

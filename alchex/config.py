@@ -67,7 +67,7 @@ class AlchexConfig(object):
 
 def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
-    defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
+    defaultconfig = AlchexConfig(folder=folder, gromacs_executable="gmx")
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
@@ -120,5 +120,6 @@ def default_configuration():
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
+    defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
     return defaultconfig
