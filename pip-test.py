@@ -7,6 +7,6 @@ d = ReplacementSystem(
     )
 
 d.auto_replace(
-    selection="resname DPP", 
+    selection="resname DPPC", 
     composition={"PI3P" : 100}
     )

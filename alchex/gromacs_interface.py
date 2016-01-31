@@ -250,10 +250,11 @@ class GromacsTOPFile(object):
                     startline = line_id
             else:
                 stripline = line.strip()
-                if len(stripline) == 0 or stripline[0] == "[":
-                    endline = line_id
+                if stripline[0] == "[":
+                    break
+        endline = line_id
         newlines = [resname.ljust(5) + str(rescount) for resname, rescount in new_molecules]
-        self.lines = self.lines[:startline+1] + newlines + self.lines[endline:]
+        self.lines = self.lines[:startline+1] + newlines + self.lines[endline+1:]
     def get_tables(self):
         table_head = re.compile(r'^\s*\[\s*(\w[\w\s]\w*)\s*\]\s*$')
         tables = []

@@ -6,8 +6,4 @@
 SELF-ASSEMBLY
 
 [ molecules ]
-PROTEIN 1
-DPPC 361
-W 8153
-NA+ 205
-CL- 191
+PI3P 71

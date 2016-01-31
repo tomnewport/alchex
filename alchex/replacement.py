@@ -56,7 +56,6 @@ class ReplacementSpecification(object):
                 swap_ratios.add_node(from_resname)
             for to_resname in self.composition.keys():
                 ex_map = self.alchex_config.get_exchange_map(from_resname, to_resname)
-
                 if to_resname not in sizes:
                     sizes[to_resname] = []
                 sizes[to_resname].append(ex_map.from_count/ex_map.to_count)
@@ -255,7 +254,7 @@ class ReplacementSystem(object):
             structure.box_vector = original.box_vector
 
             structure.to_file("debug-"+to_resname+".gro")
-            structures = structure.declash(4.5)
+            structures = structure.declash(2)
             for idx, dc_structure in enumerate(structures):
                 self.simulations.cd("/" + name + "/" + to_resname)
                 base_filename = "alchex_component."+str(idx)
@@ -264,7 +263,7 @@ class ReplacementSystem(object):
                 original_topology.modify_molecules(dc_structure.top_molecules())
                 original_topology.to_file(self.simulations.resolve_path(base_filename+".top"))
                 self.simulations.makedirs(em_dir)
-                self.simulations.gromacs.grompp(kwargs={
+                print self.simulations.gromacs.grompp(kwargs={
                     "-f":"em.mdp", 
                     "-c": base_filename+".gro", 
                     "-p": base_filename+".top",
