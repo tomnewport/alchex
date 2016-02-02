@@ -252,7 +252,6 @@ class ReplacementSystem(object):
             structure.residues = residues
             structure.sysname = "Alchex replacement component " + to_resname
             structure.box_vector = original.box_vector
-
             structure.to_file("debug-"+to_resname+".gro")
             structures = structure.declash(2)
             for idx, dc_structure in enumerate(structures):

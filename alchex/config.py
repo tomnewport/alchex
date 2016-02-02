@@ -11,7 +11,7 @@ class AlchexConfig(object):
         folder="alchex_configuration", 
         gromacs_executable="gmx"):
         self.folder = folder
-        if path.exists(path.join(folder, "alchex.json")):
+        if path.exists(path.join(folder, "alchex.p")):
             raise NotImplementedError()
         else:
             self.gromacs_executable = gromacs_executable
@@ -64,7 +64,21 @@ class AlchexConfig(object):
         params = GromacsMDPFile()
         params.from_file(mdp_file)
         self.grompp_parameters[name] = params.attrs
+    def save(self, save_as=None):
+        pass
 
+def user_config_path(config):
+    return path.join(path.expanduser("~/.alchex"), config+".p")
+
+def default_config_path(config):
+    return path.join(path.split(__file__)[0], "config", config + ".p")
+
+def config(config="default-cg"):
+    user_config = path.expanduser("~/.alchex")
+    default_config = path.join(path.split(__file__)[0], "config")
+    print user_config, default_config
+
+'''
 def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
@@ -133,3 +147,5 @@ def default_configuration():
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
     return defaultconfig
+
+'''
