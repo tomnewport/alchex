@@ -4,22 +4,28 @@ from alchex.residue import ResidueStructure
 from alchex.errors import ExchangeMapMissingException
 import MDAnalysis as mda
 from random import choice
-from os import path
+from os import path, makedirs
+import pickle
 
 class AlchexConfig(object):
-    def __init__(self, 
-        folder="alchex_configuration", 
-        gromacs_executable="gmx"):
-        self.folder = folder
-        if path.exists(path.join(folder, "alchex.p")):
-            raise NotImplementedError()
-        else:
-            self.gromacs_executable = gromacs_executable
-            self.parameters = {}
-            self.exchange_maps = {}
-            self.compositions = {}
-            self.reference_structures = {}
-            self.grompp_parameters = {}
+    def __init__(self, name):
+        self.name = name
+        # Parameters should be stored as .ITP
+        self.parameters = {}
+        # Exchange maps can be loaded from .json
+        self.exchange_maps = {}
+        # Compositions are depracated
+        self.compositions = {}
+        # Reference structures need to be loaded
+        # from .gro files
+        self.reference_structures = {}
+        # Grompp parameters can be stored 
+        # as json
+        self.grompp_parameters = {}
+    def save(self):
+        pass
+    def load(self):
+        pass
     def load_itp_file(self, filename, resname):
         itp        = GromacsITPFile(filename)
         parameters = itp.read_residue(resname)
@@ -64,8 +70,6 @@ class AlchexConfig(object):
         params = GromacsMDPFile()
         params.from_file(mdp_file)
         self.grompp_parameters[name] = params.attrs
-    def save(self, save_as=None):
-        pass
 
 def user_config_path(config):
     return path.join(path.expanduser("~/.alchex"), config+".p")
@@ -73,16 +77,12 @@ def user_config_path(config):
 def default_config_path(config):
     return path.join(path.split(__file__)[0], "config", config + ".p")
 
-def config(config="default-cg"):
-    user_config = path.expanduser("~/.alchex")
-    default_config = path.join(path.split(__file__)[0], "config")
-    print user_config, default_config
 
-'''
 def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
-    defaultconfig = AlchexConfig(folder=folder, gromacs_executable="gmx")
+    defaultconfig = AlchexConfig("cg_default")
+    defaultconfig.gromacs_executable = "gmx"
 
 
 
@@ -147,5 +147,3 @@ def default_configuration():
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
     return defaultconfig
-
-'''
