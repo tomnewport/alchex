@@ -1,5 +1,5 @@
 from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import cdist, pdist, squareform
 import numpy
 import networkx as nx
 from itertools import combinations
@@ -267,14 +267,15 @@ class WAEditableGrofile(object):
         top_molecules = self.top_molecules()
         counts = []
         for moltype, count in top_molecules:
-            atom_count = int(count)
-            for instance_id in range(atom_count):
+            moltype_count = int(count)
+            atom_count = self.moltype_atomcounts[moltype]
+            for instance_id in range(moltype_count):
                 counts.append({
                     "moltype" : moltype, 
                     "atoms" : atom_count, 
                     "instance_id" : instance_id})
         current_count = None
-        for residue in self.residues:
+        for residue in self.residues[:1000]:
             if current_count is None or current_count["atoms"] <= 0:
                 current_count = counts.pop(0)
             current_count["atoms"] -= len(residue.atoms)
@@ -292,13 +293,28 @@ class WAEditableGrofile(object):
         for moltype, atom_count in atoms:
             molecules.append((moltype, atom_count/self.moltype_atomcounts[moltype]))
         return molecules
-    def moltype_clashgraph(self, distance_tolerance=1):
-        graph = nx.Graph()
-        moltypes = set()
+    def residue_of(self, atom_id):
+        sum_atoms = 0
+        for residue in self.residues:
+            sum_atoms += len(residue.atoms)
+            if sum_atoms > atom_id:
+                return residue
+    def atom_clashes(self, distance_tolerance=1):
+        all_points = None
         for r in self.residues:
-            #print r.moltype
-            moltypes.add((r.moltype, r.moltype_instance))
-        #print moltypes
+            if all_points is None:
+                all_points = r.coordinates
+            else:
+                all_points.add_points(r.coordinates.points[:,:3])
+        distances = squareform(pdist(all_points.points))
+        numpy.fill_diagonal(distances, distance_tolerance + 1)
+        clashes = numpy.argwhere(distances <= distance_tolerance)
+        return clashes
+    def moltype_clashgraph(self, distance_tolerance=1):
+        atom_clashes = self.atom_clashes()
+        for atom1, atom2 in atom_clashes:
+            res1, res2 = self.residue_of(atom1), self.residue_of(atom2)
+            print(res1.moltype, res1.moltype_instance, res2.moltype, res2.moltype_instance)
     def clashgraph(self, distance_tolerance=1):
         graph = nx.Graph()
         graph.add_nodes_from(range(len(self.residues)))
