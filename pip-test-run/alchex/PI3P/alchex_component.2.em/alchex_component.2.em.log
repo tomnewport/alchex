@@ -1,5 +1,5 @@
-Log file opened on Sun Jan 31 19:41:42 2016
-Host: derp.local  pid: 7098  rank ID: 0  number of ranks:  1
+Log file opened on Wed Feb  3 12:24:11 2016
+Host: derp.local  pid: 76401  rank ID: 0  number of ranks:  1
 GROMACS:    gmx mdrun, VERSION 5.0.1
 
 GROMACS is written by:
@@ -100,7 +100,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = 3888692493
+   ld-seed                        = 3159214944
    emtol                          = 1000
    emstep                         = 0.001
    niter                          = 20
@@ -276,7 +276,7 @@ Using full Lennard-Jones parameter combination matrix
 Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00, Coulomb -1e+00
 Removing pbc first time
 Initiating Steepest Descents
-Started Steepest Descents on rank 0 Sun Jan 31 19:41:42 2016
+Started Steepest Descents on rank 0 Wed Feb  3 12:24:11 2016
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e+03
@@ -286,15 +286,15 @@ Steepest Descents:
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.66386e+02    1.96519e+02   -1.36609e+02   -1.35750e+03   -8.31205e+02
+    4.85592e+02    1.81597e+02   -1.16127e+02   -1.35752e+03   -8.06456e+02
  Pressure (bar)
     0.00000e+00
 
 
 Steepest Descents converged to Fmax < 1000 in 1 steps
-Potential Energy  = -8.3120483e+02
-Maximum force     =  6.3192572e+02 on atom 2
-Norm of force     =  2.2362050e+02
+Potential Energy  = -8.0645551e+02
+Maximum force     =  6.2962628e+02 on atom 2
+Norm of force     =  2.4612889e+02
 
 	M E G A - F L O P S   A C C O U N T I N G
 
@@ -305,15 +305,15 @@ Norm of force     =  2.2362050e+02
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               0.001382           0.012    15.7
- NxN RF Elec. + LJ [V&F]                  0.000352           0.019    24.0
- NxN LJ [V&F]                             0.000736           0.032    39.9
- Shift-X                                  0.000064           0.000     0.5
- Bonds                                    0.000064           0.004     4.8
- Angles                                   0.000060           0.010    12.7
- Virial                                   0.000109           0.002     2.5
+ Pair Search distance check               0.001338           0.012    13.5
+ NxN RF Elec. + LJ [V&F]                  0.000384           0.021    23.3
+ NxN LJ [V&F]                             0.000928           0.040    44.9
+ Shift-X                                  0.000064           0.000     0.4
+ Bonds                                    0.000064           0.004     4.2
+ Angles                                   0.000060           0.010    11.3
+ Virial                                   0.000109           0.002     2.2
 -----------------------------------------------------------------------------
- Total                                                       0.079   100.0
+ Total                                                       0.089   100.0
 -----------------------------------------------------------------------------
 
 
@@ -324,16 +324,16 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.000          0.000   1.1
+ Neighbor search        1    1          1       0.000          0.000   1.0
  Force                  1    1          1       0.000          0.000   1.1
  NB X/F buffer ops.     1    1          1       0.000          0.000   0.0
- Rest                                           0.005          0.030  97.7
+ Rest                                           0.006          0.034  97.9
 -----------------------------------------------------------------------------
- Total                                          0.006          0.031 100.0
+ Total                                          0.006          0.035 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
        Time:        0.006        0.006      100.0
                (steps/hour)
-Performance:       648659.4
-Finished mdrun on rank 0 Sun Jan 31 19:41:42 2016
+Performance:       584142.3
+Finished mdrun on rank 0 Wed Feb  3 12:24:11 2016

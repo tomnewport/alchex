@@ -1,3 +1,4 @@
+# coding: utf-8
 from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile
 from alchex.exchange_map import ExchangeMap
 from alchex.residue import ResidueStructure
