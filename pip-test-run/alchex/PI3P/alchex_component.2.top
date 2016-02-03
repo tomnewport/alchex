@@ -1,9 +1,0 @@
-#include "martini_v2.1.itp"
-#include "protein-cg.itp"
-#include "pi3p.itp"
-
-[ system ]
-SELF-ASSEMBLY
-
-[ molecules ]
-PI3P 4

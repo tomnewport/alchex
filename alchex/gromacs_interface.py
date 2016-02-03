@@ -419,6 +419,8 @@ class GromacsEditableTOPFile(object):
         self.tables = OrderedDict()
         self.moltypes = OrderedDict()
         self.includes = []
+    def modify_molecules(self, new_molecules):
+        self.tables["molecules"] = [OrderedDict([("moltype",moltype), ("count", str(count))]) for moltype, count in new_molecules]
     def add_moltype(self, moltype):
         self.moltypes[moltype.name] = moltype
     def preprocess_line(self, line):
@@ -428,12 +430,15 @@ class GromacsEditableTOPFile(object):
         return line
     def from_file(self, filename):
         table_header = re.compile('\[\s*(\w*)\s*\]')
+        quoted = re.compile('[\'"]([^"'']*)[\'"]')
         with open(filename, "r") as file_handle:
             for line in file_handle:
                 line = self.preprocess_line(line)
                 if line != "":
                     th = table_header.search(line)
-                    if th is not None:
+                    if "#include " in line:
+                        self.includes.append(quoted.search(line).groups(1)[0])
+                    elif th is not None:
                         table_name = th.group(1)
                         if table_name in TOPFILE_FIELDS:
                             table_columns = TOPFILE_FIELDS[table_name]

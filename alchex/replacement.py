@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile
+from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile, GromacsEditableTOPFile
 from alchex.config import default_configuration
 from alchex.geometry import PointCloud
 from alchex.residue import ResidueStructure, MultiResidueStructure
@@ -107,8 +107,8 @@ class ReplaceableEntity(object):
         to_residue = self.replacement_system.alchex_config.get_reference_structure(self.exchange_model.to_resname)
         self.replacement = self.exchange_model.run(self.from_residue, to_residue)
         self.replacement.resid = self.new_residue_ids
+        self.replacement.moltype = self.exchange_model.to_moltype
         return self.replacement
-
 
 class ReplacementSystem(object):
     def __init__(self, 
@@ -221,13 +221,70 @@ class ReplacementSystem(object):
                     )
 
         return replaceable_entities
-    def replace(self, replaceable_entities, name="alchex"):
+    def _replace(self, replaceable_entities, name="alchex"):
         '''
         Given a set of replaceable_entities, performs replacement in the specified directory
         '''
         self.simulations.copy_folder("/original", "/" + name)
         self.simulations.cd("/"+name)
+        original = WAEditableGrofile()
+        original.from_file(self.simulations.resolve_path("/"+name+"/input.gro"))
+        original_topology = GromacsEditableTOPFile()
+        original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
+        em_mdp = GromacsMDPFile()
+        em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
+        em_mdp.to_file(self.simulations.resolve_path("em.mdp"))
+        self.simulations.gromacs.grompp(kwargs={
+                    "-f" : "em.mdp", 
+                    "-c" : "input.gro", 
+                    "-p" : "input.top",
+                    "-o" : "preprocess",
+                    "-pp": "input-pp.top",
+                    "-maxwarn":"1"})
+        full_topology = GromacsEditableTOPFile()
+        full_topology.from_file(self.simulations.resolve_path("/"+name+"/input-pp.top"))
+        original.add_topology(full_topology)
+        replaced = WAEditableGrofile()
+        for entity in replaceable_entities:
+            to_resname = entity.exchange_model.to_resname
+            to_moltype = entity.exchange_model.to_moltype
+            if to_moltype not in original.moltypes:
+                insert_idx = original.moltypes.index(entity.exchange_model.from_moltype)
+                original.moltypes.insert(insert_idx, entity.exchange_model.to_moltype)
+            entity.replacement_system = self
+            entity.setup()
+            new_residues = entity.replace()
+            original.delete_by_resids(entity.residue_ids)
+            original.residues.append(new_residues)
+        original_topology.modify_molecules(original.top_molecules())
+        original_topology.to_file(self.simulations.resolve_path("replaced.top"))
+        original.sort_residues()
+        original.renumber_moltypes()
+        original.moltype_clashgraph()
+        original.to_file(self.simulations.resolve_path("replaced.gro"))
+        # Energy minimise the new system
+        '''
+        print self.simulations.gromacs.grompp(kwargs={
+                    "-f" : "em.mdp", 
+                    "-c" : "replaced.gro", 
+                    "-p" : "replaced.top",
+                    "-o" : "all-em.tpr",
+                    "-maxwarn":"1"})[1]
+        print self.simulations.gromacs.mdrun(kwargs={
+            "-deffnm" : "all-em"
+            })[1]
+        '''
+        # Look for clashes
+        # Use alchembed to resolve clashes
+    def replace(self, replaceable_entities, name="alchex"):
+        '''
+        Old method, see _replace instead.
+        Given a set of replaceable_entities, performs replacement in the specified directory
+        '''
+        self.simulations.copy_folder("/original", "/" + name)
+        self.simulations.cd("/"+name)
         replacement_groups = {}
+        '''
         for entity in replaceable_entities:
             to_resname = entity.exchange_model.to_resname
             if to_resname not in replacement_groups:
@@ -235,12 +292,15 @@ class ReplacementSystem(object):
             entity.replacement_system = self
             entity.setup()
             replacement_groups[to_resname].append(entity.replace())
+        '''
         original = WAEditableGrofile()
         original.from_file(self.simulations.resolve_path("/"+name+"/input.gro"))
         original_topology = GromacsTOPFile()
         original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
         em_mdp = GromacsMDPFile()
         em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
+
+        '''
         for p, v in self.additional_em_parameters.items():
             em_mdp.attrs[p] = v
         for to_resname, residues in replacement_groups.items():
@@ -272,6 +332,7 @@ class ReplacementSystem(object):
                 grompp_result, grompp_message = self.simulations.gromacs.mdrun(kwargs={"-deffnm":em_dir})
                 if "Steepest Descents converged to Fmax" in grompp_message:
                     logging.info("Successfully energy minimised " + to_resname + "/" +  base_filename + ".")
+        '''
     def auto_replace(self, selection, composition):
         '''Shorthand to create replaceable entities and then run replacement'''
         replacement_specification = ReplacementSpecification(self.alchex_config,
@@ -287,7 +348,7 @@ class ReplacementSystem(object):
                 )
             )
         replaceable_entities = self.build_replaceable_entities(map_counts, replacement_specification)
-        self.replace(replaceable_entities)
+        self._replace(replaceable_entities)
     def energy_minimise(self):
         # Determine non-clashing groups of replaceable entites
         # Energy minimise non-clashing groups of replacable entities

@@ -14,6 +14,8 @@ class WAEditableResidue(object):
     def __init__(self, resname, resid):
         self.resname = resname
         self.resid = resid
+        self.moltype = None
+        self.moltype_instance = None
         self.ids = []
         self.atoms = []
         self.coordinates = PointCloud(3)
@@ -211,17 +213,92 @@ class WAEditableGrofile(object):
     def __init__(self):
         self.sysname = "Edited Gro File"
         self.residues = []
+        self.moltypes = []
         self.box_vector = [0,0,0]
+    def sort_residues(self):
+        if len(self.moltypes) != 0:
+            self.residues = sorted(self.residues, key = lambda x: (
+                self.moltypes.index(x.moltype), 
+                x.moltype_instance,
+                int(x.resid))
+            )
+        else:
+            self.residues = sorted(self.residues, key = lambda x: int(x.resid))
+        for residue in self.residues:
+            residue.sort_atoms()
+    def add_topology(self, topfile):
+        self.sort_residues
+        self.topology = topfile
+        self.moltype_atomcounts = {}
+        counts = []
+        for molname, topdef in topfile.moltypes.items():
+            self.moltype_atomcounts[molname] = len(topdef.atoms)
+        for moltype_idx, row in enumerate(topfile.tables["molecules"]):
+            moltype = row["moltype"]
+            for molname, topdef in topfile.moltypes.items():
+                if molname.lower() == moltype.lower():
+                    moltype_def = topdef
+                    break
+            self.moltypes.append(molname)
+            atom_count = len(moltype_def.atoms)
+            instance_count = int(row["count"])
+            for instance_id in range(instance_count):
+                counts.append({"moltype" : molname, "atoms" : atom_count, "instance_id" : instance_id, "moltype_idx":moltype_idx})
+        current_count = None
+        for residue in self.residues:
+            if current_count is None or current_count["atoms"] <= 0:
+                current_count = counts.pop(0)
+            current_count["atoms"] -= len(residue.atoms)
+            residue.moltype = current_count["moltype"]
+            residue.moltype_instance = current_count["instance_id"]
     def combine(self, other):
         self.residues += other.residues
-    def top_molecules(self):
-        molecules = []
+    def find_resid(self, resid):
+        for idx, residue in enumerate(self.residues):
+            if int(residue.resid) == int(resid):
+                return idx
+        return None
+    def delete_by_resids(self, resids):
+        resids = list(resids)
+        for resid in resids:
+            del self.residues[self.find_resid(resid)]
+    def renumber_moltypes(self):
+        # Something is wrong with this
+        top_molecules = self.top_molecules()
+        counts = []
+        for moltype, count in top_molecules:
+            atom_count = int(count)
+            for instance_id in range(atom_count):
+                counts.append({
+                    "moltype" : moltype, 
+                    "atoms" : atom_count, 
+                    "instance_id" : instance_id})
+        current_count = None
         for residue in self.residues:
-            if len(molecules) == 0 or molecules[-1][0] != residue.resname:
-                molecules.append((residue.resname, 1))
+            if current_count is None or current_count["atoms"] <= 0:
+                current_count = counts.pop(0)
+            current_count["atoms"] -= len(residue.atoms)
+            residue.moltype = current_count["moltype"]
+            residue.moltype_instance = current_count["instance_id"]
+    def top_molecules(self):
+        self.sort_residues()
+        atoms = []
+        for residue in self.residues:
+            if len(atoms) == 0 or atoms[-1][0] != residue.moltype:
+                atoms.append((residue.moltype, len(residue.atoms)))
             else:
-                molecules[-1] = (residue.resname, molecules[-1][1] + 1)
+                atoms[-1] = (residue.moltype, atoms[-1][1] + len(residue.atoms))
+        molecules = []
+        for moltype, atom_count in atoms:
+            molecules.append((moltype, atom_count/self.moltype_atomcounts[moltype]))
         return molecules
+    def moltype_clashgraph(self, distance_tolerance=1):
+        graph = nx.Graph()
+        moltypes = set()
+        for r in self.residues:
+            #print r.moltype
+            moltypes.add((r.moltype, r.moltype_instance))
+        #print moltypes
     def clashgraph(self, distance_tolerance=1):
         graph = nx.Graph()
         graph.add_nodes_from(range(len(self.residues)))
@@ -289,7 +366,9 @@ class WAEditableGrofile(object):
             file_handle.write(self.sysname + "\n")
             file_handle.write(str(atom_count).rjust(5)+ "\n")
             atom_id = 0
-            for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+            self.sort_residues()
+            #for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+            for residue in self.residues:
                 residue.sort_atoms()
                 for idx, atom_data in enumerate(residue.atoms):
                     atom_id += 1

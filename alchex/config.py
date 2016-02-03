@@ -33,13 +33,15 @@ class AlchexConfig(object):
         self.parameters[resname] = parameters
     def get_reference_structure(self, resname):
         return choice(self.reference_structures[resname])
-    def build_exchange_map(self, from_resname, to_resname, exchange_model, draw=False, **kwargs):
+    def build_exchange_map(self, from_resname, from_moltype, to_resname, to_moltype, exchange_model, draw=False, **kwargs):
         from_parameters = self.parameters[from_resname]
         to_parameters = self.parameters[to_resname]
         newmap = ExchangeMap()
         newmap.new(
             from_itp=from_parameters, 
             to_itp=to_parameters, 
+            to_moltype=to_moltype,
+            from_moltype=from_moltype,
             method=exchange_model, 
             draw=False, 
             **kwargs)
@@ -83,7 +85,7 @@ def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
-    defaultconfig.gromacs_executable = "gmx"
+    defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"
 
 
 
@@ -98,7 +100,9 @@ def default_configuration():
 
     defaultconfig.build_exchange_map(
     from_resname="DPPC", 
-    to_resname = "CHOL", 
+    from_moltype="DPPC", 
+    to_resname = "CHOL",
+    to_moltype = "CHOL", 
     exchange_model="martini.static_planar_alignment", 
     draw=False, 
     clusters=[
@@ -121,22 +125,30 @@ def default_configuration():
 
     defaultconfig.build_exchange_map(
     from_resname="POPC",
+    from_moltype="POPC",
     to_resname="DPPC",
+    to_moltype="DPPC",
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
     from_resname="DPPC",
+    from_moltype="DPPC",
     to_resname="PI3P",
+    to_moltype="PI3P",
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
     from_resname="POPC",
+    from_moltype="POPC",
     to_resname="CDL0",
+    to_moltype="CDL0",
     exchange_model="martini.lipid_to_card")
 
     defaultconfig.build_exchange_map(
     from_resname="POPC",
+    from_moltype="POPC",
     to_resname="DLPG",
+    to_moltype="DLPG",
     exchange_model="martini.lipid")
 
     #defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")

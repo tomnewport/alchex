@@ -12,6 +12,7 @@ class ExchangeMap(object):
         self.from_resname = ""
         self.from_count = 0
         self.to_resname = ""
+        self.to_moltype = None
         self.grouping = None
         self.to_count = 0
         self.actions = []
@@ -172,7 +173,9 @@ class ExchangeMap(object):
         ]
     def __repr__(self):
         return " 〘 ⚗ Change {from_count}x {from_resname} to {to_count}x {to_resname} {sc} 〙 ".format(sc=self.scorecard(), **self.__dict__)
-    def new(self, from_itp=None, to_itp=None, method="martini.lipid", draw=False, **kwargs):
+    def new(self, from_itp=None, to_itp=None, to_moltype=None, from_moltype=None, method="martini.lipid", draw=False, **kwargs):
+        self.to_moltype = to_moltype
+        self.from_moltype = from_moltype
         self.from_itp = from_itp
         self.to_itp = to_itp
         self.from_resname = self.from_itp.atoms.values()[0].attrs["residue"]
