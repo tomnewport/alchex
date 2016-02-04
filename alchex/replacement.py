@@ -283,7 +283,8 @@ class ReplacementSystem(object):
         original.renumber_moltypes()
         print(len(original.declash_moltypes(2)))
         # Energy minimise the new system
-        original.to_file(self.simulations.resolve_path("replaced.gro"))        
+        original.to_file(self.simulations.resolve_path("replaced.gro"))   
+             
         statuscode, message = self.simulations.gromacs.grompp(kwargs={
                     "-f" : "em.mdp", 
                     "-c" : "replaced.gro", 
