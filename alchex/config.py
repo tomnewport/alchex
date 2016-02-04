@@ -95,8 +95,11 @@ def default_configuration():
     defaultconfig.load_itp_file("data/CDL.itp", "CDL0")
     defaultconfig.load_itp_file("data/chol.itp", "CHOL")
     defaultconfig.load_itp_file("data/dppc.itp", "DPPC")
-    defaultconfig.load_itp_file("data/dppc.itp", "DPPC")
     defaultconfig.load_itp_file("data/pi3p.itp", "PI3P")
+    defaultconfig.load_itp_file("data/martini_v2.1.itp", "PVPA")
+    defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPS")
+    defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPE")
+    defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPG")
     defaultconfig.load_itp_file("data/popc_patch/popc_ac.itp", "POPC")
 
     defaultconfig.build_exchange_map(
@@ -166,11 +169,50 @@ def default_configuration():
     to_moltype="DLPG",
     exchange_model="martini.lipid")
 
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="POPS",
+    to_moltype="POPS",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="POPC",
+    to_moltype="POPC",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="PVPA",
+    to_moltype="PVPA",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="POPE",
+    to_moltype="POPE",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="POPG",
+    from_moltype="POPG",
+    to_resname="POPS",
+    to_moltype="POPS",
+    exchange_model="martini.lipid")
+
     defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
     defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
     defaultconfig.add_reference_structure("PI3P","data/pi3p.pdb", selection="resname PI3")
     defaultconfig.add_reference_structure("CHOL","data/chol.pdb", selection="resname CHO")
+    defaultconfig.add_reference_structure("PVPA","data/pvpa.pdb", selection="resname PVP")
+    defaultconfig.add_reference_structure("POPS","data/pops.pdb", selection="resname POP")
+    defaultconfig.add_reference_structure("POPE","data/pope.pdb", selection="resname POP")
+    defaultconfig.add_reference_structure("POPC","data/popc.pdb", selection="resname POP")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")

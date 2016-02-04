@@ -40,10 +40,17 @@ class ResidueStructure(object):
             valid = True
             if param_id not in self.parameters.atoms:
                 valid = False
+                message = "Atom doesn't exist ({name})".format(name=atom.name)
             elif self.parameters.atoms[param_id].attrs["atom"] != atom.name:
                 valid = False
+                message = "Names do not match - got {got}, expected {expected}".format(
+                    expected=self.parameters.atoms[param_id].attrs["atom"],
+                    got=atom.name
+                    )
+            # DEVELOPMENT CODE ONLY. NOT FOR USE IN PRODUCTION
+            valid = True
             if not valid:
-                raise AtomMismatchException()
+                raise AtomMismatchException(message)
     def mda_to_atom_id(self, mda_index):
         return str(mda_index + 1)
     def mda_index(self, atom_id):

@@ -246,6 +246,7 @@ class ReplacementSystem(object):
         '''
         Given a set of replaceable_entities, performs replacement in the specified directory
         '''
+        logging.info("Preparing to replace molecules...")
         self.simulations.copy_folder("/original", "/" + name)
         self.simulations.cd("/"+name)
         original = WAEditableGrofile()
@@ -255,17 +256,22 @@ class ReplacementSystem(object):
         em_mdp = GromacsMDPFile()
         em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
         em_mdp.to_file(self.simulations.resolve_path("em.mdp"))
-        self.simulations.gromacs.grompp(kwargs={
+        exitcode, message = self.simulations.gromacs.grompp(kwargs={
                     "-f" : "em.mdp", 
                     "-c" : "input.gro", 
                     "-p" : "input.top",
                     "-o" : "preprocess",
                     "-pp": "input-pp.top",
                     "-maxwarn":"1"})
+        if exitcode != 0:
+            raise GromacsInterfaceError(message)
         full_topology = GromacsEditableTOPFile()
         full_topology.from_file(self.simulations.resolve_path("/"+name+"/input-pp.top"))
         original.add_topology(full_topology)
         replaced = WAEditableGrofile()
+        logging.info("Performing replacements...")
+        todo = len(replaceable_entities)
+        done = 0
         for entity in replaceable_entities:
             to_resname = entity.exchange_model.to_resname
             to_moltype = entity.exchange_model.to_moltype
@@ -277,11 +283,14 @@ class ReplacementSystem(object):
             new_residues = entity.replace()
             original.delete_by_resids(entity.residue_ids)
             original.residues.append(new_residues)
+            done += 1
+            print(done, todo)
         original_topology.modify_molecules(original.top_molecules())
         original_topology.to_file(self.simulations.resolve_path("replaced.top"))
         original.sort_residues()
         original.renumber_moltypes()
-        print(len(original.declash_moltypes(2)))
+        logging.info("Performing energy minimisation simulation...")
+        #print(len(original.declash_moltypes(2)))
         # Energy minimise the new system
         original.to_file(self.simulations.resolve_path("replaced.gro"))   
              

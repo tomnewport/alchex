@@ -1,0 +1,9 @@
+#include "martini_v2.1.itp"
+[ system ]
+MIXED-LIPID
+
+[ molecules ]
+POPE	7776
+POPS	2592
+W	196762
+
