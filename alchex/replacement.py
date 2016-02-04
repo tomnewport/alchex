@@ -4,6 +4,7 @@
 from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile, GromacsEditableTOPFile
 from alchex.config import default_configuration
 from alchex.geometry import PointCloud
+from alchex.errors import GromacsInterfaceError
 from alchex.residue import ResidueStructure, MultiResidueStructure
 from alchex.workarounds import WAEditableGrofile
 from os import path
@@ -133,6 +134,20 @@ class ReplacementSystem(object):
         if include_from is None:
             self.include_from = path.split(self.input_topology_filename)[0]
         self.setup()
+        self._custom_groups = {}
+    def custom_group(self, group_name):
+        universe = self.simulations.universe("input.gro")
+        if group_name not in self._custom_groups:
+            if group_name in ["leaflet upper", "leaflet lower"]:
+                
+            self._custom_groups[group_name] = "---"
+        return self._custom_groups[group_name]
+    def preprocess_selection(self, string):
+        custom_groups = ["leaflet upper", "leaflet lower"]
+        for cg in custom_groups:
+            if cg in string:
+                string = string.replace(cg, self.custom_group(cg))
+        return string
     def setup(self):
         # Add specified files:
         self.simulations = SimulationContainer(self.root_folder, GromacsWrapper(self.alchex_config.gromacs_executable))
@@ -260,20 +275,26 @@ class ReplacementSystem(object):
         original_topology.to_file(self.simulations.resolve_path("replaced.top"))
         original.sort_residues()
         original.renumber_moltypes()
-        original.moltype_clashgraph()
-        original.to_file(self.simulations.resolve_path("replaced.gro"))
+        print(len(original.declash_moltypes(2)))
         # Energy minimise the new system
-        '''
-        print self.simulations.gromacs.grompp(kwargs={
+        original.to_file(self.simulations.resolve_path("replaced.gro"))        
+        statuscode, message = self.simulations.gromacs.grompp(kwargs={
                     "-f" : "em.mdp", 
                     "-c" : "replaced.gro", 
                     "-p" : "replaced.top",
                     "-o" : "all-em.tpr",
-                    "-maxwarn":"1"})[1]
-        print self.simulations.gromacs.mdrun(kwargs={
+                    "-maxwarn":"1"})
+        if statuscode != 0:
+            raise GromacsInterfaceError(message)
+
+        statuscode, message = self.simulations.gromacs.mdrun(kwargs={
             "-deffnm" : "all-em"
-            })[1]
-        '''
+            })
+        if statuscode != 0:
+            raise GromacsInterfaceError(message)
+
+        original.reload(self.simulations.resolve_path("all-em.gro"), same_atom_names=False)
+        print(len(original.declash_moltypes(2)))
         # Look for clashes
         # Use alchembed to resolve clashes
     def replace(self, replaceable_entities, name="alchex"):
@@ -364,3 +385,12 @@ d = ReplacementSystem(
 
 d.auto_replace(selection="resname POPC", composition={"DPPC" : 50, "CDL0" : 24})
 '''
+
+d = ReplacementSystem(
+    input_structure_filename="pip-test/original/centred.gro",
+    input_topology_filename="pip-test/original/input.top",
+    root_folder="pip-test-run"
+    )
+print d.preprocess_selection("hello world")
+print d.preprocess_selection("leaflet upper")
+print d.preprocess_selection("leaflet upper and resid 10")

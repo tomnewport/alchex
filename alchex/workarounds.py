@@ -4,6 +4,7 @@ import numpy
 import networkx as nx
 from itertools import combinations
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 def mda_atom_to_dict(mda_atom):
     return {
@@ -310,11 +311,37 @@ class WAEditableGrofile(object):
         numpy.fill_diagonal(distances, distance_tolerance + 1)
         clashes = numpy.argwhere(distances <= distance_tolerance)
         return clashes
-    def moltype_clashgraph(self, distance_tolerance=1):
-        atom_clashes = self.atom_clashes()
+    def moltype_clashgraph(self, distance_tolerance=2):
+        atom_clashes = self.atom_clashes(distance_tolerance=distance_tolerance)
+        graph = nx.Graph()
         for atom1, atom2 in atom_clashes:
             res1, res2 = self.residue_of(atom1), self.residue_of(atom2)
-            print(res1.moltype, res1.moltype_instance, res2.moltype, res2.moltype_instance)
+            mol1, mol2 = (res1.moltype, res1.moltype_instance), (res2.moltype, res2.moltype_instance)
+            if mol1 != mol2 and (mol1, mol2) not in graph.edges(mol1):
+                graph.add_edge(mol1, mol2)
+        return graph
+    def declash_moltypes(self, distance_tolerance=2, exclude=None, include=None):
+        all_moltypes = set([(residue.moltype, residue.moltype_instance) for residue in self.residues])
+        clashgraph = self.moltype_clashgraph(distance_tolerance=distance_tolerance)
+        if exclude is not None:
+            exc = [x.upper() for x in exclude]
+            remove = [x for x in all_moltypes if x[0].upper() in exc]
+            clashgraph.remove_nodes_from(remove)
+            all_moltypes -= set(remove)
+        if include is not None:
+            inc = [x.upper() for x in include]
+            remove = [x for x in all_moltypes if x[0].upper() not in inc]
+            clashgraph.remove_nodes_from(remove)
+            all_moltypes -= set(remove)
+        colours = nx.algorithms.greedy_color(clashgraph)
+        groups = []
+        for moltype, colour in colours.items():
+            while len(groups) < colour + 1:
+                groups.append(set())
+            all_moltypes.remove(moltype)
+            groups[colour].add(moltype)
+        groups[0].update(all_moltypes)
+        return groups
     def clashgraph(self, distance_tolerance=1):
         graph = nx.Graph()
         graph.add_nodes_from(range(len(self.residues)))
@@ -369,6 +396,36 @@ class WAEditableGrofile(object):
             self.residues[-1].ids.append(atom_id)
             self.residues[-1].atoms.append(atom_data)
         self.box_vector = [10*float(x) for x in lines[-1].split()]
+    def reload(self, filename, reload_coordinates=True, reload_resids=True, reload_atom_names=True, same_atom_names=True):
+        '''
+        Reloads coordinates and/or resids from a file - this allows gromacs to run a simulation
+        and the results to be loaded back into the object, keeping things like moltypes.
+        '''
+        with open(filename, "r") as fh:
+            lines = [x for x in fh.read().split("\n") if x.strip() != ""]
+        atoms = [gro_to_dict(x) for x in lines[2:-1]]
+        atom_start = 0
+        for residue in self.residues:
+            res_atoms = len(residue.atoms)
+            atom_end = atom_start + res_atoms
+            residue_atoms = atoms[atom_start:atom_end]
+            assert len(residue_atoms) == len(residue.atoms), "Files are too different"
+            if same_atom_names:
+                assert [x["name"] for x in residue.atoms] == [x["name"] for x in residue_atoms], "Atom names have changed"
+            if reload_coordinates:
+                residue.coordinates.points = numpy.array([[
+                    10*float(atom_data["posx"]), 
+                    10*float(atom_data["posy"]), 
+                    10*float(atom_data["posz"]),
+                    1
+                ] for atom_data in residue_atoms])
+            if reload_resids:
+                residue.resid = residue_atoms[0]["resid"]
+            for old_atom, new_atom in zip(residue.atoms, residue_atoms):
+                if reload_atom_names:
+                    old_atom["name"] = new_atom["name"]
+            atom_start = atom_end
+        assert atom_start == len(lines) - 3, "Number of atoms in update file does not match new file."
     def list_residues(self):
         rlist = []
         for residue in self.residues:

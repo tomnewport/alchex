@@ -3,3 +3,6 @@ class AtomMismatchException(Exception):
 
 class ExchangeMapMissingException(Exception):
     pass
+
+class GromacsInterfaceError(Exception):
+    pass

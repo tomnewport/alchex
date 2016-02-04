@@ -138,6 +138,13 @@ def default_configuration():
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="CDL0",
+    to_moltype="CDL0",
+    exchange_model="martini.lipid_to_card")
+
+    defaultconfig.build_exchange_map(
     from_resname="POPC",
     from_moltype="POPC",
     to_resname="CDL0",
