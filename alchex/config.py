@@ -85,8 +85,9 @@ def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
-    defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"
-
+    
+    #defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"
+    defaultconfig.gromacs_executable = "gmx"
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
@@ -140,6 +141,13 @@ def default_configuration():
     defaultconfig.build_exchange_map(
     from_resname="DPPC",
     from_moltype="DPPC",
+    to_resname="DPPC",
+    to_moltype="DPPC",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
     to_resname="CDL0",
     to_moltype="CDL0",
     exchange_model="martini.lipid_to_card")
@@ -152,16 +160,17 @@ def default_configuration():
     exchange_model="martini.lipid_to_card")
 
     defaultconfig.build_exchange_map(
-    from_resname="POPC",
-    from_moltype="POPC",
+    from_resname="DPPC",
+    from_moltype="DPPC",
     to_resname="DLPG",
     to_moltype="DLPG",
     exchange_model="martini.lipid")
 
-    #defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
+    defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
     defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
     defaultconfig.add_reference_structure("PI3P","data/pi3p.pdb", selection="resname PI3")
+    defaultconfig.add_reference_structure("CHOL","data/chol.pdb", selection="resname CHO")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")

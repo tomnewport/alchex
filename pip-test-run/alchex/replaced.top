@@ -1,0 +1,18 @@
+#include "martini_v2.1.itp"
+#include "protein-cg.itp"
+#include "pi3p.itp"
+#include "CDL.itp"
+[ system ]
+SELF-ASSEMBLY
+
+[ molecules ]
+Protein	1
+DLPG	223
+CDL0	28
+CHOL	27
+PI3P	28
+DPPC	27
+W	8153
+NA+	205
+CL-	191
+

@@ -7,6 +7,19 @@ d = ReplacementSystem(
     )
 
 d.auto_replace(
-    selection="resname DPPC and leaflet upper", 
-    composition={"PI3P" : 100, "CDL0" : 100}
+		{
+			"selection"  :"leaflet upper",
+		 	"composition": {
+		 	    "DLPG" : 30
+		 	    }
+		},
+		{	
+			"selection"  :"leaflet lower",
+		 	"composition": {
+		 	    "PI3P" : 1, 
+		 	    "CDL0" : 1,
+		 	    "CHOL" : 1,
+		 	    "DLPG" : 1,
+		 	    "DPPC" : 1
+		 	    }}
     )

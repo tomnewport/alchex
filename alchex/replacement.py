@@ -7,6 +7,7 @@ from alchex.geometry import PointCloud
 from alchex.errors import GromacsInterfaceError
 from alchex.residue import ResidueStructure, MultiResidueStructure
 from alchex.workarounds import WAEditableGrofile
+from alchex.lipid_analysis import find_bilayer_leaflets
 from os import path
 from collections import Counter
 import logging
@@ -138,9 +139,14 @@ class ReplacementSystem(object):
     def custom_group(self, group_name):
         universe = self.simulations.universe("input.gro")
         if group_name not in self._custom_groups:
-            if group_name in ["leaflet upper", "leaflet lower"]:
-                
-            self._custom_groups[group_name] = "---"
+            if group_name in ["leaflet upper", "leaflet lower"]:  
+                lower_leaflet_resids, upper_leaflet_resids = find_bilayer_leaflets(universe)
+                self._custom_groups["leaflet lower"] = "("+" or ".join(
+                    ["resid "+str(resid) for resid in lower_leaflet_resids]
+                    )+")"
+                self._custom_groups["leaflet upper"] = "("+" or ".join(
+                    ["resid "+str(resid) for resid in upper_leaflet_resids]
+                    )+")"
         return self._custom_groups[group_name]
     def preprocess_selection(self, string):
         custom_groups = ["leaflet upper", "leaflet lower"]
@@ -176,7 +182,7 @@ class ReplacementSystem(object):
     def build_replaceable_entities(self, map_counts, replacement_specification):
         # Accepts a list of residue names and counts
         input_universe       = self.simulations.universe("input.gro")
-        replaceable_universe = input_universe.select_atoms(replacement_specification.selection)
+        replaceable_universe = input_universe.select_atoms(self.preprocess_selection(replacement_specification.selection))
         available_entities   = replaceable_universe.residues
         resid_to_name        = {r.id : r.name for r in available_entities}
         from_resnames = Counter([r.name for r in available_entities])
@@ -354,21 +360,27 @@ class ReplacementSystem(object):
                 if "Steepest Descents converged to Fmax" in grompp_message:
                     logging.info("Successfully energy minimised " + to_resname + "/" +  base_filename + ".")
         '''
-    def auto_replace(self, selection, composition):
+    def auto_replace(self, *groups):
         '''Shorthand to create replaceable entities and then run replacement'''
-        replacement_specification = ReplacementSpecification(self.alchex_config,
-            selection=selection, 
-            composition=composition, 
-            parsimonious=False)
-        input_universe       = self.simulations.universe("input.gro")
-        replaceable_universe = input_universe.select_atoms(selection)
-        # Determine how many of each residue are going to be created:
-        map_counts = replacement_specification.map_counts(
-            Counter(
+        replaceable_entities = []
+        for group in groups:
+            selection = group["selection"]
+            composition = group["composition"]
+
+            replacement_specification = ReplacementSpecification(self.alchex_config,
+                selection=selection, 
+                composition=composition, 
+                parsimonious=False)
+            input_universe       = self.simulations.universe("input.gro")
+
+            replaceable_universe = input_universe.select_atoms(self.preprocess_selection(selection))
+            # Determine how many of each residue are going to be created:
+            map_counts = replacement_specification.map_counts(
+                Counter(
                 [x.atoms[0].resname for x in replaceable_universe.residues]
                 )
-            )
-        replaceable_entities = self.build_replaceable_entities(map_counts, replacement_specification)
+                )
+            replaceable_entities += self.build_replaceable_entities(map_counts, replacement_specification)
         self._replace(replaceable_entities)
     def energy_minimise(self):
         # Determine non-clashing groups of replaceable entites
@@ -384,7 +396,7 @@ d = ReplacementSystem(
     input_topology_filename="data/testpatch/sample.top")
 
 d.auto_replace(selection="resname POPC", composition={"DPPC" : 50, "CDL0" : 24})
-'''
+
 
 d = ReplacementSystem(
     input_structure_filename="pip-test/original/centred.gro",
@@ -393,4 +405,5 @@ d = ReplacementSystem(
     )
 print d.preprocess_selection("hello world")
 print d.preprocess_selection("leaflet upper")
-print d.preprocess_selection("leaflet upper and resid 10")
+print d.preprocess_selection("leaflet lower and resid 10")
+'''
