@@ -6,6 +6,7 @@ from alchex.errors import ExchangeMapMissingException
 import MDAnalysis as mda
 from random import choice
 from os import path, makedirs
+from shutils import rmtree
 import pickle
 
 class AlchexConfig(object):
@@ -24,7 +25,13 @@ class AlchexConfig(object):
         # as json
         self.grompp_parameters = {}
     def save(self):
-        pass
+        save_root = user_config_path(self.name)
+
+        if path.exists(save_root):
+            rmtree(save_root)
+
+        parameters_root = path.join(save_root, "parameters")
+        print(self.parameters)
     def load(self):
         pass
     def load_itp_file(self, filename, resname):
@@ -75,10 +82,10 @@ class AlchexConfig(object):
         self.grompp_parameters[name] = params.attrs
 
 def user_config_path(config):
-    return path.join(path.expanduser("~/.alchex"), config+".p")
+    return path.join(path.expanduser("~/.alchex"), config,"")
 
 def default_config_path(config):
-    return path.join(path.split(__file__)[0], "config", config + ".p")
+    return path.join(path.split(__file__)[0], "config", config, "")
 
 
 def default_configuration():
@@ -217,4 +224,8 @@ def default_configuration():
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
+    defaultconfig.save()
+
     return defaultconfig
+
+default_configuration()
