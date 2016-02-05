@@ -197,13 +197,13 @@ def gro_to_dict(groline):
 def dict_to_gro(dictionary):
     line = ""
     #residue number (5 positions, integer)
-    line += str(dictionary["resid"]).rjust(5)
+    line += str(int(dictionary["resid"])%100000).rjust(5)
     #residue name (5 characters)
     line += str(dictionary["resname"]).ljust(5)
     #atom name (5 characters)
     line += str(dictionary["name"]).rjust(5)
     #atom number (5 positions, integer)
-    line += str(dictionary["atomid"]).rjust(5)
+    line += str(int(dictionary["atomid"])%100000).rjust(5)
     #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
     line += "".join(["{:8.4f}".format(x) for x in [dictionary["posx"], dictionary["posy"], dictionary["posz"]]])
     #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)

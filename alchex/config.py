@@ -6,7 +6,7 @@ from alchex.errors import ExchangeMapMissingException
 import MDAnalysis as mda
 from random import choice
 from os import path, makedirs
-from shutils import rmtree
+from shutil import rmtree
 import pickle
 
 class AlchexConfig(object):
