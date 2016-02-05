@@ -310,7 +310,7 @@ class ReplacementSystem(object):
             raise GromacsInterfaceError(message)
 
         original.reload(self.simulations.resolve_path("all-em.gro"), same_atom_names=False)
-        print(len(original.declash_moltypes(2)))
+        #print(len(original.declash_moltypes(2)))
         # Look for clashes
         # Use alchembed to resolve clashes
     def replace(self, replaceable_entities, name="alchex"):
