@@ -93,8 +93,8 @@ def default_configuration():
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
     
-    #defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse"
-    defaultconfig.gromacs_executable = "gmx"
+    defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
+    #defaultconfig.gromacs_executable = "gmx"
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
@@ -232,6 +232,20 @@ def default_configuration():
     to_moltype="POPS",
     exchange_model="martini.lipid")
 
+    defaultconfig.build_exchange_map(
+    from_resname="POPG",
+    from_moltype="POPG",
+    to_resname="POPG",
+    to_moltype="POPG",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="POPG",
+    from_moltype="POPG",
+    to_resname="DLPG",
+    to_moltype="DLPG",
+    exchange_model="martini.lipid")
+
     defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
     defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
@@ -241,6 +255,7 @@ def default_configuration():
     defaultconfig.add_reference_structure("POPS","data/pops.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPE","data/pope.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPC","data/popc.pdb", selection="resname POP")
+    defaultconfig.add_reference_structure("POPG", "data/popg.pdb", selection="resname POP")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")

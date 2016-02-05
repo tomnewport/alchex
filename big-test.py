@@ -1,11 +1,11 @@
 from alchex.replacement import ReplacementSystem
-'''
+
 d = ReplacementSystem(
     input_structure_filename="big/equil_memb.gro",
     input_topology_filename="big/equil_memb.top",
     root_folder="big-test-run"
     )
-'''
+
 '''
 d.auto_replace(
 		{
@@ -25,12 +25,16 @@ d.auto_replace(
 		 	    }}
     )
 '''
-'''
+
 d.auto_replace({
 	"selection": "resname POPG",
 	"composition" :{
-		"POPS" : 45.6
+		"POPG" : 1
 		}})
+
+
+
+
 '''
 d = ReplacementSystem(
     input_structure_filename="vesicle/pope_vesicle.gro",
@@ -45,3 +49,4 @@ d.auto_replace({
 		"DLPG" : 1,
 		"CDL0" : 1
 		}})
+'''

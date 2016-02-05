@@ -166,7 +166,7 @@ class GromacsITPFile(object):
     def __init__(self, filename):
         self.filename = filename
     def read_residue(self, residue_name):
-        colnames = {"atoms" : "id type resnr residue atom cgnr charge".split(),
+        colnames = {"atoms" : "id type resnr residue atom cgnr charge mass".split(),
                    "bonds": "i  j   funct   length  force.c.".split(),
                    "angles": "i  j  k   funct   angle   force.c.".split(),
                    "molname": "molname       nrexcl".split()}
@@ -286,6 +286,7 @@ class GromacsTOPFile(object):
                     return rtables
             elif len(rtables) > 0:
                 rtables.append(table)
+        return rtables
     def residue_parameters(self, target_resname):
         colnames = {"atoms" : "id type resnr residue atom cgnr charge".split(),
                    "bonds": "i  j   funct   length  force.c.".split(),
