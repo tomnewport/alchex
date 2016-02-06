@@ -7,9 +7,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.spatial.distance import pdist, squareform
 import numpy
+import logging
 
-def find_bilayer_leaflets(universe, headgroups="name P*", axis=[0,0,1]):
+logging.basicConfig(format=' ⚗ %(levelname)s : %(message)s', level=logging.INFO)
+
+def find_bilayer_leaflets(universe, headgroups="name P*", axis=[0,0,1], mda_selection=True):
 	points = universe.select_atoms(headgroups)
+	universe_resids = {x.id:idx for idx, x in enumerate(universe.residues)}
 	coordinates = points.coordinates()
 	graph = nx.Graph()
 	graph.add_nodes_from(range(len(points)))
@@ -29,5 +33,11 @@ def find_bilayer_leaflets(universe, headgroups="name P*", axis=[0,0,1]):
 	leaflets = [
 		[points[x].resid for x in sg.nodes()] for sg in subgraphs
 	]
-	return leaflets
+	if not mda_selection:
+		return leaflets
+	else:
+		return [universe.residues[[universe_resids[x] for x in leaflet]] for leaflet in leaflets]
+
+
+
 		

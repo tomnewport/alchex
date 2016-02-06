@@ -5,6 +5,7 @@ import MDAnalysis as mda
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
 from shutil import copy, copyfile, rmtree, copytree
 from os import path, makedirs
+from alchex.lipid_analysis import find_bilayer_leaflets
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -95,6 +96,22 @@ class SimulationContainer(object):
         self.makedirs("/")
         self.cd()
         self.universes = {}
+        self.groups = {}
+    def select_atoms(self, filename, selection):
+        custom_groups = ["leaflet upper", "leaflet lower"]
+        universe = self.universe(filename)
+        if filename not in self.groups:
+            self.groups[filename] = {}
+        for cg in custom_groups:
+            if cg in selection:
+                cg_name = cg.replace(" ", "_")
+                if cg not in self.groups[filename]:
+                    if cg_name in ["leaflet_upper", "leaflet_lower"]:
+                        lower_leaflet, upper_leaflet = find_bilayer_leaflets(universe)
+                        self.groups[filename]["leaflet_lower"] = lower_leaflet
+                        self.groups[filename]["leaflet_upper"] = upper_leaflet
+                selection = selection.replace(cg, "group "+cg_name)
+        return universe.select_atoms(selection, **self.groups[filename])
     def universe(self, filename):
         if filename not in self.universes:
             self.universes[filename] = mda.Universe(self.resolve_path(filename))

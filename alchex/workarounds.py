@@ -129,7 +129,6 @@ class WAEditableResidue(object):
     def as_pdb(self):
         lines = []
         for atom_id in self.ids:
-            print atom_id
             atom, coordinates = self.get_atom_by_id(atom_id)
             line = "ATOM    {id} {name} {resname} {resid}      {xpos}  {ypos}  {zpos}  1.00  0.00           N"
             lines.append(line.format(
@@ -380,21 +379,28 @@ class WAEditableGrofile(object):
             lines = [x for x in fh.read().split("\n") if x.strip() != ""]
         self.sysname = lines[0].strip()
         used_resids = set()
+        file_atom_id = 0
+        file_residue_adder = 0
         for line in lines[2:-1]:
+            file_atom_id += 1
             atom_data = gro_to_dict(line)
+            base_resid =  int(atom_data["resid"])
+            resid = str(base_resid + file_residue_adder)
             coordinates = [[
                 10*float(atom_data["posx"]), 
                 10*float(atom_data["posy"]), 
                 10*float(atom_data["posz"])
                 ]]
-            if atom_data["resid"] not in used_resids:
-                used_resids.add(atom_data["resid"])
-                self.residues.append(WAEditableResidue(resid=atom_data["resid"], resname=atom_data["resname"]))
+            if resid not in used_resids:
+                used_resids.add(resid)
+                self.residues.append(WAEditableResidue(resid=resid, resname=atom_data["resname"]))
                 res_start = int(atom_data["atomid"])
             self.residues[-1].coordinates.add_points(coordinates)
-            atom_id = str(1 + int(atom_data["atomid"]) - res_start)
+            atom_id = str(1 + (file_atom_id - res_start))
             self.residues[-1].ids.append(atom_id)
             self.residues[-1].atoms.append(atom_data)
+            if base_resid == 99999:
+                file_residue_adder += 100000
         self.box_vector = [10*float(x) for x in lines[-1].split()]
     def reload(self, filename, reload_coordinates=True, reload_resids=True, reload_atom_names=True, same_atom_names=True):
         '''
@@ -457,3 +463,4 @@ class WAEditableGrofile(object):
                     atom["velz"]    = atom_data.get("velz", 0)
                     file_handle.write(dict_to_gro(atom) + "\n")
             file_handle.write("".join([str(x/10).rjust(10) for x in self.box_vector])+"\n")
+

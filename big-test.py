@@ -27,10 +27,18 @@ d.auto_replace(
 '''
 
 d.auto_replace({
-	"selection": "resname POPG",
+	"selection": "leaflet upper",
 	"composition" :{
-		"POPG" : 1
-		}})
+		"DPPC" : 1,
+		"CDL0" : 1
+		}},
+	{
+	"selection": "leaflet lower",
+	"composition" :{
+		"DPPC" : 1,
+		"CDL0" : 1
+		}}
+	)
 
 
 

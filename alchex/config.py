@@ -31,7 +31,7 @@ class AlchexConfig(object):
             rmtree(save_root)
 
         parameters_root = path.join(save_root, "parameters")
-        print(self.parameters)
+        #print(self.parameters)
     def load(self):
         pass
     def load_itp_file(self, filename, resname):
@@ -93,8 +93,8 @@ def default_configuration():
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
     
-    defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
-    #defaultconfig.gromacs_executable = "gmx"
+    #defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
+    defaultconfig.gromacs_executable = "gmx"
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
@@ -230,6 +230,20 @@ def default_configuration():
     from_moltype="POPG",
     to_resname="POPS",
     to_moltype="POPS",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="POPG",
+    from_moltype="POPG",
+    to_resname="CDL0",
+    to_moltype="CDL0",
+    exchange_model="martini.lipid_to_card")
+
+    defaultconfig.build_exchange_map(
+    from_resname="POPG",
+    from_moltype="POPG",
+    to_resname="DPPC",
+    to_moltype="DPPC",
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(

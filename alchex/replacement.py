@@ -182,7 +182,7 @@ class ReplacementSystem(object):
     def build_replaceable_entities(self, map_counts, replacement_specification):
         # Accepts a list of residue names and counts
         input_universe       = self.simulations.universe("input.gro")
-        replaceable_universe = input_universe.select_atoms(self.preprocess_selection(replacement_specification.selection))
+        replaceable_universe = self.simulations.select_atoms("input.gro", replacement_specification.selection)
         available_entities   = replaceable_universe.residues
         resid_to_name        = {r.id : r.name for r in available_entities}
         from_resnames = Counter([r.name for r in available_entities])
@@ -202,6 +202,7 @@ class ReplacementSystem(object):
                         group = [{r.id,} for r in available_entities if r.name==from_resname]
                     elif ex_map.from_count == 2:
                         group_centres_selection = replaceable_universe.select_atoms("name " + ex_map.grouping["atom"])
+                        print replaceable_universe, ex_map.grouping["atom"]
                         group_centres = PointCloud(3)
                         group_centres.add_points(group_centres_selection.coordinates())
                         logging.info("Pairing points using atom name " + ex_map.grouping["atom"] + ". This may take some time...")
@@ -267,6 +268,7 @@ class ReplacementSystem(object):
             raise GromacsInterfaceError(message)
         full_topology = GromacsEditableTOPFile()
         full_topology.from_file(self.simulations.resolve_path("/"+name+"/input-pp.top"))
+        logging.info("Adding topology...")
         original.add_topology(full_topology)
         replaced = WAEditableGrofile()
         logging.info("Performing replacements...")
@@ -284,16 +286,24 @@ class ReplacementSystem(object):
             original.delete_by_resids(entity.residue_ids)
             original.residues.append(new_residues)
             done += 1
-            print(done, todo)
+            if done % 5 == 0:
+                prog = done/(1.0*todo)
+                pb = "=" * int(prog*50) + " " * int((1-prog)*50)
+                print "\r ⚗ Replacing residues... [{pb}] {perc:4.1f}%".format(pb=pb, perc=prog * 100),
+        print "\n"
+        logging.info("Modifying topology...")
         original_topology.modify_molecules(original.top_molecules())
+        logging.info("Writing topology...")
         original_topology.to_file(self.simulations.resolve_path("replaced.top"))
+        logging.info("Sorting residues...")
         original.sort_residues()
+        logging.info("Renumbering moltypes...")
         original.renumber_moltypes()
-        logging.info("Performing energy minimisation simulation...")
+        logging.info("Saving structure...")
         #print(len(original.declash_moltypes(2)))
         # Energy minimise the new system
         original.to_file(self.simulations.resolve_path("replaced.gro"))   
-             
+        logging.info("Performing energy minimisation simulation...")
         statuscode, message = self.simulations.gromacs.grompp(kwargs={
                     "-f" : "em.mdp", 
                     "-c" : "replaced.gro", 
@@ -373,6 +383,7 @@ class ReplacementSystem(object):
     def auto_replace(self, *groups):
         '''Shorthand to create replaceable entities and then run replacement'''
         replaceable_entities = []
+        input_universe       = self.simulations.universe("input.gro")
         for group in groups:
             selection = group["selection"]
             composition = group["composition"]
@@ -381,9 +392,8 @@ class ReplacementSystem(object):
                 selection=selection, 
                 composition=composition, 
                 parsimonious=False)
-            input_universe       = self.simulations.universe("input.gro")
-
-            replaceable_universe = input_universe.select_atoms(self.preprocess_selection(selection))
+            replaceable_universe = self.simulations.select_atoms("input.gro", selection)
+            #replaceable_universe = input_universe.select_atoms(self.preprocess_selection(selection))
             # Determine how many of each residue are going to be created:
             map_counts = replacement_specification.map_counts(
                 Counter(
