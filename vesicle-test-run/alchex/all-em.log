@@ -1,5 +1,5 @@
-Log file opened on Fri Feb  5 10:08:26 2016
-Host: derp.local  pid: 11181  rank ID: 0  number of ranks:  1
+Log file opened on Sat Feb  6 18:38:45 2016
+Host: derp.local  pid: 39579  rank ID: 0  number of ranks:  1
 GROMACS:    gmx mdrun, VERSION 5.0.1
 
 GROMACS is written by:
@@ -100,7 +100,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = 1215459030
+   ld-seed                        = 3864005020
    emtol                          = 1000
    emstep                         = 0.001
    niter                          = 20
@@ -247,7 +247,7 @@ qm-opts:
    userreal3                      = 0
    userreal4                      = 0
 grpopts:
-   nrdf:      216876
+   nrdf:      213591
    ref-t:           0
    tau-t:           0
 annealing:          No
@@ -260,8 +260,8 @@ Initializing Domain Decomposition on 4 ranks
 Dynamic load balancing: no
 Will sort the charge groups at every domain (re)decomposition
 Initial maximum inter charge-group distances:
-    two-body bonded interactions: 1.097 nm, Bond, atoms 6088 6089
-  multi-body bonded interactions: 1.851 nm, G96Angle, atoms 6868 6870
+    two-body bonded interactions: 1.107 nm, Bond, atoms 3415 3416
+  multi-body bonded interactions: 1.851 nm, G96Angle, atoms 1905 1907
 Minimum cell size due to bonded interactions: 2.036 nm
 Optimizing the DD grid for 4 cells with a minimum initial size of 2.036 nm
 The maximum allowed number of cells is: X 10 Y 10 Z 10
@@ -280,7 +280,7 @@ SIMD instructions most likely to fit this hardware: AVX2_256
 SIMD instructions selected at GROMACS compile time: AVX2_256
 
 Cut-off's:   NS: 1   Coulomb: 1   LJ: 1
-System total charge: -220.000
+System total charge: -439.000
 
 Using AVX2_256 4x8 non-bonded kernels
 
@@ -303,8 +303,8 @@ The maximum allowed distance for charge groups involved in interactions is:
 Making 1D domain decomposition grid 4 x 1 x 1, home cell index 0 0 0
 
 Initiating Steepest Descents
-Charge group distribution at step 0: 17946 18198 18189 17960
-Started Steepest Descents on rank 0 Fri Feb  5 10:08:26 2016
+Charge group distribution at step 0: 17954 17675 17624 17945
+Started Steepest Descents on rank 0 Sat Feb  6 18:38:45 2016
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e+03
@@ -312,14 +312,14 @@ Steepest Descents:
            Step           Time         Lambda
               0        0.00000        0.00000
 
-DD  step 0 load imb.: force  9.8%
+DD  step 0 load imb.: force  2.7%
 
            Step           Time         Lambda
               1        1.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    4.49559e+15   -2.15344e+04    4.49559e+15
+    1.22459e+05    8.39292e+03    4.96037e+13   -3.69918e+04    4.96037e+13
  Pressure (bar)
     0.00000e+00
 
@@ -328,7 +328,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    1.80645e+15   -2.15347e+04    1.80645e+15
+    1.22459e+05    8.39292e+03    3.25236e+13   -3.70123e+04    3.25236e+13
  Pressure (bar)
     0.00000e+00
 
@@ -337,7 +337,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    6.64034e+14   -2.15350e+04    6.64034e+14
+    1.22459e+05    8.39292e+03    1.99741e+13   -3.70546e+04    1.99741e+13
  Pressure (bar)
     0.00000e+00
 
@@ -346,7 +346,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    2.27848e+14   -2.15354e+04    2.27848e+14
+    1.22459e+05    8.39291e+03    1.10699e+13   -3.71384e+04    1.10699e+13
  Pressure (bar)
     0.00000e+00
 
@@ -355,7 +355,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    7.74005e+13   -2.15358e+04    7.74005e+13
+    1.22459e+05    8.39290e+03    5.50728e+12   -3.72813e+04    5.50728e+12
  Pressure (bar)
     0.00000e+00
 
@@ -364,7 +364,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    2.83647e+13   -2.15363e+04    2.83647e+13
+    1.22459e+05    8.39289e+03    2.59637e+12   -3.74680e+04    2.59637e+12
  Pressure (bar)
     0.00000e+00
 
@@ -373,7 +373,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37953e+04    9.34029e+12   -2.15369e+04    9.34029e+12
+    1.22459e+05    8.39288e+03    1.18489e+12   -3.76637e+04    1.18489e+12
  Pressure (bar)
     0.00000e+00
 
@@ -382,7 +382,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37952e+04    2.71678e+12   -2.15376e+04    2.71678e+12
+    1.22459e+05    8.39287e+03    4.85926e+11   -3.78571e+04    4.85926e+11
  Pressure (bar)
     0.00000e+00
 
@@ -391,7 +391,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37952e+04    1.01330e+12   -2.15384e+04    1.01330e+12
+    1.22460e+05    8.39282e+03    1.84991e+11   -3.80384e+04    1.84991e+11
  Pressure (bar)
     0.00000e+00
 
@@ -400,7 +400,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01292e+05    1.37951e+04    3.26028e+11   -2.15387e+04    3.26028e+11
+    1.22461e+05    8.39266e+03    7.06303e+10   -3.82110e+04    7.06304e+10
  Pressure (bar)
     0.00000e+00
 
@@ -409,7 +409,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01293e+05    1.37951e+04    8.63685e+10   -2.15365e+04    8.63686e+10
+    1.22463e+05    8.39234e+03    2.49067e+10   -3.83488e+04    2.49068e+10
  Pressure (bar)
     0.00000e+00
 
@@ -418,7 +418,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01295e+05    1.37950e+04    2.67202e+10   -2.15195e+04    2.67203e+10
+    1.22467e+05    8.39200e+03    9.04121e+09   -3.84024e+04    9.04131e+09
  Pressure (bar)
     0.00000e+00
 
@@ -427,7 +427,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01299e+05    1.37949e+04    8.33295e+09   -2.14063e+04    8.33305e+09
+    1.22473e+05    8.39195e+03    3.06274e+09   -3.83867e+04    3.06283e+09
  Pressure (bar)
     0.00000e+00
 
@@ -436,7 +436,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01306e+05    1.37948e+04    2.33147e+09   -2.10692e+04    2.33156e+09
+    1.22484e+05    8.39199e+03    1.00268e+09   -3.83018e+04    1.00278e+09
  Pressure (bar)
     0.00000e+00
 
@@ -445,7 +445,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01321e+05    1.37951e+04    6.32788e+08   -2.08335e+04    6.32882e+08
+    1.22505e+05    8.39236e+03    3.40161e+08   -3.78771e+04    3.40254e+08
  Pressure (bar)
     0.00000e+00
 
@@ -454,7 +454,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01356e+05    1.37960e+04    1.81813e+08   -2.06464e+04    1.81908e+08
+    1.22556e+05    8.39301e+03    1.13381e+08   -3.72707e+04    1.13475e+08
  Pressure (bar)
     0.00000e+00
 
@@ -463,7 +463,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01419e+05    1.37969e+04    4.87717e+07   -2.05333e+04    4.88663e+07
+    1.22675e+05    8.39348e+03    3.80049e+07   -3.65933e+04    3.80994e+07
  Pressure (bar)
     0.00000e+00
 
@@ -472,7 +472,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01541e+05    1.37967e+04    1.53016e+07   -2.03063e+04    1.53966e+07
+    1.22807e+05    8.39365e+03    1.85799e+07   -3.60093e+04    1.86751e+07
  Pressure (bar)
     0.00000e+00
 
@@ -481,7 +481,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01695e+05    1.37956e+04    5.45651e+06   -2.00374e+04    5.55196e+06
+    1.22968e+05    8.39374e+03    9.37398e+06   -3.54408e+04    9.46990e+06
  Pressure (bar)
     0.00000e+00
 
@@ -490,7 +490,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.01874e+05    1.37932e+04    2.06270e+06   -1.97747e+04    2.15859e+06
+    1.23207e+05    8.39369e+03    4.09319e+06   -3.47181e+04    4.19007e+06
  Pressure (bar)
     0.00000e+00
 
@@ -499,7 +499,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.02071e+05    1.37901e+04    5.52026e+05   -1.94675e+04    6.48420e+05
+    1.23455e+05    8.39312e+03    1.75215e+06   -3.40575e+04    1.84994e+06
  Pressure (bar)
     0.00000e+00
 
@@ -508,7 +508,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.02419e+05    1.37829e+04   -5.39151e+05   -1.90356e+04   -4.41985e+05
+    1.23991e+05    8.39261e+03   -1.24453e+05   -3.28044e+04   -2.48733e+04
  Pressure (bar)
     0.00000e+00
 
@@ -517,7 +517,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.02892e+05    1.37681e+04   -1.10517e+06   -1.85085e+04   -1.00702e+06
+    1.24597e+05    8.38929e+03   -8.96356e+05   -3.16007e+04   -7.94971e+05
  Pressure (bar)
     0.00000e+00
 
@@ -526,7 +526,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.03864e+05    1.37173e+04   -1.46462e+06   -1.78728e+04   -1.36491e+06
+    1.25045e+05    8.38187e+03   -1.19407e+06   -3.05750e+04   -1.09121e+06
  Pressure (bar)
     0.00000e+00
 
@@ -535,7 +535,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.03877e+05    1.36669e+04   -1.52865e+06   -1.74892e+04   -1.42860e+06
+    1.25318e+05    8.36648e+03   -1.34694e+06   -3.03380e+04   -1.24360e+06
  Pressure (bar)
     0.00000e+00
 
@@ -544,7 +544,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.03759e+05    1.36372e+04   -1.55061e+06   -1.76883e+04   -1.45090e+06
+    1.25365e+05    8.33730e+03   -1.45278e+06   -2.98126e+04   -1.34889e+06
  Pressure (bar)
     0.00000e+00
 
@@ -553,7 +553,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.02670e+05    1.34117e+04   -1.63246e+06   -1.74754e+04   -1.53385e+06
+    1.24732e+05    8.27328e+03   -1.53073e+06   -3.04790e+04   -1.42821e+06
  Pressure (bar)
     0.00000e+00
 
@@ -562,7 +562,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    9.92582e+04    1.32004e+04   -1.66411e+06   -1.84996e+04   -1.57015e+06
+    1.24607e+05    8.26710e+03   -1.54207e+06   -3.04929e+04   -1.43969e+06
  Pressure (bar)
     0.00000e+00
 
@@ -571,7 +571,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    9.87491e+04    1.31730e+04   -1.66910e+06   -1.84175e+04   -1.57559e+06
+    1.20588e+05    8.06477e+03   -1.62366e+06   -3.36669e+04   -1.52867e+06
  Pressure (bar)
     0.00000e+00
 
@@ -580,7 +580,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    9.72560e+04    1.30827e+04   -1.68068e+06   -1.87939e+04   -1.58913e+06
+    1.15199e+05    7.87478e+03   -1.63306e+06   -3.75433e+04   -1.54753e+06
  Pressure (bar)
     0.00000e+00
 
@@ -589,7 +589,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    6.43829e+04    1.10993e+04   -1.73140e+06   -2.87331e+04   -1.68465e+06
+    1.15109e+05    7.89271e+03   -1.65442e+06   -3.76240e+04   -1.56905e+06
  Pressure (bar)
     0.00000e+00
 
@@ -598,49 +598,49 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    6.42507e+04    1.10874e+04   -1.74583e+06   -2.73765e+04   -1.69787e+06
+    1.10926e+05    7.73696e+03   -1.66074e+06   -3.99392e+04   -1.58202e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              33       33.00000        0.00000
 
-           Step           Time         Lambda
-             34       34.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    6.41880e+04    1.10849e+04   -1.75566e+06   -2.74029e+04   -1.70779e+06
+    1.10815e+05    7.73806e+03   -1.66562e+06   -4.00556e+04   -1.58712e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             34       34.00000        0.00000
 
            Step           Time         Lambda
              35       35.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    6.37320e+04    1.10673e+04   -1.76412e+06   -2.73786e+04   -1.71670e+06
+    1.10650e+05    7.73534e+03   -1.67414e+06   -4.01710e+04   -1.59592e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              36       36.00000        0.00000
 
-           Step           Time         Lambda
-             37       37.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    5.69339e+04    1.08203e+04   -1.79018e+06   -2.92379e+04   -1.75167e+06
+    1.02215e+05    7.46833e+03   -1.69779e+06   -4.52823e+04   -1.63339e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             37       37.00000        0.00000
 
            Step           Time         Lambda
              38       38.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    5.67830e+04    1.07741e+04   -1.79548e+06   -2.89269e+04   -1.75685e+06
+    1.01427e+05    7.44415e+03   -1.70030e+06   -4.57134e+04   -1.63714e+06
  Pressure (bar)
     0.00000e+00
 
@@ -649,7 +649,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.93378e+04    1.04051e+04   -1.78841e+06   -3.18835e+04   -1.76055e+06
+    9.96296e+04    7.39005e+03   -1.70526e+06   -4.66735e+04   -1.64491e+06
  Pressure (bar)
     0.00000e+00
 
@@ -658,7 +658,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.96537e+04    1.03950e+04   -1.80331e+06   -3.18810e+04   -1.77514e+06
+    8.02224e+04    6.83099e+03   -1.73510e+06   -5.83039e+04   -1.70635e+06
  Pressure (bar)
     0.00000e+00
 
@@ -667,7 +667,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.92247e+04    1.03406e+04   -1.80419e+06   -3.18968e+04   -1.77652e+06
+    7.94498e+04    6.80796e+03   -1.73891e+06   -5.84882e+04   -1.71114e+06
  Pressure (bar)
     0.00000e+00
 
@@ -679,7 +679,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.90905e+04    1.03349e+04   -1.80695e+06   -3.19475e+04   -1.77948e+06
+    7.67355e+04    6.73361e+03   -1.74281e+06   -5.98284e+04   -1.71917e+06
  Pressure (bar)
     0.00000e+00
 
@@ -688,7 +688,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.60273e+04    1.01936e+04   -1.81002e+06   -3.32902e+04   -1.78709e+06
+    7.30214e+04    6.63382e+03   -1.74745e+06   -6.17769e+04   -1.72957e+06
  Pressure (bar)
     0.00000e+00
 
@@ -697,28 +697,28 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.10271e+04    9.88111e+03   -1.81351e+06   -3.52120e+04   -1.79781e+06
+    6.62134e+04    6.46218e+03   -1.75450e+06   -6.59014e+04   -1.74772e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              46       46.00000        0.00000
 
-           Step           Time         Lambda
-             47       47.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    4.09337e+04    9.87675e+03   -1.81572e+06   -3.52294e+04   -1.80014e+06
+    5.77566e+04    6.25735e+03   -1.76205e+06   -7.12294e+04   -1.76926e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             47       47.00000        0.00000
 
            Step           Time         Lambda
              48       48.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.92502e+04    9.79503e+03   -1.81758e+06   -3.57181e+04   -1.80426e+06
+    5.51203e+04    6.19400e+03   -1.76534e+06   -7.26835e+04   -1.77671e+06
  Pressure (bar)
     0.00000e+00
 
@@ -727,28 +727,28 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.75692e+04    9.69201e+03   -1.81825e+06   -3.64961e+04   -1.80748e+06
+    5.27540e+04    6.14189e+03   -1.76739e+06   -7.44915e+04   -1.78299e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              50       50.00000        0.00000
 
-           Step           Time         Lambda
-             51       51.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.74545e+04    9.68594e+03   -1.81975e+06   -3.63940e+04   -1.80900e+06
+    5.16662e+04    6.11510e+03   -1.76881e+06   -7.51295e+04   -1.78616e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             51       51.00000        0.00000
 
            Step           Time         Lambda
              52       52.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.60623e+04    9.59961e+03   -1.82153e+06   -3.69996e+04   -1.81286e+06
+    4.94602e+04    6.06537e+03   -1.77059e+06   -7.66446e+04   -1.79171e+06
  Pressure (bar)
     0.00000e+00
 
@@ -757,7 +757,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.25055e+04    9.39822e+03   -1.82442e+06   -3.88132e+04   -1.82133e+06
+    4.84632e+04    6.04294e+03   -1.77161e+06   -7.73556e+04   -1.79446e+06
  Pressure (bar)
     0.00000e+00
 
@@ -766,19 +766,25 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.21936e+04    9.37397e+03   -1.82587e+06   -3.86036e+04   -1.82290e+06
+    4.71029e+04    6.01330e+03   -1.77216e+06   -7.83433e+04   -1.79739e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              55       55.00000        0.00000
 
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    4.66903e+04    6.00634e+03   -1.77356e+06   -7.86751e+04   -1.79954e+06
+ Pressure (bar)
+    0.00000e+00
+
            Step           Time         Lambda
              56       56.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.16533e+04    9.34331e+03   -1.82653e+06   -3.89175e+04   -1.82446e+06
+    3.74124e+04    5.82915e+03   -1.78090e+06   -8.60896e+04   -1.82375e+06
  Pressure (bar)
     0.00000e+00
 
@@ -787,7 +793,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    3.06457e+04    9.28892e+03   -1.82775e+06   -3.93851e+04   -1.82720e+06
+    3.63928e+04    5.79942e+03   -1.78093e+06   -8.61346e+04   -1.82487e+06
  Pressure (bar)
     0.00000e+00
 
@@ -796,7 +802,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.91255e+04    9.20615e+03   -1.82960e+06   -4.01500e+04   -1.83142e+06
+    3.62656e+04    5.81638e+03   -1.78325e+06   -8.65123e+04   -1.82768e+06
  Pressure (bar)
     0.00000e+00
 
@@ -805,58 +811,52 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.77152e+04    9.13793e+03   -1.82960e+06   -4.08353e+04   -1.83358e+06
+    3.31437e+04    5.76021e+03   -1.78449e+06   -8.95417e+04   -1.83513e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              60       60.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.75475e+04    9.12878e+03   -1.82982e+06   -4.08885e+04   -1.83403e+06
- Pressure (bar)
-    0.00000e+00
-
            Step           Time         Lambda
              61       61.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.74493e+04    9.12149e+03   -1.83102e+06   -4.09070e+04   -1.83535e+06
- Pressure (bar)
-    0.00000e+00
 
            Step           Time         Lambda
              62       62.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.70657e+04    9.10228e+03   -1.83144e+06   -4.11238e+04   -1.83640e+06
+    3.29918e+04    5.75829e+03   -1.78647e+06   -8.96703e+04   -1.83739e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              63       63.00000        0.00000
 
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    3.07422e+04    5.71182e+03   -1.78864e+06   -9.15764e+04   -1.84376e+06
+ Pressure (bar)
+    0.00000e+00
+
            Step           Time         Lambda
              64       64.00000        0.00000
 
-           Step           Time         Lambda
-             65       65.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.70009e+04    9.09852e+03   -1.83237e+06   -4.11595e+04   -1.83743e+06
+    3.02728e+04    5.70976e+03   -1.78902e+06   -9.21205e+04   -1.84515e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             65       65.00000        0.00000
 
            Step           Time         Lambda
              66       66.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.54058e+04    9.02543e+03   -1.83408e+06   -4.20964e+04   -1.84174e+06
+    3.00847e+04    5.70218e+03   -1.78977e+06   -9.22468e+04   -1.84623e+06
  Pressure (bar)
     0.00000e+00
 
@@ -865,28 +865,28 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.47988e+04    8.99890e+03   -1.83491e+06   -4.22097e+04   -1.84332e+06
+    2.96887e+04    5.69664e+03   -1.79049e+06   -9.26583e+04   -1.84777e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              68       68.00000        0.00000
 
-           Step           Time         Lambda
-             69       69.00000        0.00000
-
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.46684e+04    8.99330e+03   -1.83547e+06   -4.22920e+04   -1.84410e+06
+    2.68799e+04    5.65886e+03   -1.79235e+06   -9.62394e+04   -1.85605e+06
  Pressure (bar)
     0.00000e+00
+
+           Step           Time         Lambda
+             69       69.00000        0.00000
 
            Step           Time         Lambda
              70       70.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.41400e+04    8.97193e+03   -1.83634e+06   -4.26014e+04   -1.84583e+06
+    2.67309e+04    5.65546e+03   -1.79320e+06   -9.62938e+04   -1.85711e+06
  Pressure (bar)
     0.00000e+00
 
@@ -895,7 +895,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.27079e+04    8.91792e+03   -1.83825e+06   -4.33877e+04   -1.85001e+06
+    2.64444e+04    5.64891e+03   -1.79349e+06   -9.65322e+04   -1.85793e+06
  Pressure (bar)
     0.00000e+00
 
@@ -904,7 +904,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.17698e+04    8.88313e+03   -1.83936e+06   -4.38531e+04   -1.85256e+06
+    2.62790e+04    5.64104e+03   -1.79426e+06   -9.65685e+04   -1.85891e+06
  Pressure (bar)
     0.00000e+00
 
@@ -913,7 +913,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.14339e+04    8.86589e+03   -1.83924e+06   -4.39106e+04   -1.85285e+06
+    2.52602e+04    5.62373e+03   -1.79542e+06   -9.76426e+04   -1.86218e+06
  Pressure (bar)
     0.00000e+00
 
@@ -922,7 +922,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.13598e+04    8.86618e+03   -1.84015e+06   -4.39455e+04   -1.85387e+06
+    2.47051e+04    5.62170e+03   -1.79609e+06   -9.84478e+04   -1.86421e+06
  Pressure (bar)
     0.00000e+00
 
@@ -931,28 +931,28 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.11482e+04    8.85955e+03   -1.84066e+06   -4.41772e+04   -1.85483e+06
+    2.41627e+04    5.61373e+03   -1.79702e+06   -9.91657e+04   -1.86641e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              76       76.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.05844e+04    8.83183e+03   -1.84137e+06   -4.46450e+04   -1.85660e+06
- Pressure (bar)
-    0.00000e+00
-
            Step           Time         Lambda
              77       77.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    2.38215e+04    5.60830e+03   -1.79712e+06   -9.96620e+04   -1.86736e+06
+ Pressure (bar)
+    0.00000e+00
 
            Step           Time         Lambda
              78       78.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    2.04441e+04    8.82666e+03   -1.84183e+06   -4.47161e+04   -1.85727e+06
+    2.36985e+04    5.60569e+03   -1.79791e+06   -9.98614e+04   -1.86846e+06
  Pressure (bar)
     0.00000e+00
 
@@ -961,7 +961,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.98717e+04    8.80773e+03   -1.84267e+06   -4.50457e+04   -1.85903e+06
+    2.18589e+04    5.59079e+03   -1.79962e+06   -1.02347e+05   -1.87451e+06
  Pressure (bar)
     0.00000e+00
 
@@ -973,7 +973,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.95835e+04    8.79677e+03   -1.84331e+06   -4.51862e+04   -1.86011e+06
+    2.17424e+04    5.58556e+03   -1.80061e+06   -1.02528e+05   -1.87581e+06
  Pressure (bar)
     0.00000e+00
 
@@ -982,37 +982,37 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.91622e+04    8.78458e+03   -1.84317e+06   -4.54574e+04   -1.86068e+06
+    2.12304e+04    5.57747e+03   -1.80140e+06   -1.03364e+05   -1.87796e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              83       83.00000        0.00000
 
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    2.07158e+04    5.56653e+03   -1.80227e+06   -1.04151e+05   -1.88014e+06
+ Pressure (bar)
+    0.00000e+00
+
            Step           Time         Lambda
              84       84.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.91411e+04    8.78364e+03   -1.84407e+06   -4.54730e+04   -1.86162e+06
+    2.00188e+04    5.55936e+03   -1.80315e+06   -1.05381e+05   -1.88295e+06
  Pressure (bar)
     0.00000e+00
 
            Step           Time         Lambda
              85       85.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.86905e+04    8.76843e+03   -1.84485e+06   -4.56849e+04   -1.86307e+06
- Pressure (bar)
-    0.00000e+00
-
            Step           Time         Lambda
              86       86.00000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.81530e+04    8.74742e+03   -1.84571e+06   -4.61108e+04   -1.86492e+06
+    1.97964e+04    5.55512e+03   -1.80395e+06   -1.05650e+05   -1.88425e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1021,7 +1021,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.71994e+04    8.71930e+03   -1.84620e+06   -4.62999e+04   -1.86658e+06
+    1.91909e+04    5.54606e+03   -1.80493e+06   -1.06942e+05   -1.88714e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1033,7 +1033,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.71671e+04    8.71518e+03   -1.84751e+06   -4.62372e+04   -1.86787e+06
+    1.83600e+04    5.52956e+03   -1.80605e+06   -1.07602e+05   -1.88977e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1042,7 +1042,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.67432e+04    8.70525e+03   -1.84847e+06   -4.66290e+04   -1.86965e+06
+    1.82588e+04    5.52849e+03   -1.80707e+06   -1.07797e+05   -1.89108e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1051,7 +1051,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.63554e+04    8.69069e+03   -1.84889e+06   -4.71365e+04   -1.87098e+06
+    1.78029e+04    5.52682e+03   -1.80672e+06   -1.10210e+05   -1.89360e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1060,7 +1060,7 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.62457e+04    8.68725e+03   -1.84941e+06   -4.70886e+04   -1.87156e+06
+    1.75320e+04    5.51235e+03   -1.80870e+06   -1.09074e+05   -1.89473e+06
  Pressure (bar)
     0.00000e+00
 
@@ -1069,15 +1069,330 @@ DD  step 0 load imb.: force  9.8%
 
    Energies (kJ/mol)
            Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
-    1.60845e+04    8.67720e+03   -1.85000e+06   -4.73841e+04   -1.87263e+06
+    1.72779e+04    5.50694e+03   -1.80700e+06   -1.10730e+05   -1.89494e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+             94       94.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.72357e+04    5.50675e+03   -1.80894e+06   -1.10721e+05   -1.89692e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+             95       95.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.69473e+04    5.50476e+03   -1.80911e+06   -1.11142e+05   -1.89780e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+             96       96.00000        0.00000
+
+           Step           Time         Lambda
+             97       97.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.68985e+04    5.50443e+03   -1.81009e+06   -1.11414e+05   -1.89910e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+             98       98.00000        0.00000
+
+           Step           Time         Lambda
+             99       99.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.68209e+04    5.50095e+03   -1.81064e+06   -1.11784e+05   -1.90011e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            100      100.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.65024e+04    5.49550e+03   -1.81127e+06   -1.13109e+05   -1.90238e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            101      101.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.61518e+04    5.49230e+03   -1.81226e+06   -1.13144e+05   -1.90376e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            102      102.00000        0.00000
+
+           Step           Time         Lambda
+            103      103.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.60109e+04    5.48625e+03   -1.81291e+06   -1.13888e+05   -1.90530e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            104      104.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.57723e+04    5.48788e+03   -1.81316e+06   -1.14586e+05   -1.90648e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            105      105.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.56469e+04    5.48276e+03   -1.81403e+06   -1.14703e+05   -1.90760e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            106      106.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.55882e+04    5.48708e+03   -1.81456e+06   -1.14925e+05   -1.90841e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            107      107.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.52728e+04    5.47329e+03   -1.81370e+06   -1.17381e+05   -1.91034e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            108      108.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.51907e+04    5.46880e+03   -1.81573e+06   -1.16367e+05   -1.91143e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            109      109.00000        0.00000
+
+           Step           Time         Lambda
+            110      110.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.50785e+04    5.46556e+03   -1.81617e+06   -1.16904e+05   -1.91253e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            111      111.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.49740e+04    5.46178e+03   -1.81642e+06   -1.17405e+05   -1.91339e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            112      112.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.49208e+04    5.45995e+03   -1.81687e+06   -1.17629e+05   -1.91412e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            113      113.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.47901e+04    5.45467e+03   -1.81737e+06   -1.18145e+05   -1.91527e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            114      114.00000        0.00000
+
+           Step           Time         Lambda
+            115      115.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.46716e+04    5.45134e+03   -1.81794e+06   -1.18501e+05   -1.91631e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            116      116.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.45196e+04    5.44400e+03   -1.81810e+06   -1.19184e+05   -1.91732e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            117      117.00000        0.00000
+
+           Step           Time         Lambda
+            118      118.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.44319e+04    5.44151e+03   -1.81923e+06   -1.19035e+05   -1.91839e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            119      119.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.43951e+04    5.43683e+03   -1.81918e+06   -1.19892e+05   -1.91924e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            120      120.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.43209e+04    5.43401e+03   -1.81970e+06   -1.19878e+05   -1.91982e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            121      121.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.42996e+04    5.44161e+03   -1.81990e+06   -1.20201e+05   -1.92036e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            122      122.00000        0.00000
+
+           Step           Time         Lambda
+            123      123.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.42492e+04    5.43014e+03   -1.82018e+06   -1.20428e+05   -1.92093e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            124      124.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.42365e+04    5.43310e+03   -1.82056e+06   -1.20786e+05   -1.92167e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            125      125.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.40300e+04    5.41770e+03   -1.82075e+06   -1.21055e+05   -1.92236e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            126      126.00000        0.00000
+
+           Step           Time         Lambda
+            127      127.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.38874e+04    5.41382e+03   -1.82234e+06   -1.20912e+05   -1.92395e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            128      128.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.39088e+04    5.40690e+03   -1.82229e+06   -1.22135e+05   -1.92511e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            129      129.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.38206e+04    5.40216e+03   -1.82264e+06   -1.22229e+05   -1.92565e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            130      130.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.38266e+04    5.39529e+03   -1.82311e+06   -1.22359e+05   -1.92625e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            131      131.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.38500e+04    5.39334e+03   -1.82198e+06   -1.24051e+05   -1.92679e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            132      132.00000        0.00000
+
+           Step           Time         Lambda
+            133      133.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.37524e+04    5.38945e+03   -1.82377e+06   -1.23263e+05   -1.92789e+06
+ Pressure (bar)
+    0.00000e+00
+
+           Step           Time         Lambda
+            134      134.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond       G96Angle        LJ (SR)   Coulomb (SR)      Potential
+    1.37225e+04    5.38311e+03   -1.82415e+06   -1.23508e+05   -1.92856e+06
  Pressure (bar)
     0.00000e+00
 
 
-Steepest Descents converged to Fmax < 1000 in 94 steps
-Potential Energy  = -1.8726270e+06
-Maximum force     =  6.5477954e+02 on atom 10190
-Norm of force     =  1.8852232e+01
+Steepest Descents converged to Fmax < 1000 in 135 steps
+Potential Energy  = -1.9285558e+06
+Maximum force     =  7.6988245e+02 on atom 3622
+Norm of force     =  1.7421782e+01
 
 	M E G A - F L O P S   A C C O U N T I N G
 
@@ -1088,22 +1403,22 @@ Norm of force     =  1.8852232e+01
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check             709.607942        6386.471    19.2
- NxN RF Elec. + LJ [V&F]                 17.634272         952.251     2.9
- NxN LJ [V&F]                           593.170144       25506.316    76.8
- Reset In Box                             6.795542          20.387     0.1
- CG-CoM                                   7.807644          23.423     0.1
- Bonds                                    0.947802          55.920     0.2
- Angles                                   0.762246         128.057     0.4
- Virial                                   6.812462         122.624     0.4
+ Pair Search distance check             994.641698        8951.775    19.1
+ NxN RF Elec. + LJ [V&F]                 46.919584        2533.658     5.4
+ NxN LJ [V&F]                           810.368416       34845.842    74.5
+ Reset In Box                             9.611730          28.835     0.1
+ CG-CoM                                  11.249284          33.748     0.1
+ Bonds                                    1.183815          69.845     0.1
+ Angles                                   0.828630         139.210     0.3
+ Virial                                   9.636030         173.449     0.4
 -----------------------------------------------------------------------------
- Total                                                   33195.450   100.0
+ Total                                                   46776.361   100.0
 -----------------------------------------------------------------------------
 
 
     D O M A I N   D E C O M P O S I T I O N   S T A T I S T I C S
 
- av. #atoms communicated per step for force:  2 x 14059.7
+ av. #atoms communicated per step for force:  2 x 13857.1
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
@@ -1113,16 +1428,16 @@ On 4 MPI ranks
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Domain decomp.         4    1        107       0.864         19.364   7.9
- DD comm. load          4    1          1       0.000          0.006   0.0
- Neighbor search        4    1         94       1.434         32.131  13.1
- Force                  4    1         94       2.572         57.601  23.4
- Wait + Comm. F         4    1         94       0.413          9.252   3.8
- NB X/F buffer ops.     4    1         94       0.012          0.271   0.1
- Comm. energies         4    1         94       0.080          1.785   0.7
- Rest                                           5.611        125.673  51.1
+ Domain decomp.         4    1        157       1.154         25.844   7.9
+ DD comm. load          4    1          1       0.000          0.003   0.0
+ Neighbor search        4    1        135       1.960         43.912  13.4
+ Force                  4    1        135       3.631         81.336  24.7
+ Wait + Comm. F         4    1        135       0.348          7.789   2.4
+ NB X/F buffer ops.     4    1        135       0.019          0.417   0.1
+ Comm. energies         4    1        135       0.081          1.820   0.6
+ Rest                                           7.481        167.572  51.0
 -----------------------------------------------------------------------------
- Total                                         10.986        246.083 100.0
+ Total                                         14.674        328.692 100.0
 -----------------------------------------------------------------------------
 
 NOTE: 8 % of the run time was spent in domain decomposition,
@@ -1131,7 +1446,7 @@ NOTE: 8 % of the run time was spent in domain decomposition,
 
 
                Core t (s)   Wall t (s)        (%)
-       Time:       43.945       10.986      400.0
+       Time:       58.697       14.674      400.0
                (steps/hour)
-Performance:        30802.3
-Finished mdrun on rank 0 Fri Feb  5 10:08:37 2016
+Performance:        33119.2
+Finished mdrun on rank 0 Sat Feb  6 18:39:00 2016

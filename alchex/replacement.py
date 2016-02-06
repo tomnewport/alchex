@@ -13,8 +13,12 @@ from collections import Counter
 import logging
 from random import shuffle
 import networkx as nx
+import sys
 
 logging.basicConfig(format=' ⚗ %(levelname)s : %(message)s', level=logging.INFO)
+
+PROGRESS_BLOCKS = u"█▉▊▋▌▍▎▏"[::-1]
+PROGRESS_SPINNER = [u"🌘",u"🌗",u"🌖",u"🌕",u"🌔",u"🌓",u"🌒",u"🌑"]
 
 def norm_dict(dictionary):
     sum_values = 1.0 * sum(dictionary.values())
@@ -201,8 +205,7 @@ class ReplacementSystem(object):
                     if ex_map.from_count == 1:
                         group = [{r.id,} for r in available_entities if r.name==from_resname]
                     elif ex_map.from_count == 2:
-                        group_centres_selection = replaceable_universe.select_atoms("name " + ex_map.grouping["atom"])
-                        print replaceable_universe, ex_map.grouping["atom"]
+                        group_centres_selection = replaceable_universe.select_atoms("resname "+from_resname+" and name " + ex_map.grouping["atom"])
                         group_centres = PointCloud(3)
                         group_centres.add_points(group_centres_selection.coordinates())
                         logging.info("Pairing points using atom name " + ex_map.grouping["atom"] + ". This may take some time...")
@@ -286,10 +289,18 @@ class ReplacementSystem(object):
             original.delete_by_resids(entity.residue_ids)
             original.residues.append(new_residues)
             done += 1
-            if done % 5 == 0:
+            if done % 1 == 0:
                 prog = done/(1.0*todo)
-                pb = "=" * int(prog*50) + " " * int((1-prog)*50)
-                print "\r ⚗ Replacing residues... [{pb}] {perc:4.1f}%".format(pb=pb, perc=prog * 100),
+                p_done = int(prog*50)
+                p_current = int((prog*50 - (p_done)) * 8)
+                p_todo = (50-p_done)
+                endchar = PROGRESS_BLOCKS[p_current]
+                if prog == 1:
+                    endchar = ""
+                spinner = PROGRESS_SPINNER[done/5 % 8]
+                pb = u"█" * int(prog*50) + endchar+ " " * int((1-prog)*50)
+                sys.stdout.write(u"\r ⚗ Replacing residues ┠{pb}┨ {spinner}  {perc:4.1f}%    ".format(pb=pb, perc=prog * 100, spinner=spinner))
+                sys.stdout.flush()
         print "\n"
         logging.info("Modifying topology...")
         original_topology.modify_molecules(original.top_molecules())
