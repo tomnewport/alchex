@@ -57,6 +57,11 @@ class AlchexConfig(object):
         compositions_root = path.join(save_root, "compositions")
         makedirs(compositions_root)
 
+        for composition_name, composition in self.compositions.items():
+            filename = path.join(compositions_root, composition_name + ".json")
+            with open(filename, "w") as file_handle:
+                json.dump(composition, file_handle, indent=4)
+
         structures_root = path.join(save_root, "reference_structures")
         makedirs(structures_root)
 
@@ -94,10 +99,8 @@ class AlchexConfig(object):
             return self.exchange_maps[from_resname][to_resname]
         else:
             raise ExchangeMapMissingException("Cannot find a map to make a {to_resname} from a {from_resname}".format(to_resname=to_resname, from_resname=from_resname))
-    def add_composition(self, name, **resname_fractions):
-        n_val = sum(resname_fractions.values()) * 1.0
-        resname_fractions = {k: v/n_val for k, v in resname_fractions.items()}
-        self.compositions[name] = resname_fractions
+    def add_composition(self, name, composition):
+        self.compositions[name] = composition
     def add_reference_structure(self, resname, structure_file, selection=None):
         ref_universe  = mda.Universe(structure_file)
         if resname not in self.reference_structures:
@@ -314,7 +317,18 @@ def default_configuration():
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
-
+    defaultconfig.add_composition("vesicle_test", ({
+    "selection": "leaflet inner",
+    "composition" :{
+        "DPPC" : 1,
+        "DLPG" : 1
+        }},
+    {
+    "selection": "leaflet outer",
+    "composition" :{
+        "POPS" : 1,
+        "DLPG" : 1
+        }}))
     defaultconfig.save()
 
     return defaultconfig
