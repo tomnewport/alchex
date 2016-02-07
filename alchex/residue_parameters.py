@@ -107,7 +107,7 @@ class ResidueParameters(object):
                     if ";" in line:
                         line = line.split(";")[0]
                     line = line.strip()
-                    if line != "":
+                    if line != "" and line[0] != "#":
                         parts = line.split()
                         if current_table_name == "moleculetype":
                             if section_started:

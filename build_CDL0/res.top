@@ -1,0 +1,8 @@
+#include "martini_v2.1.itp"
+
+[ system ]
+builder
+
+[ molecules ]
+CDL0   10
+        

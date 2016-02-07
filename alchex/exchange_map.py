@@ -28,15 +28,27 @@ class ExchangeMap(object):
             "from_count": self.from_count,
             "from_resname" : self.from_resname,
             "from_moltype" : self.from_moltype,
-            "to_count"     : self.from_count,
-            "to_resname"   : self.from_resname,
-            "to_moltype"   : self.from_moltype,
+            "to_count"     : self.to_count,
+            "to_resname"   : self.to_resname,
+            "to_moltype"   : self.to_moltype,
             "grouping"     : self.grouping,
             "actions"      : self.actions
             }
         json_dict = {k:v for k,v in json_dict.items() if v is not None}
         with open(filename, "w") as file_handle:
             json.dump(json_dict, file_handle,sort_keys=True, indent=4)
+
+    def from_file(self, filename):
+        with open(filename, "r") as file_handle:
+            json_dict = json.load(file_handle)
+        self.from_count   = json_dict.get("from_count")
+        self.from_resname = json_dict.get("from_resname")
+        self.from_moltype = json_dict.get("from_moltype")
+        self.to_count     = json_dict.get("to_count")
+        self.to_resname   = json_dict.get("to_resname")
+        self.to_moltype   = json_dict.get("to_moltype")
+        self.grouping     = json_dict.get("grouping")
+        self.actions      = json_dict.get("actions")
     def used_actions(self):
         return set([x["method"] for x in self.actions])
     def scorecard(self):

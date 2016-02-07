@@ -1,15 +1,17 @@
 # coding: utf-8
-from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile
+from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile, SimulationContainer, GromacsWrapper
 from alchex.exchange_map import ExchangeMap
 from alchex.residue import ResidueStructure
 from residue_parameters import ResidueParameters
 from alchex.errors import ExchangeMapMissingException
+from alchex.workarounds import dict_to_gro
 import MDAnalysis as mda
 from random import choice
-from os import path, makedirs
+from os import path, makedirs, walk
 from shutil import rmtree
 import json
 from glob import glob
+import numpy
 
 class AlchexConfig(object):
     def __init__(self, name):
@@ -26,6 +28,8 @@ class AlchexConfig(object):
         # Grompp parameters can be stored 
         # as json
         self.grompp_parameters = {}
+        self.simulation_containers = {}
+        self.includes = []
     def save(self):
         save_root = user_config_path(self.name)
 
@@ -33,6 +37,11 @@ class AlchexConfig(object):
             rmtree(save_root)
 
         makedirs(save_root)
+
+        meta_json = {"include":self.includes}
+        meta_path = path.join(save_root, "config.json")
+        with open(meta_path, "w") as file_handle:
+            json.dump(meta_json, file_handle, indent=4)
 
         grompp_root = path.join(save_root, "grompp_parameters")
         makedirs(grompp_root)
@@ -74,8 +83,18 @@ class AlchexConfig(object):
             for idx, structure in enumerate(structures):
                 filename = path.join(structure_root, resname+"-"+str(idx)+".gro")
                 structure.export_gro(filename)
-    def load(self, force_factory=False):
-        load_root = user_config_path(self.name)
+    def load(self, force_factory=False, name=None):
+        if name is None:
+            name = self.name
+        load_root = user_config_path(name)
+
+        with open(path.join(load_root, "config.json"), "r") as file_handle:
+            meta_json = json.load(file_handle)
+        self.includes = meta_json["include"]
+
+        for include in self.includes:
+            self.load(name=include)
+
         if not path.exists(load_root):
             load_root = default_config_path(self.name)
 
@@ -111,12 +130,24 @@ class AlchexConfig(object):
             gp = GromacsMDPFile()
             gp.from_file(gp_filename)
             self.grompp_parameters[params_name] = gp
-        
-        
+
+        em_root = path.join(load_root, "exchange_maps")
+        em_filenames = walk(em_root)
+        for dirpath, dirnames, filenames in em_filenames:
+            for filename in filenames:
+                fn_path = path.join(dirpath, filename)
+                from_resname, to_resname = filename.split(".")[0].split("-")
+                ex_map = ExchangeMap()
+                ex_map.from_file(fn_path)
+                if not from_resname in self.exchange_maps:
+                    self.exchange_maps[from_resname] = {}
+                self.exchange_maps[from_resname][to_resname] = ex_map
     def load_itp_file(self, filename, resname):
-        itp        = GromacsITPFile(filename)
-        parameters = itp.read_residue(resname)
-        self.parameters[resname] = parameters
+        #itp        = GromacsITPFile(filename)
+        #parameters = itp.read_residue(resname)
+        params = ResidueParameters(resname)
+        params.import_itp(filename)
+        self.parameters[resname] = params
     def get_reference_structure(self, resname):
         return choice(self.reference_structures[resname])
     def build_exchange_map(self, from_resname, from_moltype, to_resname, to_moltype, exchange_model, draw=False, **kwargs):
@@ -157,6 +188,72 @@ class AlchexConfig(object):
         params = GromacsMDPFile()
         params.from_file(mdp_file)
         self.grompp_parameters[name] = params
+    def simulation_container(self, name="alchex_tmp"):
+        if name not in self.simulation_containers:
+            self.simulation_containers[name] = SimulationContainer(
+                name, 
+                GromacsWrapper(
+                    gromacs_executable=self.gromacs_executable
+                    ))
+        return self.simulation_containers[name]
+    def generate_structure(self, resname, repeats=10):
+        sims = self.simulation_container("build_"+resname)
+        res_params = self.parameters[resname]
+        res_params.export_itp(sims.resolve_path("res.itp"))
+        topology_string = '''#include "martini_v2.1.itp"
+
+[ system ]
+builder
+
+[ molecules ]
+{resname}   {repeats}
+        '''.format(resname=resname, repeats=repeats)
+        with open(sims.resolve_path("res.top"), "w") as file_handle:
+            file_handle.write(topology_string)
+        n_atoms = len(res_params.atoms)*repeats
+        coordinates = numpy.random.randn(n_atoms,3) * (n_atoms ** (1./3.))
+        coordinates = coordinates - coordinates.min(axis=0)
+        box_vector = coordinates.max(axis=0)*1.5
+        gro_file = "BUILDER\n{n_atoms}\n".format(n_atoms=n_atoms)
+        idx=0
+        for rep_id in range(repeats):
+            for atom_id in range(len(res_params.atoms)):
+                xpos, ypos, zpos = coordinates[idx,:]
+                idx += 1
+                gro_file += dict_to_gro({
+                    "resid":rep_id+1, 
+                    "resname":resname,
+                    "name":"ANY",
+                    "atomid":atom_id+1,
+                    "posx":xpos,
+                    "posy":ypos,
+                    "posz":zpos,
+                    "velx":0,
+                    "vely":0,
+                    "velz":0
+                    })+"\n"
+        gro_file += "".join([str(x/10)[:9].rjust(10) for x in box_vector])+"\n"
+        with open(sims.resolve_path("res.gro"), "w") as file_handle:
+            file_handle.write(gro_file)
+        em_mdp = '''emstep                   = 0.001
+integrator               = steep
+emtol                    = 10
+nsteps                   = 50000
+nstxout                  = 1
+        '''
+        with open(sims.resolve_path("res.mdp"), "w") as file_handle:
+            file_handle.write(em_mdp)
+        sims.gromacs.grompp(kwargs={
+            "-f" : "res.mdp",
+            "-p" : "res.top",
+            "-c" : "res.gro",
+            "-o" : "res_em.tpr",
+            "-maxwarn":1
+            })
+        print sims.gromacs.mdrun(kwargs={
+            "-deffnm" : "res_em"
+            })
+
 
 def user_config_path(config):
     return path.join(path.expanduser("~/.alchex/config/"), config,"")
@@ -185,6 +282,7 @@ def default_configuration():
     defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPE")
     defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPG")
     defaultconfig.load_itp_file("data/popc_patch/popc_ac.itp", "POPC")
+    defaultconfig.generate_structure("POPC")
 
     defaultconfig.build_exchange_map(
     from_resname="DPPC", 
