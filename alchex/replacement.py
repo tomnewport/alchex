@@ -258,7 +258,7 @@ class ReplacementSystem(object):
         original_topology = GromacsEditableTOPFile()
         original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
         em_mdp = GromacsMDPFile()
-        em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
+        em_mdp = self.alchex_config.grompp_parameters["em"].clone()
         em_mdp.to_file(self.simulations.resolve_path("em.mdp"))
         exitcode, message = self.simulations.gromacs.grompp(kwargs={
                     "-f" : "em.mdp", 
@@ -355,8 +355,7 @@ class ReplacementSystem(object):
         original.from_file(self.simulations.resolve_path("/"+name+"/input.gro"))
         original_topology = GromacsTOPFile()
         original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
-        em_mdp = GromacsMDPFile()
-        em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
+        em_mdp = self.alchex_config.grompp_parameters["em"].clone()
 
         '''
         for p, v in self.additional_em_parameters.items():

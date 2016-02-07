@@ -8,8 +8,14 @@ d = ReplacementSystem(
     )
 
 d.auto_replace({
-	"selection": "resname POPE",
+	"selection": "leaflet inner",
 	"composition" :{
 		"DPPC" : 1,
+		"DLPG" : 1
+		}},
+	{
+	"selection": "leaflet outer",
+	"composition" :{
+		"POPS" : 1,
 		"DLPG" : 1
 		}})

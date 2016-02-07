@@ -7,7 +7,7 @@ import MDAnalysis as mda
 from random import choice
 from os import path, makedirs
 from shutil import rmtree
-import pickle
+import json
 
 class AlchexConfig(object):
     def __init__(self, name):
@@ -30,8 +30,42 @@ class AlchexConfig(object):
         if path.exists(save_root):
             rmtree(save_root)
 
-        parameters_root = path.join(save_root, "parameters")
-        #print(self.parameters)
+        makedirs(save_root)
+
+        grompp_root = path.join(save_root, "grompp_parameters")
+        makedirs(grompp_root)
+
+        for g_name, parameters in self.grompp_parameters.items():
+            filename = path.join(grompp_root, g_name+".mdp")
+            parameters.to_file(filename)
+
+        parameters_root = path.join(save_root, "topologies")
+        makedirs(parameters_root)
+        for resname, parameters in self.parameters.items():
+            filename = path.join(parameters_root, resname+".itp")
+            parameters.export_itp(filename)
+
+        exchange_maps_root = path.join(save_root, "exchange_maps")
+        makedirs(exchange_maps_root)
+        for from_resname, to_ems in self.exchange_maps.items():
+            em_root = path.join(exchange_maps_root, from_resname)
+            makedirs(em_root)
+            for to_resname, exchange_map in to_ems.items():
+                filename = path.join(em_root, from_resname+"-"+to_resname+".json")
+                exchange_map.to_file(filename)
+
+        compositions_root = path.join(save_root, "compositions")
+        makedirs(compositions_root)
+
+        structures_root = path.join(save_root, "reference_structures")
+        makedirs(structures_root)
+
+        for resname, structures in self.reference_structures.items():
+            structure_root = path.join(structures_root, resname)
+            makedirs(structure_root)
+            for idx, structure in enumerate(structures):
+                filename = path.join(structure_root, resname+"-"+str(idx)+".gro")
+                structure.export_gro(filename)
     def load(self):
         pass
     def load_itp_file(self, filename, resname):
@@ -59,7 +93,7 @@ class AlchexConfig(object):
         if from_resname in self.exchange_maps and to_resname in self.exchange_maps[from_resname]:
             return self.exchange_maps[from_resname][to_resname]
         else:
-            raise ExchangeMapMissingException()
+            raise ExchangeMapMissingException("Cannot find a map to make a {to_resname} from a {from_resname}".format(to_resname=to_resname, from_resname=from_resname))
     def add_composition(self, name, **resname_fractions):
         n_val = sum(resname_fractions.values()) * 1.0
         resname_fractions = {k: v/n_val for k, v in resname_fractions.items()}
@@ -79,10 +113,10 @@ class AlchexConfig(object):
     def add_grompp_parameters(self, name, mdp_file):
         params = GromacsMDPFile()
         params.from_file(mdp_file)
-        self.grompp_parameters[name] = params.attrs
+        self.grompp_parameters[name] = params
 
 def user_config_path(config):
-    return path.join(path.expanduser("~/.alchex"), config,"")
+    return path.join(path.expanduser("~/.alchex/config/"), config,"")
 
 def default_config_path(config):
     return path.join(path.split(__file__)[0], "config", config, "")
@@ -146,6 +180,13 @@ def default_configuration():
     from_moltype="POPE",
     to_resname="DPPC",
     to_moltype="DPPC",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="POPE",
+    from_moltype="POPE",
+    to_resname="POPS",
+    to_moltype="POPS",
     exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
@@ -278,4 +319,13 @@ def default_configuration():
 
     return defaultconfig
 
-default_configuration()
+f = default_configuration()
+'''
+f.parameters["POPC"].export_itp("file.itp")
+from residue_parameters import ResidueParameters
+a = ResidueParameters("POPC")
+a.import_itp("martini_v2.1.itp")
+a.export_itp("file_out.itp")
+'''
+f.reference_structures["POPC"][0].export_gro("test_popc.gro")
+

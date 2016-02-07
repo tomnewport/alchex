@@ -1,4 +1,4 @@
-emstep                   = 0.001
 integrator               = steep
+emstep                   = 0.001
 emtol                    = 1000
 nsteps                   = 5000

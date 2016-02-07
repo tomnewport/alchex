@@ -5,9 +5,10 @@ import MDAnalysis as mda
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
 from shutil import copy, copyfile, rmtree, copytree
 from os import path, makedirs
-from alchex.lipid_analysis import find_bilayer_leaflets
+from alchex.lipid_analysis import find_bilayer_leaflets, find_vesicle_leaflets
 from collections import OrderedDict
 from copy import deepcopy
+from alchex.knowledge import ITP_FIELDS
 
 '''
 class AsyncOSCommand(object):
@@ -98,7 +99,7 @@ class SimulationContainer(object):
         self.universes = {}
         self.groups = {}
     def select_atoms(self, filename, selection):
-        custom_groups = ["leaflet upper", "leaflet lower"]
+        custom_groups = ["leaflet upper", "leaflet lower", "leaflet inner", "leaflet outer"]
         universe = self.universe(filename)
         if filename not in self.groups:
             self.groups[filename] = {}
@@ -110,6 +111,10 @@ class SimulationContainer(object):
                         lower_leaflet, upper_leaflet = find_bilayer_leaflets(universe)
                         self.groups[filename]["leaflet_lower"] = lower_leaflet
                         self.groups[filename]["leaflet_upper"] = upper_leaflet
+                    if cg_name in ["leaflet_inner", "leaflet_outer"]:
+                        inner_leaflet, outer_leaflet = find_vesicle_leaflets(universe)
+                        self.groups[filename]["leaflet_inner"] = inner_leaflet
+                        self.groups[filename]["leaflet_outer"] = outer_leaflet
                 selection = selection.replace(cg, "group "+cg_name)
         return universe.select_atoms(selection, **self.groups[filename])
     def universe(self, filename):
@@ -183,10 +188,7 @@ class GromacsITPFile(object):
     def __init__(self, filename):
         self.filename = filename
     def read_residue(self, residue_name):
-        colnames = {"atoms" : "id type resnr residue atom cgnr charge mass".split(),
-                   "bonds": "i  j   funct   length  force.c.".split(),
-                   "angles": "i  j  k   funct   angle   force.c.".split(),
-                   "molname": "molname       nrexcl".split()}
+        colnames = ITP_FIELDS
         tables = {}
         with open(self.filename, "r") as file_handle:
             sectionline = 0
@@ -230,6 +232,8 @@ class GromacsITPFile(object):
 class GromacsMDPFile(object):
     def __init__(self):
         self.attrs = {}
+    def clone(self):
+        return deepcopy(self)
     def from_file(self, filename):
         with open(filename, "r") as file_handle:
             for line in file_handle:
