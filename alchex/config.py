@@ -2,12 +2,14 @@
 from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile
 from alchex.exchange_map import ExchangeMap
 from alchex.residue import ResidueStructure
+from residue_parameters import ResidueParameters
 from alchex.errors import ExchangeMapMissingException
 import MDAnalysis as mda
 from random import choice
 from os import path, makedirs
 from shutil import rmtree
 import json
+from glob import glob
 
 class AlchexConfig(object):
     def __init__(self, name):
@@ -54,13 +56,14 @@ class AlchexConfig(object):
                 filename = path.join(em_root, from_resname+"-"+to_resname+".json")
                 exchange_map.to_file(filename)
 
-        compositions_root = path.join(save_root, "compositions")
-        makedirs(compositions_root)
+        compositions_file = path.join(save_root, "compositions.json")
 
+        compositions_json = {}
         for composition_name, composition in self.compositions.items():
-            filename = path.join(compositions_root, composition_name + ".json")
-            with open(filename, "w") as file_handle:
-                json.dump(composition, file_handle, indent=4)
+            compositions_json[composition_name] = composition
+
+        with open(compositions_file, "w") as file_handle:
+            json.dump(compositions_json, file_handle, indent=4)
 
         structures_root = path.join(save_root, "reference_structures")
         makedirs(structures_root)
@@ -71,8 +74,45 @@ class AlchexConfig(object):
             for idx, structure in enumerate(structures):
                 filename = path.join(structure_root, resname+"-"+str(idx)+".gro")
                 structure.export_gro(filename)
-    def load(self):
-        pass
+    def load(self, force_factory=False):
+        load_root = user_config_path(self.name)
+        if not path.exists(load_root):
+            load_root = default_config_path(self.name)
+
+        compositions_file = path.join(load_root, "compositions.json")
+        if path.exists(compositions_file):
+            with open(compositions_file,"r") as file_handle:
+                compositions = json.load(file_handle)
+            for c_name, composition in compositions.items():
+                self.compositions[c_name] = composition
+
+        topologies_root = path.join(load_root, "topologies")
+        topologies_filenames = glob(path.join(topologies_root,"*.itp"))
+        for top_filename in topologies_filenames:
+            resname = path.splitext(path.basename(top_filename))[0]
+            res_parameter = ResidueParameters(resname)
+            res_parameter.import_itp(top_filename)
+            self.parameters[resname] = res_parameter
+
+        ref_struct_root = path.join(load_root, "reference_structures")
+        rs_filenames = glob(path.join(ref_struct_root, "*/*.gro"))
+        for rs_filename in rs_filenames:
+            resname = path.split(path.split(rs_filename)[0])[1]
+            params = self.parameters[resname]
+            universe = mda.Universe(rs_filename)
+            if resname not in self.reference_structures:
+                self.reference_structures[resname] = []
+            self.reference_structures[resname].append(ResidueStructure(universe, params))
+        
+        gp_root = path.join(load_root, "grompp_parameters")
+        gp_filenames = glob(path.join(gp_root,"*.mdp"))
+        for gp_filename in gp_filenames:
+            params_name = path.splitext(path.basename(gp_filename))[0]
+            gp = GromacsMDPFile()
+            gp.from_file(gp_filename)
+            self.grompp_parameters[params_name] = gp
+        
+        
     def load_itp_file(self, filename, resname):
         itp        = GromacsITPFile(filename)
         parameters = itp.read_residue(resname)
@@ -330,6 +370,7 @@ def default_configuration():
         "DLPG" : 1
         }}))
     defaultconfig.save()
+    defaultconfig.load()
 
     return defaultconfig
 
