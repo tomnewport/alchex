@@ -116,6 +116,7 @@ class SimulationContainer(object):
                         self.groups[filename]["leaflet_inner"] = inner_leaflet
                         self.groups[filename]["leaflet_outer"] = outer_leaflet
                 selection = selection.replace(cg, "group "+cg_name)
+        print selection, self.groups[filename]
         return universe.select_atoms(selection, **self.groups[filename])
     def universe(self, filename):
         if filename not in self.universes:

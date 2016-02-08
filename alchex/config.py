@@ -127,8 +127,8 @@ def default_configuration():
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
     
-    #defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
-    defaultconfig.gromacs_executable = "gmx"
+    defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
+    #defaultconfig.gromacs_executable = "gmx"
 
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
