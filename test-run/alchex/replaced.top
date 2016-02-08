@@ -1,0 +1,12 @@
+#include "martini_v2.1.itp"
+#include "protein-cg.itp"
+#include "CDL.itp"
+[ system ]
+SELF-ASSEMBLY
+
+[ molecules ]
+Protein	1
+CDL0	228
+DPPC	227
+W	16481
+

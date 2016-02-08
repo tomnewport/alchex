@@ -40,6 +40,7 @@ class WAEditableResidue(object):
         self.coordinates.points=numpy.array(new_coordinates)
     def overlay(self, from_residue, to_residue, mapping):
         points = []
+        print from_residue.resname, to_residue.resname
         for from_atom_id, to_atom_id in mapping.items():
             f_index = from_residue.mda_index(from_atom_id)
             t_index = to_residue.mda_index(to_atom_id)

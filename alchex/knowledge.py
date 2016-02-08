@@ -40,7 +40,15 @@ ITP_FIELDS = {"atoms":["id",
                       "angle",
                       "force"],
             "moleculetype": ["molname",
-                             "nrexcl"]
+                             "nrexcl"],
+            "constraints" : [
+              "i",
+              "j",
+              "funct",
+              "length"],
+            "dihedrals" : [
+            "i","j","k","l","funct","angle","force"
+            ]
                      }
 
 

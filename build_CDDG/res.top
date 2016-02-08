@@ -1,0 +1,7 @@
+#include "martini_v2.1-dna.itp"
+#include "CDDG2.itp"
+[ system ]
+builder
+[ molecules ]
+CDDG   1
+        

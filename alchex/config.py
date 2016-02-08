@@ -1,10 +1,13 @@
 # coding: utf-8
-from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile
+from alchex.gromacs_interface import GromacsITPFile, GromacsMDPFile, SimulationContainer, GromacsWrapper
 from alchex.exchange_map import ExchangeMap
 from alchex.residue import ResidueStructure
+from alchex.workarounds import dict_to_gro
+from alchex.residue_parameters import ResidueParameters
 from alchex.errors import ExchangeMapMissingException
 import MDAnalysis as mda
 from random import choice
+import numpy
 from os import path, makedirs
 from shutil import rmtree
 import json
@@ -24,6 +27,7 @@ class AlchexConfig(object):
         # Grompp parameters can be stored 
         # as json
         self.grompp_parameters = {}
+        self.simulation_containers = {}
     def save(self):
         save_root = user_config_path(self.name)
 
@@ -69,8 +73,10 @@ class AlchexConfig(object):
     def load(self):
         pass
     def load_itp_file(self, filename, resname):
-        itp        = GromacsITPFile(filename)
-        parameters = itp.read_residue(resname)
+        #itp        = GromacsITPFile(filename)
+        #parameters = itp.read_residue(resname)
+        parameters = ResidueParameters(resname)
+        parameters.import_itp(filename)
         self.parameters[resname] = parameters
     def get_reference_structure(self, resname):
         return choice(self.reference_structures[resname])
@@ -114,6 +120,91 @@ class AlchexConfig(object):
         params = GromacsMDPFile()
         params.from_file(mdp_file)
         self.grompp_parameters[name] = params
+    def simulation_container(self, name="alchex_tmp"):
+        if name not in self.simulation_containers:
+            self.simulation_containers[name] = SimulationContainer(
+                name, 
+                GromacsWrapper(
+                    gromacs_executable=self.gromacs_executable
+                    ))
+        return self.simulation_containers[name]
+    def generate_structure(self, itp_file, resname, repeats=10, additional_itps=[]):
+        sims = self.simulation_container("build_"+resname)
+        res_params = ResidueParameters(resname)
+        res_params.import_itp(itp_file)
+        sims.add_file(itp_file)
+        topology_string = ""
+        for additional_itp in additional_itps:
+            topology_string += '#include "{itp_file}"\n'.format(itp_file=path.basename(additional_itp))
+            sims.add_file(additional_itp)
+        topology_string += '''#include "{itp_file}"
+[ system ]
+builder
+[ molecules ]
+{resname}   {repeats}
+        '''.format(
+            resname=resname, 
+            repeats=repeats, 
+            itp_file=path.split(itp_file)[1])
+        with open(sims.resolve_path("res.top"), "w") as file_handle:
+            file_handle.write(topology_string)
+        n_atoms = len(res_params.atoms)*repeats
+        coordinates = numpy.random.randn(n_atoms,3) * 3 * (n_atoms ** (1./3.))
+        coordinates = coordinates - coordinates.min(axis=0)
+        box_vector = coordinates.max(axis=0)*1.5
+        gro_file = "BUILDER\n{n_atoms}\n".format(n_atoms=n_atoms)
+        idx=0
+        for rep_id in range(repeats):
+            for atom_id in range(len(res_params.atoms)):
+                xpos, ypos, zpos = coordinates[idx,:]
+                idx += 1
+                gro_file += dict_to_gro({
+                    "resid":rep_id+1, 
+                    "resname":resname,
+                    "name":"ANY",
+                    "atomid":atom_id+1,
+                    "posx":xpos,
+                    "posy":ypos,
+                    "posz":zpos,
+                    "velx":0,
+                    "vely":0,
+                    "velz":0
+                    })+"\n"
+        gro_file += "".join([str(x/10)[:9].rjust(10) for x in box_vector])+"\n"
+        with open(sims.resolve_path("res.gro"), "w") as file_handle:
+            file_handle.write(gro_file)
+        em_mdp = '''emstep                   = 0.001
+integrator               = steep
+emtol                    = 10
+nsteps                   = 50000
+nstxout                  = 1
+        '''
+        with open(sims.resolve_path("res.mdp"), "w") as file_handle:
+            file_handle.write(em_mdp)
+        exitcode, message = sims.gromacs.grompp(kwargs={
+            "-f" : "res.mdp",
+            "-p" : "res.top",
+            "-c" : "res.gro",
+            "-o" : "res_em.tpr",
+            "-maxwarn":1
+            })
+        if exitcode != 0:
+            print message
+            return False
+        exitcode, message = sims.gromacs.mdrun(kwargs={
+            "-deffnm" : "res_em"
+            })
+        print message
+        if exitcode != 0:
+            print message
+            return False
+        exitcode, message = sims.gromacs.trjconv(kwargs={
+            "-f":"res_em.gro",
+            "-o":"pbc.gro",
+            "-s":"res_em.tpr",
+            "-pbc":"mol",
+            "_stdin":"0"
+        })
 
 def user_config_path(config):
     return path.join(path.expanduser("~/.alchex/config/"), config,"")
@@ -126,17 +217,19 @@ def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
     #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
-    
     defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
     #defaultconfig.gromacs_executable = "gmx"
-
+    #defaultconfig.generate_structure("CDDG/CDDG2.itp", "CDDG", additional_itps=["data/martini_v2.1-dna.itp"], repeats=1)
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
+    defaultconfig.load_itp_file("CDDG/CDDG2.itp", "CDDG")
     defaultconfig.load_itp_file("data/DVPE.itp", "DVPE")
     defaultconfig.load_itp_file("data/CDL.itp", "CDL0")
     defaultconfig.load_itp_file("data/chol.itp", "CHOL")
     defaultconfig.load_itp_file("data/dppc.itp", "DPPC")
     defaultconfig.load_itp_file("data/pi3p.itp", "PI3P")
+    defaultconfig.load_itp_file("data/PODG.itp", "PODG")
+    defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPA")
     defaultconfig.load_itp_file("data/martini_v2.1.itp", "PVPA")
     defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPS")
     defaultconfig.load_itp_file("data/martini_v2.1.itp", "POPE")
@@ -301,6 +394,42 @@ def default_configuration():
     to_moltype="DLPG",
     exchange_model="martini.lipid")
 
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="PODG",
+    to_moltype="PODG",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="POPA",
+    to_moltype="POPA",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="POPG",
+    to_moltype="POPG",
+    exchange_model="martini.lipid")
+    
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="CDDG",
+    to_moltype="CDDG",
+    exchange_model="martini.lipid")
+
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="DPPC",
+    to_moltype="DPPC",
+    exchange_model="martini.lipid")
+    
+
     defaultconfig.add_reference_structure("DLPG","data/DLPG-em.gro")
     defaultconfig.add_reference_structure("DPPC","data/dppc.pdb", selection="resname DPP")
     defaultconfig.add_reference_structure("CDL0","data/CDL0.gro", selection="resname CDL")
@@ -311,6 +440,9 @@ def default_configuration():
     defaultconfig.add_reference_structure("POPE","data/pope.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPC","data/popc.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPG", "data/popg.pdb", selection="resname POP")
+    defaultconfig.add_reference_structure("PODG", "data/PODG-em.gro", selection="resname PODG")
+    defaultconfig.add_reference_structure("CDDG", "CDDG/CDDG2.gro")
+    defaultconfig.add_reference_structure("POPA", "data/POPA-em.gro")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")
     defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
