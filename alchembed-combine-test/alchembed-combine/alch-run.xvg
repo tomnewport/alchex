@@ -1,16 +1,38 @@
-# This file was created Thu Jan 28 22:22:12 2016
+# This file was created Fri Jan 29 15:55:05 2016
 # Created by:
-# GROMACS:      gmx mdrun, VERSION 5.0.1
-# Executable:   /usr/local/bin/gmx
-# Library dir:  /usr/local/share/gromacs/top
+#                    :-) GROMACS - gmx mdrun, VERSION 5.1 (-:
+# 
+# Executable:   /sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse
+# Data prefix:  /sbcb/packages/opt/Linux_x86_64/gromacs/5.1
 # Command line:
-#   gmx mdrun -deffnm alch-run -rdd 1
-# gmx is part of G R O M A C S:
+#   gmx_sse mdrun -deffnm alch-run -rdd 1
+# gmx mdrun is part of G R O M A C S:
 #
-# GROwing Monsters And Cloning Shrimps
+# Gravel Rubs Often Many Awfully Cauterized Sores
 #
 @    title "dH/d\xl\f{}"
 @    xaxis  label "Time (ps)"
 @    yaxis  label "dH/d\xl\f{} (kJ/mol [\xl\f{}]\S-1\N)"
 @TYPE xy
 @ subtitle "T = 310 (K) "
+0.0000 -2931.8955
+0.5000 1106.0546
+1.0000 -873.08386
+1.5000 -1480.2773
+2.0000 -1531.1545
+2.5000 -1833.9452
+3.0000 -1888.4667
+3.5000 -1831.6534
+4.0000 -1650.9812
+4.5000 -1710.6310
+5.0000 -1765.1433
+5.5000 -1948.0663
+6.0000 -2050.6868
+6.5000 -2136.5278
+7.0000 -2304.4233
+7.5000 -2437.4736
+8.0000 -2529.0457
+8.5000 -2690.6235
+9.0000 -2867.5134
+9.5000 -2812.9832
+10.0000 -3012.1677

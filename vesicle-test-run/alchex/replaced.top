@@ -1,0 +1,11 @@
+#include "martini_v2.1.itp"
+#include "CDL.itp"
+[ system ]
+POPE
+
+[ molecules ]
+DLPG	438
+DPPC	127
+POPS	312
+W	61552
+

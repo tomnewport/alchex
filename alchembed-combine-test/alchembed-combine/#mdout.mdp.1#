@@ -1,8 +1,9 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: tom (501)
-;	On host: derp.local
-;	At date: Thu Jan 28 22:22:11 2016
+;	By user: shil3498 (12841)
+;	On host: draculin
+;	At date: Fri Jan 29 15:50:01 2016
+
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -248,7 +249,6 @@ wall-density             =
 wall-ewald-zfac          = 3
 
 ; COM PULLING          
-; Pull type: no, umbrella, constraint or constant-force
 pull                     = no
 
 ; ENFORCED ROTATION    
@@ -326,6 +326,9 @@ sim-temp-high            = 300
 ; Format is number of terms (int) and for all terms an amplitude (real)
 ; and a phase angle (real)
 E-x                      = 
+; Time dependent (pulsed) electric field. Format is omega, time for pulse
+; peak, and sigma (width) for pulse. Sigma = 0 removes pulse, leaving
+; the field to be a cosine function.
 E-xt                     = 
 E-y                      = 
 E-yt                     = 
