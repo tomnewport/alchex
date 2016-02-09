@@ -1,0 +1,21 @@
+#include "martini_v2.1_for_CDDG.itp"
+#include "protein-cg.itp"
+#include "CDL.itp"
+#include "cddg_v3.itp"
+#include "PODG.itp"
+#include "pi3p.itp"
+[ system ]
+SELF-ASSEMBLY
+
+[ molecules ]
+Protein	1
+CDL0	18
+POPA	18
+POPG	71
+POPE	211
+PODG	18
+CDDG	17
+PI3P	17
+W	9145
+NA+	403
+

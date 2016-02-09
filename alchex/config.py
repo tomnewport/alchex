@@ -205,6 +205,13 @@ nstxout                  = 1
             "-pbc":"mol",
             "_stdin":"0"
         })
+        exitcode, message = sims.gromacs.trjconv(kwargs={
+            "-f":"res_em.trr",
+            "-o":"pbc.xtc",
+            "-s":"res_em.tpr",
+            "-pbc":"mol",
+            "_stdin":"0"
+        })
 
 def user_config_path(config):
     return path.join(path.expanduser("~/.alchex/config/"), config,"")
@@ -219,10 +226,10 @@ def default_configuration():
     defaultconfig = AlchexConfig("cg_default")
     defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
     #defaultconfig.gromacs_executable = "gmx"
-    #defaultconfig.generate_structure("CDDG/CDDG2.itp", "CDDG", additional_itps=["data/martini_v2.1-dna.itp"], repeats=1)
+    #defaultconfig.generate_structure("CDDG/CDDG2-noconstraints.itp", "CDDG", additional_itps=["data/martini_v2.1-dna.itp"], repeats=1)
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
-    defaultconfig.load_itp_file("CDDG/CDDG2.itp", "CDDG")
+    defaultconfig.load_itp_file("CDDG/cddg_v3.itp", "CDDG")
     defaultconfig.load_itp_file("data/DVPE.itp", "DVPE")
     defaultconfig.load_itp_file("data/CDL.itp", "CDL0")
     defaultconfig.load_itp_file("data/chol.itp", "CHOL")
@@ -441,7 +448,7 @@ def default_configuration():
     defaultconfig.add_reference_structure("POPC","data/popc.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPG", "data/popg.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("PODG", "data/PODG-em.gro", selection="resname PODG")
-    defaultconfig.add_reference_structure("CDDG", "CDDG/CDDG2.gro")
+    defaultconfig.add_reference_structure("CDDG", "CDDG/cddg_v3.gro")
     defaultconfig.add_reference_structure("POPA", "data/POPA-em.gro")
 
     defaultconfig.add_grompp_parameters("em", "gromacs_scratch/em.mdp")

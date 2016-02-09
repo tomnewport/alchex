@@ -1,0 +1,17 @@
+#include "martini_v2.1_for_CDDG.itp"
+#include "protein-cg.itp"
+#include "CDL.itp"
+#include "cddg_v3.itp"
+#include "PODG.itp"
+#include "pi3p.itp"
+
+[ system ]
+SELF-ASSEMBLY
+
+[ molecules ]
+PROTEIN 1
+
+DPPC 1049
+W 25392
+NA+ 604
+CL- 588

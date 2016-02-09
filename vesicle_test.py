@@ -17,5 +17,5 @@ d.auto_replace({
 	"selection": "leaflet outer",
 	"composition" :{
 		"POPS" : 1,
-		"DLPG" : 1
+		"CDL0" : 1
 		}})
