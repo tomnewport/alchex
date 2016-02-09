@@ -6056,12 +6056,6 @@ CDDG                1
 
    2  1 13 	2 	180.0 	25 	
    1 13 14 	2 	180.0 	25	
-
-[ dihedrals ]
-
-13  14  15   16   2   -78.00000   25
-14  15  16   17   2   -90.00000   20
-15  14  16   18   2   -142.00000   50
 ;;;;;; Martini lipid topology for C16:0/18:1 DAG (PODG), generated using:
 ; The Martini lipid itp generator version 0.4  Args are: -o martini_v2.0_PODG_01.itp -alname PODG -alhead '' -allink 'G G' -altail 'CDCC CCCC'
 ; WARNING: Lipids topology was generated following the Martini 2.0 guidelines but this specific lipid type might

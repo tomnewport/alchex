@@ -37,7 +37,7 @@ def setup(folder="3ZE3-phosynth"):
         file_handle.write("\n".join(lipid_atoms))
         file_handle.write("\n[ SOL_ION ]\n")
         file_handle.write("\n".join(water_sol_atoms))
-
+    print folder
     print sims.gromacs.grompp(kwargs={
         "-f" : mdp_path,
         "-c" : gro_path,
@@ -45,10 +45,11 @@ def setup(folder="3ZE3-phosynth"):
         "-n" : "index.ndx",
         "-o" : "mdrun-"+folder[:4]+".tpr",
         "-maxwarn" : 3
-        })[1]
-    #print sims.gromacs.mdrun(kwargs={
-    #    "-deffnm" : "topol"
-    #    })[1]
+        })[0]
+    print sims.gromacs.mdrun(kwargs={
+        "-deffnm" : "mdrun-"+folder[:4],
+        "-nsteps" : 100000000
+        })[0]
 setup("3ZE3-phosynth")
 setup("4WIS-phosynth")
 setup("5D91-phosynth")
