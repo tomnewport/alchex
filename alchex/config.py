@@ -90,7 +90,7 @@ class AlchexConfig(object):
             to_moltype=to_moltype,
             from_moltype=from_moltype,
             method=exchange_model, 
-            draw=False, 
+            draw=draw, 
             **kwargs)
         if from_resname not in self.exchange_maps:
             self.exchange_maps[from_resname] = {}
