@@ -32,7 +32,7 @@ for pdb_filename in glob("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipid
     "composition" :{
         "POPA" : 1,
         "PI3P" : 1,
-        "CDDG" : 1,
+        #"CDDG" : 1,
         "PODG" : 1,
         "CDL0" : 1,
         "POPG" : 4,
@@ -43,7 +43,7 @@ for pdb_filename in glob("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipid
     "composition" :{
         "POPA" : 1,
         "PI3P" : 1,
-        "CDDG" : 1,
+        #"CDDG" : 1,
         "PODG" : 1,
         "CDL0" : 1,
         "POPG" : 4,

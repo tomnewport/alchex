@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: shil3498 (12841)
 ;	On host: draculin
-;	At date: Tue Feb  9 11:14:24 2016
+;	At date: Tue Feb  9 19:42:59 2016
 
 ;
 
@@ -37,7 +37,7 @@ ld-seed                  = -1
 
 ; ENERGY MINIMIZATION OPTIONS
 ; Force tolerance and initial step-size
-emtol                    = 1000
+emtol                    = 10
 emstep                   = 0.001
 ; Max number of iterations in relax-shells
 niter                    = 20

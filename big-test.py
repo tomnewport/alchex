@@ -29,8 +29,7 @@ d.auto_replace(
 d.auto_replace({
 	"selection": "leaflet upper",
 	"composition" :{
-		"DPPC" : 1,
-		"CDL0" : 1
+		"DPPC" : 1
 		}},
 	{
 	"selection": "leaflet lower",
