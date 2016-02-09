@@ -14,8 +14,9 @@ import logging
 from random import shuffle
 import networkx as nx
 import sys
+import alchex.logger
 
-logging.basicConfig(format=' ⚗ %(levelname)s : %(message)s', level=logging.INFO)
+logging.info("Done importing")
 
 PROGRESS_BLOCKS = u"█▉▊▋▌▍▎▏"[::-1]
 PROGRESS_SPINNER = [u"🌘",u"🌗",u"🌖",u"🌕",u"🌔",u"🌓",u"🌒",u"🌑"]
@@ -140,6 +141,7 @@ class ReplacementSystem(object):
             self.include_from = path.split(self.input_topology_filename)[0]
         self.setup()
         self._custom_groups = {}
+        logging.info("Config complete")
     def custom_group(self, group_name):
         universe = self.simulations.universe("input.gro")
         if group_name not in self._custom_groups:
@@ -331,6 +333,7 @@ class ReplacementSystem(object):
             raise GromacsInterfaceError(message)
 
         original.reload(self.simulations.resolve_path("all-em.gro"), same_atom_names=False)
+        logging.info("Complete")
         #print(len(original.declash_moltypes(2)))
         # Look for clashes
         # Use alchembed to resolve clashes

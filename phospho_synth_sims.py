@@ -15,6 +15,7 @@ GMX = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
 
 for pdb_filename in glob("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/alchex/phospho_synth_sims/input_data/*/*/coarsegrained-system.pdb"):
     folder, filename = path.split(pdb_filename)
+    writefolder = path.join("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/alchex/phospho_synth_sims/replaced/", path.split(folder)[1]+"-phosynth")
     check_output("cd "+folder+";"+GMX +" editconf -f "+filename+" -o input.gro -c", shell=True)
     with open(path.join(folder, "input.gro"), "r") as input_fh:
         newlines = input_fh.read().replace("DPP ", "DPPC")
@@ -23,7 +24,7 @@ for pdb_filename in glob("/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipid
     d = ReplacementSystem(
         input_structure_filename=path.join(folder,"input.gro"),
         input_topology_filename=path.join(folder,"topol2.top"),
-        root_folder="phos-test-run"
+        root_folder=path.split(folder)[1]+"-phosynth"
     )
     
     d.auto_replace({

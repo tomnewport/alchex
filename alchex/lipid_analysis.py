@@ -8,8 +8,7 @@ import seaborn as sns
 from scipy.spatial.distance import pdist, squareform
 import numpy
 import logging
-
-logging.basicConfig(format=' ⚗ %(levelname)s : %(message)s', level=logging.INFO)
+import alchex.logger
 
 def find_bilayer_leaflets(universe, headgroups="name P*", axis=[0,0,1], mda_selection=True):
 	points = universe.select_atoms(headgroups)

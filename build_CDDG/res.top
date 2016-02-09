@@ -1,5 +1,5 @@
 #include "martini_v2.1-dna.itp"
-#include "CDDG2.itp"
+#include "CDDG2-noconstraints.itp"
 [ system ]
 builder
 [ molecules ]
