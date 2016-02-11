@@ -138,7 +138,7 @@ class VesicleBuilder(object):
         distance = numpy.linalg.norm(displacement)
         mol_axis = displacement / distance
         points = PointCloud(3)
-        points.add_points(universe.select_atoms("not resname DPP").coordinates())
+        points.add_points(universe.select_atoms("resname DPP").coordinates())
         cross_sectional_area_3d(points, mol_axis)
         
 

@@ -93,6 +93,7 @@ class PointCloud:
         self.dimensions = dimensions
         self.points = numpy.zeros((0,self.dimensions+1))
         self.lines  = []
+        self.planes = []
     def group_points(self, group_size, **kwargs):
         if group_size == 2:
             return bruteforce_pair(self.points, **kwargs)
@@ -330,8 +331,15 @@ from scipy.spatial import Delaunay
 from itertools import combinations
 from collections import Counter
 
+def export_obj_3d(pointcloud, destination):
+    with open(destination, "w") as obj_handle:
+        for point in pointcloud.points:
+            obj_handle.write("v "+ " ".join(map(str,point))+"\n")
+        for plane in pointcloud.planes:
+            obj_handle.write("f " + " ".join(map(lambda x : str(x+1), plane))+"\n")
+
+
 def alpha_shape_3d(pointcloud, alpha=1):
-    print(1)
     all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
     matching_simplices = []
     planes = []
@@ -348,9 +356,8 @@ def alpha_shape_3d(pointcloud, alpha=1):
     for plane in outer:
         for a, b in combinations(plane,2):
             pointcloud.lines.append([a,b])
-    #pointcloud.planes.append(list(plane))
-    print(2)
-    plot_3d(pointcloud)
+        pointcloud.planes.append(list(plane))
+    export_obj_3d(pointcloud, "test.obj")
 
 
 def cross_sectional_area_3d(pointcloud, axis):
@@ -364,7 +371,7 @@ def cross_sectional_area_3d(pointcloud, axis):
     projected.transform(projection)
 
     slab = projected.clone()
-    alpha_shape_3d(pointcloud, 30)
+    alpha_shape_3d(pointcloud, 10)
     
     #plot_3d(slab)
 
