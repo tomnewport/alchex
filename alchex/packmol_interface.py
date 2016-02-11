@@ -89,7 +89,7 @@ class WrappedPackmolStructure(object):
         if self.number is not None:
             string += indent("number {number}".format(number=self.number))+"\n"
         if self.resnumbers is not None:
-            string += indent("resnumbers {resnumbers}".format(resnumbers=self.resnumber))+"\n"
+            string += indent("resnumbers {resnumbers}".format(resnumbers=self.resnumbers))+"\n"
         string += "\n".join(map(lambda x : indent(str(x)), self.constraints+self.atom_selections))
         string += "\nend structure"
         return string
@@ -108,29 +108,99 @@ class WrappedPackmolInput(object):
         return string
 
 from subprocess import Popen, PIPE, STDOUT
+from os import path
+import MDAnalysis as mda
+import numpy
+from alchex.geometry import PointCloud, plot_3d, TransformationMatrix, cross_sectional_area_3d
+import matplotlib.pyplot as plt
 
 PACKMOL_DIR = "/sansom/n15/shil3498/apps/packmol/packmol"
 
 class WrappedPackmol(object):
     def __init__(self, packmol_executable="packmol"):
         self.packmol_executable = packmol_executable
-    def run(self, input):
-        packmol_process = Popen(PACKMOL_DIR, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        response = packmol_process.communicate(str(input))
-        print response[0]
+    def run(self, input, directory="."):
+        #packmol_process = Popen(PACKMOL_DIR, stdout=PIPE, stdin=PIPE, stderr=STDOUT, cwd=directory)
+        #response = packmol_process.communicate(str(input))
+        packmol_process = Popen(PACKMOL_DIR, stdin=PIPE, cwd=directory)
+        packmol_process.communicate(str(input))
 
-a = WrappedPackmolConstraint("fixed", 0,0,0,21,39,39)
-b = WrappedPackmolAtomSelection([1,2,3],1)
-c = WrappedPackmolStructure("test.pdb", 10)
+class VesicleBuilder(object):
+    def __init__(self, output="vesicle.pdb", diameter=100, cwd="."):
+        self.output = output
+        self.diameter = diameter
+        self.cwd = cwd
+        self.molecules = []
+    def add_molecule(self, input_pdb, outer=None, inner=None, center=None, orient_tolerance=0.1):
+        universe = mda.Universe(path.join(self.cwd, input_pdb))
+        spheres = [(k,universe.select_atoms(v)) for k,v in {-1:inner, 0:center, 1:outer}.items() if v is not None][:2]
+        displacement = spheres[0][1].centroid() - spheres[1][1].centroid()
+        distance = numpy.linalg.norm(displacement)
+        mol_axis = displacement / distance
+        points = PointCloud(3)
+        points.add_points(universe.select_atoms("not resname DPP").coordinates())
+        cross_sectional_area_3d(points, mol_axis)
+        
+
+
+vesicle = VesicleBuilder(output="smallvesicle.pdb", diameter=30, cwd="/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/alchex/packmol_test")
+a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", center="name C4A or name C4B")
+
+'''
+thickness = 17
+mid = 90
+margin = 0.2
+top = mid + thickness
+bottom = mid - thickness
+tmid = mid + margin
+bmid = mid - margin
+
+prot_head = WrappedPackmolAtomSelection([374,386,410,422,446,470,482,506])
+prot_tail = WrappedPackmolAtomSelection([398,434,458,494,518,530,542,554])
+
+prot_head_const = WrappedPackmolConstraint("outside sphere", 0,0,0,top)
+prot_tail_const = WrappedPackmolConstraint("inside sphere", 0,0,0,bottom)
+
+prot_head.constraints.append(prot_head_const)
+prot_tail.constraints.append(prot_tail_const)
+
+dppc_head_const = WrappedPackmolConstraint("outside sphere", 0,0,0,top)
+dppc_tail_const = WrappedPackmolConstraint("inside sphere", 0,0,0,tmid)
+
+dppc_head = WrappedPackmolAtomSelection([2])
+dppc_tail = WrappedPackmolAtomSelection([8,12])
+
+dppc_head.constraints.append(dppc_head_const)
+dppc_tail.constraints.append(dppc_tail_const)
+
+dppc_outer = WrappedPackmolStructure("molecules/dppc.pdb", 1500, resnumbers=RESNUMBER_SEQUENTIAL)
+dppc_outer.atom_selections.append(dppc_head)
+dppc_outer.atom_selections.append(dppc_tail)
+
+dppc_inner_head_const = WrappedPackmolConstraint("inside sphere", 0,0,0, bottom)
+dppc_inner_tail_const = WrappedPackmolConstraint("outside sphere", 0,0,0, bmid)
+
+dppc_inner_head = WrappedPackmolAtomSelection([2])
+dppc_inner_tail = WrappedPackmolAtomSelection([8,12])
+
+dppc_inner_head.constraints.append(dppc_inner_head_const)
+dppc_inner_tail.constraints.append(dppc_inner_tail_const)
+
+dppc_inner = WrappedPackmolStructure("molecules/dppc.pdb", 1000, resnumbers=RESNUMBER_SEQUENTIAL)
+dppc_inner.atom_selections.append(dppc_inner_head)
+dppc_inner.atom_selections.append(dppc_inner_tail)
+
+e = WrappedPackmolStructure("molecules/2rlf.pdb", 30, resnumbers=RESNUMBER_SEQUENTIAL)
+e.atom_selections.append(prot_head)
+e.atom_selections.append(prot_tail)
+
 d = WrappedPackmolInput()
-b.constraints.append(a)
-c.atom_selections.append(b)
-c.constraints.append(a)
-d.structures.append(c)
-c.atom_selections.append(b)
-c.constraints.append(a)
-d.structures.append(c)
+
+d.structures.append(dppc_outer)
+d.structures.append(dppc_inner)
+d.structures.append(e)
 
 
 x = WrappedPackmol(PACKMOL_DIR)
-x.run(d)
+x.run(d, "/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/alchex/packmol_test")
+'''

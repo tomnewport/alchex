@@ -326,6 +326,47 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True, ce
     else:
         return transformation_matrix
 
+from scipy.spatial import Delaunay
+from itertools import combinations
+from collections import Counter
+
+def alpha_shape_3d(pointcloud, alpha=1):
+    print(1)
+    all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
+    matching_simplices = []
+    planes = []
+    for simp in all_simplices:
+        simp_radius = 0
+        for a, b in combinations(simp,2):
+            simp_radius = max(simp_radius, numpy.linalg.norm(pointcloud.points[a,:] - pointcloud.points[b,:]))
+        if simp_radius < alpha:
+            matching_simplices.append(simp)
+
+    for simp in matching_simplices:
+        planes += [frozenset(x) for x in combinations(simp,3)]
+    outer = [plane for plane, count in Counter(planes).items() if count == 1]
+    for plane in outer:
+        for a, b in combinations(plane,2):
+            pointcloud.lines.append([a,b])
+    #pointcloud.planes.append(list(plane))
+    print(2)
+    plot_3d(pointcloud)
+
+
+def cross_sectional_area_3d(pointcloud, axis):
+    plane_normal = numpy.cross(axis, [1,0,0])
+    rot_angle = numpy.arctan2(numpy.linalg.norm(plane_normal), numpy.dot(axis,[1,0,0]))
+
+    projection = TransformationMatrix(3)
+    projection.rotate_3d(rot_angle, plane_normal)
+
+    projected = pointcloud.clone()
+    projected.transform(projection)
+
+    slab = projected.clone()
+    alpha_shape_3d(pointcloud, 30)
+    
+    #plot_3d(slab)
 
 def plot_3d(*pointclouds):
     fig = plt.figure()
@@ -355,6 +396,10 @@ def plot_3d(*pointclouds):
         ymax = max(ymax, plottable.points[:,1].max())
         zmin = min(zmin, plottable.points[:,2].min())
         zmax = max(zmax, plottable.points[:,2].max())
+        for line in plottable.lines:
+            p1 = plottable.points[line[0],:]
+            p2 = plottable.points[line[1],:]
+            ax.plot([p1[0],p2[0]], [p1[1],p2[1]], [p1[2],p2[2]],c=cols)
     box = max(xmax - xmin, ymax - ymin, zmax - zmin)
     xmid = (xmax + xmin) / 2.0
     ymid = (ymax + ymin) / 2.0
