@@ -343,20 +343,24 @@ def alpha_shape_3d(pointcloud, alpha=1):
     all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
     matching_simplices = []
     planes = []
+    all_points = set(range(pointcloud.points.shape[0]))
+    simplex_points = set()
     for simp in all_simplices:
         simp_radius = 0
         for a, b in combinations(simp,2):
             simp_radius = max(simp_radius, numpy.linalg.norm(pointcloud.points[a,:] - pointcloud.points[b,:]))
         if simp_radius < alpha:
+            simplex_points.update(simp)
             matching_simplices.append(simp)
-
     for simp in matching_simplices:
         planes += [frozenset(x) for x in combinations(simp,3)]
     outer = [plane for plane, count in Counter(planes).items() if count == 1]
+    hull_points = [x for y in outer for x in y]
     for plane in outer:
         for a, b in combinations(plane,2):
             pointcloud.lines.append([a,b])
         pointcloud.planes.append(list(plane))
+    lone_points = all_points - simplex_points
     export_obj_3d(pointcloud, "test.obj")
 
 
@@ -371,9 +375,10 @@ def cross_sectional_area_3d(pointcloud, axis):
     projected.transform(projection)
 
     slab = projected.clone()
-    alpha_shape_3d(pointcloud, 10)
+
+    alpha_shape_3d(pointcloud, 15)
     
-    #plot_3d(slab)
+    plot_3d(slab)
 
 def plot_3d(*pointclouds):
     fig = plt.figure()

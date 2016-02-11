@@ -143,7 +143,7 @@ class VesicleBuilder(object):
         
 
 
-vesicle = VesicleBuilder(output="smallvesicle.pdb", diameter=30, cwd="/sansom/n15/shil3498/dphil/prj/2016-01-06_Phospholipids/alchex/packmol_test")
+vesicle = VesicleBuilder(output="smallvesicle.pdb", diameter=30, cwd="packmol_test")
 a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", center="name C4A or name C4B")
 
 '''
