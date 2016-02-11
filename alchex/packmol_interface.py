@@ -111,7 +111,7 @@ from subprocess import Popen, PIPE, STDOUT
 from os import path
 import MDAnalysis as mda
 import numpy
-from alchex.geometry import PointCloud, plot_3d, TransformationMatrix, cross_sectional_area_3d
+from alchex.geometry import PointCloud, plot_3d, TransformationMatrix, voronoi_shell_3d
 import matplotlib.pyplot as plt
 
 PACKMOL_DIR = "/sansom/n15/shil3498/apps/packmol/packmol"
@@ -138,8 +138,8 @@ class VesicleBuilder(object):
         distance = numpy.linalg.norm(displacement)
         mol_axis = displacement / distance
         points = PointCloud(3)
-        points.add_points(universe.select_atoms("resname DPP").coordinates())
-        cross_sectional_area_3d(points, mol_axis)
+        points.add_points(universe.atoms.coordinates())
+        voronoi_shell_3d(points, [1,2,3])
         
 
 

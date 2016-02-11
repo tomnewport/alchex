@@ -363,6 +363,27 @@ def alpha_shape_3d(pointcloud, alpha=1):
     lone_points = all_points - simplex_points
     export_obj_3d(pointcloud, "test.obj")
 
+def voronoi_shell_3d(pointcloud, subpoints):
+    all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
+    verts = {}
+    shell_simplices = []
+    new_verts = []
+    for simplex in all_simplices:
+        if sum([x in subpoints for x in simplex]) in [1,2]:
+            for vert in simplex:
+                if vert not in verts:
+                    verts[vert] = []
+                verts[vert].append(len(shell_simplices))
+            shell_simplices.append(simplex)
+            new_verts.append(pointcloud.points[simplex,:].mean())
+    a = PointCloud()
+    a.add_points(new_verts)
+    print("-------------")
+    print new_verts
+    plot_3d(a)
+
+
+
 
 def cross_sectional_area_3d(pointcloud, axis):
     plane_normal = numpy.cross(axis, [1,0,0])
