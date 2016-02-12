@@ -139,12 +139,13 @@ class VesicleBuilder(object):
         mol_axis = displacement / distance
         points = PointCloud(3)
         points.add_points(universe.atoms.coordinates())
-        voronoi_shell_3d(points, [1,2,3])
+        selected = [atom.number for atom in universe.atoms if atom.resname == "DPP"]
+        voronoi_shell_3d(points, selected)
         
 
 
 vesicle = VesicleBuilder(output="smallvesicle.pdb", diameter=30, cwd="packmol_test")
-a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", center="name C4A or name C4B")
+a = vesicle.add_molecule("molecules/2rlf_system.pdb", outer="name PO4 and prop z > 10", center="name C4A or name C4B")
 
 '''
 thickness = 17

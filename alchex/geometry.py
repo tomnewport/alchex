@@ -93,7 +93,7 @@ class PointCloud:
         self.dimensions = dimensions
         self.points = numpy.zeros((0,self.dimensions+1))
         self.lines  = []
-        self.planes = []
+        self.faces = []
     def group_points(self, group_size, **kwargs):
         if group_size == 2:
             return bruteforce_pair(self.points, **kwargs)
@@ -260,6 +260,56 @@ class PointCloud:
         clone.points = self.points
         clone.lines = self.lines
         return clone
+    def cliques_to_faces(self, max_faces=3):
+        graph = nx.Graph()
+        graph.add_edges_from(self.lines)
+        print("finding")
+        cliques = sorted(nx.find_cliques(graph), key=lambda x: -len(x))
+        self.faces = []
+        for clique in cliques:
+            h_clique = frozenset(clique)
+            if len(clique) == 3:
+                self.faces.append(clique)
+            else:
+                clique_positions = self.points[clique,:3]
+                ext_edges = []
+                int_edges = []
+                for edge in combinations(clique,2):
+                    shared_triangles = set([x[1] for x in graph.edges(edge[0])]).intersection(set([x[1] for x in graph.edges(edge[1])]))
+                    print shared_triangles
+                    ext_connections = shared_triangles - set(clique)
+                    print ext_connections
+                    if len(ext_connections) > 0:
+                        ext_edges.append(edge)
+                    else:
+                        int_edges.append(edge)
+                print len(ext_edges), len(int_edges)
+
+
+
+
+        
+    def build_triangles(self):
+        '''
+        This is a fast way to skin the mesh assuming
+        there are no cliques of size > 3.
+        '''
+        graph = nx.Graph()
+        graph.add_edges_from(self.lines)
+        for n1 in graph:
+            for e2 in graph.edges(n1):
+                n2 = e2[1]
+                if n2 == n1:
+                    continue
+                for e3 in graph.edges(n2):
+                    n3 = e3[1]
+                    if n3 == n2:
+                        continue
+                    for e4 in graph.edges(n3):
+                        n4 = e4[1]
+                        if n4 == n1:
+                            self.faces.append([n1, n2, n3])
+
     
 def pairwise_rmse(points1, points2):
     return numpy.sqrt((numpy.square(points1 - points2)).mean())
@@ -327,22 +377,24 @@ def solve_3d_transformation(operand, reference, subselection=None, test=True, ce
     else:
         return transformation_matrix
 
-from scipy.spatial import Delaunay
-from itertools import combinations
+from scipy.spatial import Delaunay, ConvexHull
+from itertools import combinations, product
 from collections import Counter
 
 def export_obj_3d(pointcloud, destination):
     with open(destination, "w") as obj_handle:
         for point in pointcloud.points:
             obj_handle.write("v "+ " ".join(map(str,point))+"\n")
-        for plane in pointcloud.planes:
+        for line in pointcloud.lines:
+            obj_handle.write("l "+ " ".join(map(lambda x: str(x+1),line))+"\n")
+        for plane in pointcloud.faces:
             obj_handle.write("f " + " ".join(map(lambda x : str(x+1), plane))+"\n")
 
 
 def alpha_shape_3d(pointcloud, alpha=1):
     all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
     matching_simplices = []
-    planes = []
+    faces = []
     all_points = set(range(pointcloud.points.shape[0]))
     simplex_points = set()
     for simp in all_simplices:
@@ -353,34 +405,60 @@ def alpha_shape_3d(pointcloud, alpha=1):
             simplex_points.update(simp)
             matching_simplices.append(simp)
     for simp in matching_simplices:
-        planes += [frozenset(x) for x in combinations(simp,3)]
-    outer = [plane for plane, count in Counter(planes).items() if count == 1]
+        faces += [frozenset(x) for x in combinations(simp,3)]
+    outer = [plane for plane, count in Counter(faces).items() if count == 1]
     hull_points = [x for y in outer for x in y]
     for plane in outer:
         for a, b in combinations(plane,2):
             pointcloud.lines.append([a,b])
-        pointcloud.planes.append(list(plane))
+        pointcloud.faces.append(list(plane))
     lone_points = all_points - simplex_points
     export_obj_3d(pointcloud, "test.obj")
 
 def voronoi_shell_3d(pointcloud, subpoints):
+    subpoints = set(subpoints)
     all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
-    verts = {}
     shell_simplices = []
-    new_verts = []
+    shell_nodes = set()
+    shell_edges = set()
+    shell_faces = []
     for simplex in all_simplices:
-        if sum([x in subpoints for x in simplex]) in [1,2]:
-            for vert in simplex:
-                if vert not in verts:
-                    verts[vert] = []
-                verts[vert].append(len(shell_simplices))
-            shell_simplices.append(simplex)
-            new_verts.append(pointcloud.points[simplex,:].mean())
-    a = PointCloud()
-    a.add_points(new_verts)
-    print("-------------")
-    print new_verts
-    plot_3d(a)
+        simplex = set(simplex)
+        simplex_subnodes = simplex.intersection(subpoints)
+        simplex_supnodes = simplex - simplex_subnodes
+        simplex_edges = [frozenset(x) for x in product(simplex_subnodes,simplex_supnodes)]
+        simplex_faces = map(frozenset,(combinations(simplex, 3)))
+        if len(simplex_edges) >= 3:
+            shell_nodes.update(simplex_edges)
+            this_shell_edges = {x:[] for x in simplex_edges}
+            for e1, e2 in combinations(simplex_edges,2):
+                i = e1.intersection(e2)
+                if len(i) == 1:
+                    this_shell_edges[e1].append(e2)
+                    this_shell_edges[e2].append(e1)
+                    shell_edges.add((e1,e2))
+            this_shell_face = [this_shell_edges.keys()[0]]
+            while len(this_shell_face) < len(this_shell_edges):
+                next_nodes = this_shell_edges[this_shell_face[-1]]
+                for node in next_nodes:
+                    if node not in this_shell_face:
+                        this_shell_face.append(node)
+                        break
+            shell_faces.append(this_shell_face)
+    print shell_edges
+    shell_nodes = list(shell_nodes)
+    shell_lookup = {x:idx for idx, x in enumerate(shell_nodes)}
+    shell_nodes = [pointcloud.points[list(x),:3].mean(axis=0) for x in shell_nodes]
+    print shell_edges
+    a = PointCloud(3)
+    a.add_points(shell_nodes)
+    for n1, n2 in shell_edges:
+        a.lines.append([shell_lookup[n1], shell_lookup[n2]])
+    for face in shell_faces:
+        a.faces.append([shell_lookup[x] for x in face])
+    #a.cliques_to_faces()
+    export_obj_3d(a, "test.obj")
+
 
 
 
