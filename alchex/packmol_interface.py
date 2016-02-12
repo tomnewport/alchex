@@ -111,7 +111,7 @@ from subprocess import Popen, PIPE, STDOUT
 from os import path
 import MDAnalysis as mda
 import numpy
-from alchex.geometry import PointCloud, plot_3d, TransformationMatrix, voronoi_shell_3d
+from alchex.geometry import PointCloud, plot_3d, TransformationMatrix, voronoi_shell_3d, cross_sectional_area_3d
 import matplotlib.pyplot as plt
 
 PACKMOL_DIR = "/sansom/n15/shil3498/apps/packmol/packmol"
@@ -126,26 +126,90 @@ class WrappedPackmol(object):
         packmol_process.communicate(str(input))
 
 class VesicleBuilder(object):
-    def __init__(self, output="vesicle.pdb", diameter=100, cwd="."):
+    def __init__(self, output="vesicle.pdb", radius=100, cwd="."):
         self.output = output
-        self.diameter = diameter
+        self.radius = radius
         self.cwd = cwd
         self.molecules = []
-    def add_molecule(self, input_pdb, outer=None, inner=None, center=None, orient_tolerance=0.1):
+    def add_molecule(self, input_pdb, outer=None, inner=None, center=None, orient_tolerance=0.9, ratio=1):
         universe = mda.Universe(path.join(self.cwd, input_pdb))
-        spheres = [(k,universe.select_atoms(v)) for k,v in {-1:inner, 0:center, 1:outer}.items() if v is not None][:2]
+        spheres = [(k,universe.select_atoms(v)) for k,v in [(-1,inner), (0,center), (1,outer)] if v is not None][:2]
         displacement = spheres[0][1].centroid() - spheres[1][1].centroid()
         distance = numpy.linalg.norm(displacement)
         mol_axis = displacement / distance
         points = PointCloud(3)
         points.add_points(universe.atoms.coordinates())
-        selected = [atom.number for atom in universe.atoms if atom.resname == "DPP"]
-        voronoi_shell_3d(points, selected)
-        
+        area = cross_sectional_area_3d(points, mol_axis)
+        self.molecules.append((
+            spheres[0],
+            spheres[1],
+            input_pdb,
+            area,
+            distance,
+            orient_tolerance,
+            ratio
+        ))
+    def generate_input(self):
+        input_object = WrappedPackmolInput(output=self.output)  
+        outer_unitarea = 0
+        inner_unitarea = 0
+        for sphere0, sphere1, input_pdb, area, distance, orient_tolerance, ratio in self.molecules:
+            if sphere0[0] == -1:
+                inner_unitarea += area * ratio
+            if sphere1[0] == 1:
+                outer_unitarea += area * ratio
+        for sphere0, sphere1, input_pdb, area, distance, orient_tolerance, ratio in self.molecules:
+            if sphere0[0] == -1 and sphere1[0] == 1:
+                sphere_inside_radius = self.radius - ((distance * orient_tolerance)/2)
+                sphere_outside_radius = self.radius + ((distance * orient_tolerance)/2)
+                unitarea = inner_unitarea
+            elif sphere0[0] == -1:
+                sphere_inside_radius = self.radius - (distance * orient_tolerance)
+                sphere_outside_radius = self.radius
+                unitarea = inner_unitarea
+            else:
+                sphere_inside_radius = self.radius 
+                sphere_outside_radius = self.radius + (distance * orient_tolerance)
+                unitarea = outer_unitarea
+            # unitarea/ is number of units that can be packed in
+            # one unit contains <ratio> of this molecule
+            total_area = ((4 * 3.141592 * sphere_inside_radius )**2)
+
+            #packnumber = 1.5*((total_area/unitarea) * ratio)
+            packnumber = 0.009 * total_area
+            structure = WrappedPackmolStructure(filename=input_pdb, number = int(round(packnumber)), resnumbers=3)
+            sphere_inside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere0[1].atoms])
+            sphere_outside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere1[1].atoms])
+            sphere_inside_constraint = WrappedPackmolConstraint("inside sphere",0,0,0,sphere_inside_radius)
+            sphere_outside_constraint = WrappedPackmolConstraint("outside sphere",0,0,0,sphere_outside_radius)
+            sphere_inside_selection.constraints.append(sphere_inside_constraint)
+            sphere_outside_selection.constraints.append(sphere_outside_constraint)
+            structure.atom_selections.append(sphere_inside_selection)
+            structure.atom_selections.append(sphere_outside_selection)
+            input_object.structures.append(structure)
+        print input_object
+        return input_object
+    def build(self):
+        packmol = WrappedPackmol(self.cwd)
+        packmol.run(self.generate_input(), self.cwd)
 
 
-vesicle = VesicleBuilder(output="smallvesicle.pdb", diameter=30, cwd="packmol_test")
-a = vesicle.add_molecule("molecules/2rlf_system.pdb", outer="name PO4 and prop z > 10", center="name C4A or name C4B")
+
+
+
+
+
+
+
+vesicle = VesicleBuilder(output="smallvesicle.pdb", radius=400, cwd="packmol_test")
+#a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", inner="name PO4 and prop z < 10")
+a = vesicle.add_molecule("molecules/dppc.pdb", outer="name PO4", center="name C4A or name C4B",ratio=1)
+a = vesicle.add_molecule("molecules/dppc.pdb", inner="name PO4", center="name C4A or name C4B",ratio=1)
+
+for radius in [40,50,60,80,90,100,150,200,300,400,500]:
+    vesicle.radius = radius
+    vesicle.output = "vesicle"+str(radius) + ".pdb"
+    vesicle.build()
 
 '''
 thickness = 17

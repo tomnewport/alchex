@@ -94,6 +94,7 @@ class PointCloud:
         self.points = numpy.zeros((0,self.dimensions+1))
         self.lines  = []
         self.faces = []
+        self.vertex_normals = None
     def group_points(self, group_size, **kwargs):
         if group_size == 2:
             return bruteforce_pair(self.points, **kwargs)
@@ -285,6 +286,9 @@ class PointCloud:
                         int_edges.append(edge)
                 print len(ext_edges), len(int_edges)
 
+class Volume(PointCloud):
+    pass
+
 
 
 
@@ -385,6 +389,9 @@ def export_obj_3d(pointcloud, destination):
     with open(destination, "w") as obj_handle:
         for point in pointcloud.points:
             obj_handle.write("v "+ " ".join(map(str,point))+"\n")
+        if pointcloud.vertex_normals is not None:
+            for vert_norm in pointcloud.vertex_normals:
+                obj_handle.write("vn "+" ".join(map(str, vert_norm))+"\n")
         for line in pointcloud.lines:
             obj_handle.write("l "+ " ".join(map(lambda x: str(x+1),line))+"\n")
         for plane in pointcloud.faces:
@@ -417,22 +424,32 @@ def alpha_shape_3d(pointcloud, alpha=1):
 
 def voronoi_shell_3d(pointcloud, subpoints):
     subpoints = set(subpoints)
+    print("dl-doing")
     all_simplices = Delaunay(pointcloud.points[:,:3]).simplices
+    print("dl-done")
     shell_simplices = []
     shell_nodes = set()
+    shell_node_norms = {}
+    shell_vnorms = {}
     shell_edges = set()
     shell_faces = []
     for simplex in all_simplices:
         simplex = set(simplex)
         simplex_subnodes = simplex.intersection(subpoints)
         simplex_supnodes = simplex - simplex_subnodes
-        simplex_edges = [frozenset(x) for x in product(simplex_subnodes,simplex_supnodes)]
+        simplex_edges = [x for x in product(simplex_subnodes,simplex_supnodes)]
         simplex_faces = map(frozenset,(combinations(simplex, 3)))
         if len(simplex_edges) >= 3:
             shell_nodes.update(simplex_edges)
+            for inside_node, outside_node in simplex_edges:
+                if (inside_node, outside_node) not in shell_node_norms:
+                    # Normal is pointing outside, so inside -> outside is 
+                    # the right vector
+                    shell_node_norms[(inside_node, outside_node)] = pointcloud.points[outside_node,:3] - pointcloud.points[inside_node,:3]
+                    shell_vnorms[(inside_node, outside_node)] = []
             this_shell_edges = {x:[] for x in simplex_edges}
             for e1, e2 in combinations(simplex_edges,2):
-                i = e1.intersection(e2)
+                i = set(e1).intersection(set(e2))
                 if len(i) == 1:
                     this_shell_edges[e1].append(e2)
                     this_shell_edges[e2].append(e1)
@@ -444,40 +461,62 @@ def voronoi_shell_3d(pointcloud, subpoints):
                     if node not in this_shell_face:
                         this_shell_face.append(node)
                         break
+            face_points = [numpy.mean(pointcloud.points[edge,:3], axis=0) for edge in this_shell_face]
+            face_norms  = [shell_node_norms[x] for edge in this_shell_face]
+            face_norm = numpy.mean(face_norms, axis=0)
+            pvec1 = face_points[0] - face_points[1]
+            pvec2 = face_points[1] - face_points[2]
+            plane_normal = numpy.cross(pvec1, pvec2)
+            vec_normal = numpy.mean(face_norms, axis=0)
+            face_centre = numpy.mean(face_points, axis=0)
+            # Check and flip
+            if numpy.dot(plane_normal, vec_normal) < 0:
+                plane_normal = - plane_normal
+                this_shell_face = this_shell_face[::-1]
             shell_faces.append(this_shell_face)
-    print shell_edges
+            for edge in this_shell_face:
+                shell_vnorms[edge].append(plane_normal)
     shell_nodes = list(shell_nodes)
     shell_lookup = {x:idx for idx, x in enumerate(shell_nodes)}
+    shell_vnorms = [shell_vnorms[x] for x in shell_nodes]
     shell_nodes = [pointcloud.points[list(x),:3].mean(axis=0) for x in shell_nodes]
-    print shell_edges
-    a = PointCloud(3)
+    a = Volume(3)
     a.add_points(shell_nodes)
+    #a.vertex_normals = shell_node_norms
     for n1, n2 in shell_edges:
         a.lines.append([shell_lookup[n1], shell_lookup[n2]])
     for face in shell_faces:
         a.faces.append([shell_lookup[x] for x in face])
-    #a.cliques_to_faces()
     export_obj_3d(a, "test.obj")
 
 
 
 
 
-def cross_sectional_area_3d(pointcloud, axis):
-    plane_normal = numpy.cross(axis, [1,0,0])
-    rot_angle = numpy.arctan2(numpy.linalg.norm(plane_normal), numpy.dot(axis,[1,0,0]))
+def cross_sectional_area_3d(pointcloud, axis, method="convexhull"):
+    plane_normal = numpy.cross(axis, [0,0,1])
+    rot_angle = numpy.arctan2(numpy.linalg.norm(plane_normal), numpy.dot(axis,[0,0,1]))
 
     projection = TransformationMatrix(3)
     projection.rotate_3d(rot_angle, plane_normal)
 
     projected = pointcloud.clone()
     projected.transform(projection)
-
-    slab = projected.clone()
-
-    alpha_shape_3d(pointcloud, 15)
-    
-    plot_3d(slab)
+    projected.points[:,2] = 1
+    projected.dimensions = 2
+    projected.points = projected.points[:,:3]
+    if pointcloud.points.shape[0] < 3:
+        return 0
+    if method == "convexhull":
+        triangles = Delaunay(projected.points[:,:2]).simplices
+        area = 0
+        for tp1, tp2, tp3 in triangles:
+            tl12 = numpy.linalg.norm(projected.points[tp1,:2] - projected.points[tp2,:2])
+            tl23 = numpy.linalg.norm(projected.points[tp2,:2] - projected.points[tp3,:2])
+            tl34 = numpy.linalg.norm(projected.points[tp3,:2] - projected.points[tp1,:2])
+            s = (tl12 + tl23 + tl34) / 2
+            area += (s*(s-tl12)*(s-tl23)*(s-tl34)) ** 0.5
+        return area
 
 def plot_3d(*pointclouds):
     fig = plt.figure()
