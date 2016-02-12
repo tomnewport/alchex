@@ -176,7 +176,7 @@ class VesicleBuilder(object):
             total_area = ((4 * 3.141592 * sphere_inside_radius )**2)
 
             #packnumber = 1.5*((total_area/unitarea) * ratio)
-            packnumber = 0.009 * total_area
+            packnumber = 0.01 * total_area
             structure = WrappedPackmolStructure(filename=input_pdb, number = int(round(packnumber)), resnumbers=3)
             sphere_inside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere0[1].atoms])
             sphere_outside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere1[1].atoms])
