@@ -1,0 +1,8 @@
+#include "martini_v2.1.itp"
+#include "CDL.itp"
+[ system ]
+POPE VESICLE
+
+[ molecules ]
+POPE	877
+W	61552

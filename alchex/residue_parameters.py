@@ -3,6 +3,8 @@ from itertools import product
 import matplotlib.pyplot as plt
 import networkx as nx
 from copy import deepcopy
+from alchex.knowledge import ITP_FIELDS
+import re
 
 class RPAtom(object):
     def __init__(self, attrs):
@@ -23,14 +25,36 @@ class RPAtom(object):
         return ba
     def bonded_ids(self):
         return [x.attrs["id"] for x in self.bonded()]
+    def to_itp_line(self):
+        fields = []
+        for field_name in ITP_FIELDS["atoms"]:
+            if field_name in self.attrs:
+                fields.append(self.attrs[field_name])
+            else:
+                fields.append("")
+        return "\t".join(fields)
+
+
 
 class RPBond(object):
+    table_name = "bonds"
     def __init__(self, i_atom, j_atom, attrs):
         i_atom.i_bonded.append(self)
         j_atom.j_bonded.append(self)
         self.attrs = attrs
         self.i_atom = i_atom
         self.j_atom = j_atom
+    def to_itp_line(self):
+        fields = []
+        for field_name in ITP_FIELDS[self.table_name]:
+            if field_name in self.attrs:
+                fields.append(self.attrs[field_name])
+            else:
+                fields.append("")
+        return "\t".join(fields)
+
+class RPConstraint(RPBond):
+    table_name = "constraints"
 
 class RPAngle(object):
     def __init__(self, i_atom, j_atom, k_atom, attrs):
@@ -42,15 +66,83 @@ class RPAngle(object):
         self.j_atom = j_atom
         self.k_atom = k_atom
         self._graph = None
+    def to_itp_line(self):
+        fields = []
+        for field_name in ITP_FIELDS["angles"]:
+            if field_name in self.attrs:
+                fields.append(str(self.attrs[field_name]))
+            else:
+                fields.append("")
+        return "\t".join(fields)
+
+class RPDihedral(object):
+    def __init__(self, attrs):
+        self.attrs = attrs
 
 class ResidueParameters(object):
     def __init__(self, resname):
         self.resname = resname
+        self.nrexcl = "1"
         self.atoms = {}
         self.bonds = []
         self.angles = []
+        self.dihedrals = []
+        self.constraints = []
         self._graph = None
         self._atom_to_id_dict = None
+    def export_itp(self, filename):
+        itp_text = "[ moleculetype ]\n"
+        itp_text += self.resname+" "+self.nrexcl+"\n\n"
+        itp_text += "[ atoms ]\n"
+        for atom_id, atom in sorted(self.atoms.items(), key=lambda x : int(x[0])):
+            itp_text +=  atom.to_itp_line()+"\n"
+        itp_text += "\n[ bonds ]\n"
+        for bond in self.bonds:
+            itp_text +=  bond.to_itp_line()+"\n"
+        itp_text += "\n[ angles ]\n"
+        for angle in self.angles:
+            itp_text +=  angle.to_itp_line()+"\n"
+        with open(filename, "w") as file_handle:
+            file_handle.write(itp_text)
+    def import_itp(self, itp_file):
+        with open(itp_file, "r") as file_handle:
+            table_head = re.compile(r'^\s*\[\s*(\w+)\s*\]\s*$')
+            section_started = False
+            current_table_name = ""
+            for line in file_handle:
+                table_head_search = table_head.search(line)
+                if table_head_search is not None:
+                    current_table_name = table_head_search.groups(1)[0]
+                else:
+                    if ";" in line:
+                        line = line.split(";")[0]
+                    line = line.strip()
+                    if line != "" and line[0] != "#":
+                        parts = line.split()
+                        if current_table_name == "moleculetype":
+                            if section_started:
+                                return
+                            if not section_started:
+                                if parts[0] == self.resname:
+                                    section_started = True
+                                    self.nrexcl = parts[1]
+                        elif section_started:
+                            if current_table_name == "atoms":
+                                atom_attrs = {k:v for k, v in zip(ITP_FIELDS["atoms"], parts)}
+                                self.add_atom(atom_attrs["id"],atom_attrs)
+                            elif current_table_name == "bonds":
+                                bond_attrs = {k:v for k, v in zip(ITP_FIELDS["bonds"], parts)}
+                                self.add_bond(bond_attrs["i"], bond_attrs["j"],bond_attrs)
+                            elif current_table_name == "angles":
+                                angle_attrs = {k:v for k, v in zip(ITP_FIELDS["angles"], parts)}
+                                self.add_angle(angle_attrs["i"], angle_attrs["j"],angle_attrs["k"],angle_attrs)
+                            elif current_table_name == "constraints":
+                                constraint_attrs = {k:v for k, v in zip(ITP_FIELDS["constraints"], parts)}
+                                self.add_constraint(constraint_attrs["i"], constraint_attrs["j"],constraint_attrs)
+                            elif current_table_name == "dihedrals":
+                                dh_attrs = {k:v for k, v in zip(ITP_FIELDS["dihedrals"], parts)}
+                                self.add_dihedral(dh_attrs["i"], dh_attrs["j"],dh_attrs["k"],dh_attrs["l"], dh_attrs)
+
     def clone(self):
         return deepcopy(self)
     def merge(self, other):
@@ -69,11 +161,17 @@ class ResidueParameters(object):
         i_atom = self.atoms[i]
         j_atom = self.atoms[j]
         self.bonds.append(RPBond(i_atom, j_atom, attributes))
+    def add_constraint(self, i, j, attributes):
+        i_atom = self.atoms[i]
+        j_atom = self.atoms[j]
+        self.constraints.append(RPConstraint(i_atom, j_atom, attributes))
     def add_angle(self, i, j, k, attributes):
         i_atom = self.atoms[i]
         j_atom = self.atoms[j]
         k_atom = self.atoms[k]
         self.angles.append(RPAngle(i_atom, j_atom, k_atom, attributes))
+    def add_dihedral(self, i,j,k,l,attributes):
+        self.dihedrals.append(RPDihedral(attributes))
     def atoms_to_ids(self, atoms):
         if self._atom_to_id_dict is None:
             self._atom_to_id_dict = {}

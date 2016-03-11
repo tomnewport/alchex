@@ -5,8 +5,10 @@ import MDAnalysis as mda
 from subprocess import Popen, check_output, CalledProcessError, PIPE, STDOUT
 from shutil import copy, copyfile, rmtree, copytree
 from os import path, makedirs
+from alchex.lipid_analysis import find_bilayer_leaflets, find_vesicle_leaflets
 from collections import OrderedDict
 from copy import deepcopy
+from alchex.knowledge import ITP_FIELDS
 
 '''
 class AsyncOSCommand(object):
@@ -95,6 +97,26 @@ class SimulationContainer(object):
         self.makedirs("/")
         self.cd()
         self.universes = {}
+        self.groups = {}
+    def select_atoms(self, filename, selection):
+        custom_groups = ["leaflet upper", "leaflet lower", "leaflet inner", "leaflet outer"]
+        universe = self.universe(filename)
+        if filename not in self.groups:
+            self.groups[filename] = {}
+        for cg in custom_groups:
+            if cg in selection:
+                cg_name = cg.replace(" ", "_")
+                if cg not in self.groups[filename]:
+                    if cg_name in ["leaflet_upper", "leaflet_lower"]:
+                        lower_leaflet, upper_leaflet = find_bilayer_leaflets(universe)
+                        self.groups[filename]["leaflet_lower"] = lower_leaflet
+                        self.groups[filename]["leaflet_upper"] = upper_leaflet
+                    if cg_name in ["leaflet_inner", "leaflet_outer"]:
+                        inner_leaflet, outer_leaflet = find_vesicle_leaflets(universe)
+                        self.groups[filename]["leaflet_inner"] = inner_leaflet
+                        self.groups[filename]["leaflet_outer"] = outer_leaflet
+                selection = selection.replace(cg, "group "+cg_name)
+        return universe.select_atoms(selection, **self.groups[filename])
     def universe(self, filename):
         if filename not in self.universes:
             self.universes[filename] = mda.Universe(self.resolve_path(filename))
@@ -166,10 +188,7 @@ class GromacsITPFile(object):
     def __init__(self, filename):
         self.filename = filename
     def read_residue(self, residue_name):
-        colnames = {"atoms" : "id type resnr residue atom cgnr charge".split(),
-                   "bonds": "i  j   funct   length  force.c.".split(),
-                   "angles": "i  j  k   funct   angle   force.c.".split(),
-                   "molname": "molname       nrexcl".split()}
+        colnames = ITP_FIELDS
         tables = {}
         with open(self.filename, "r") as file_handle:
             sectionline = 0
@@ -213,6 +232,8 @@ class GromacsITPFile(object):
 class GromacsMDPFile(object):
     def __init__(self):
         self.attrs = {}
+    def clone(self):
+        return deepcopy(self)
     def from_file(self, filename):
         with open(filename, "r") as file_handle:
             for line in file_handle:
@@ -250,10 +271,11 @@ class GromacsTOPFile(object):
                     startline = line_id
             else:
                 stripline = line.strip()
-                if len(stripline) == 0 or stripline[0] == "[":
-                    endline = line_id
+                if stripline[0] == "[":
+                    break
+        endline = line_id
         newlines = [resname.ljust(5) + str(rescount) for resname, rescount in new_molecules]
-        self.lines = self.lines[:startline+1] + newlines + self.lines[endline:]
+        self.lines = self.lines[:startline+1] + newlines + self.lines[endline+1:]
     def get_tables(self):
         table_head = re.compile(r'^\s*\[\s*(\w[\w\s]\w*)\s*\]\s*$')
         tables = []
@@ -285,6 +307,7 @@ class GromacsTOPFile(object):
                     return rtables
             elif len(rtables) > 0:
                 rtables.append(table)
+        return rtables
     def residue_parameters(self, target_resname):
         colnames = {"atoms" : "id type resnr residue atom cgnr charge".split(),
                    "bonds": "i  j   funct   length  force.c.".split(),
@@ -418,6 +441,8 @@ class GromacsEditableTOPFile(object):
         self.tables = OrderedDict()
         self.moltypes = OrderedDict()
         self.includes = []
+    def modify_molecules(self, new_molecules):
+        self.tables["molecules"] = [OrderedDict([("moltype",moltype), ("count", str(count))]) for moltype, count in new_molecules]
     def add_moltype(self, moltype):
         self.moltypes[moltype.name] = moltype
     def preprocess_line(self, line):
@@ -427,12 +452,15 @@ class GromacsEditableTOPFile(object):
         return line
     def from_file(self, filename):
         table_header = re.compile('\[\s*(\w*)\s*\]')
+        quoted = re.compile('[\'"]([^"'']*)[\'"]')
         with open(filename, "r") as file_handle:
             for line in file_handle:
                 line = self.preprocess_line(line)
                 if line != "":
                     th = table_header.search(line)
-                    if th is not None:
+                    if "#include " in line:
+                        self.includes.append(quoted.search(line).groups(1)[0])
+                    elif th is not None:
                         table_name = th.group(1)
                         if table_name in TOPFILE_FIELDS:
                             table_columns = TOPFILE_FIELDS[table_name]

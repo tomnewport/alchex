@@ -1,9 +1,10 @@
 from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import cdist, pdist, squareform
 import numpy
 import networkx as nx
 from itertools import combinations
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 def mda_atom_to_dict(mda_atom):
     return {
@@ -14,6 +15,8 @@ class WAEditableResidue(object):
     def __init__(self, resname, resid):
         self.resname = resname
         self.resid = resid
+        self.moltype = None
+        self.moltype_instance = None
         self.ids = []
         self.atoms = []
         self.coordinates = PointCloud(3)
@@ -126,7 +129,6 @@ class WAEditableResidue(object):
     def as_pdb(self):
         lines = []
         for atom_id in self.ids:
-            print atom_id
             atom, coordinates = self.get_atom_by_id(atom_id)
             line = "ATOM    {id} {name} {resname} {resid}      {xpos}  {ypos}  {zpos}  1.00  0.00           N"
             lines.append(line.format(
@@ -194,13 +196,13 @@ def gro_to_dict(groline):
 def dict_to_gro(dictionary):
     line = ""
     #residue number (5 positions, integer)
-    line += str(dictionary["resid"]).rjust(5)
+    line += str(int(dictionary["resid"])%100000).rjust(5)
     #residue name (5 characters)
     line += str(dictionary["resname"]).ljust(5)
     #atom name (5 characters)
     line += str(dictionary["name"]).rjust(5)
     #atom number (5 positions, integer)
-    line += str(dictionary["atomid"]).rjust(5)
+    line += str(int(dictionary["atomid"])%100000).rjust(5)
     #position (in nm, x y z in 3 columns, each 8 positions with 3 decimal places)
     line += "".join(["{:8.4f}".format(x) for x in [dictionary["posx"], dictionary["posy"], dictionary["posz"]]])
     #velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places)
@@ -211,17 +213,134 @@ class WAEditableGrofile(object):
     def __init__(self):
         self.sysname = "Edited Gro File"
         self.residues = []
+        self.moltypes = []
         self.box_vector = [0,0,0]
+    def sort_residues(self):
+        if len(self.moltypes) != 0:
+            self.residues = sorted(self.residues, key = lambda x: (
+                self.moltypes.index(x.moltype), 
+                x.moltype_instance,
+                int(x.resid))
+            )
+        else:
+            self.residues = sorted(self.residues, key = lambda x: int(x.resid))
+        for residue in self.residues:
+            residue.sort_atoms()
+    def add_topology(self, topfile):
+        self.sort_residues
+        self.topology = topfile
+        self.moltype_atomcounts = {}
+        counts = []
+        for molname, topdef in topfile.moltypes.items():
+            self.moltype_atomcounts[molname] = len(topdef.atoms)
+        for moltype_idx, row in enumerate(topfile.tables["molecules"]):
+            moltype = row["moltype"]
+            for molname, topdef in topfile.moltypes.items():
+                if molname.lower() == moltype.lower():
+                    moltype_def = topdef
+                    break
+            self.moltypes.append(molname)
+            atom_count = len(moltype_def.atoms)
+            instance_count = int(row["count"])
+            for instance_id in range(instance_count):
+                counts.append({"moltype" : molname, "atoms" : atom_count, "instance_id" : instance_id, "moltype_idx":moltype_idx})
+        current_count = None
+        for residue in self.residues:
+            if current_count is None or current_count["atoms"] <= 0:
+                current_count = counts.pop(0)
+            current_count["atoms"] -= len(residue.atoms)
+            residue.moltype = current_count["moltype"]
+            residue.moltype_instance = current_count["instance_id"]
     def combine(self, other):
         self.residues += other.residues
+    def find_resid(self, resid):
+        for idx, residue in enumerate(self.residues):
+            if int(residue.resid) == int(resid):
+                return idx
+        return None
+    def delete_by_resids(self, resids):
+        resids = list(resids)
+        for resid in resids:
+            del self.residues[self.find_resid(resid)]
+    def renumber_moltypes(self):
+        # Something is wrong with this
+        top_molecules = self.top_molecules()
+        counts = []
+        for moltype, count in top_molecules:
+            moltype_count = int(count)
+            atom_count = self.moltype_atomcounts[moltype]
+            for instance_id in range(moltype_count):
+                counts.append({
+                    "moltype" : moltype, 
+                    "atoms" : atom_count, 
+                    "instance_id" : instance_id})
+        current_count = None
+        for residue in self.residues[:1000]:
+            if current_count is None or current_count["atoms"] <= 0:
+                current_count = counts.pop(0)
+            current_count["atoms"] -= len(residue.atoms)
+            residue.moltype = current_count["moltype"]
+            residue.moltype_instance = current_count["instance_id"]
     def top_molecules(self):
-        molecules = []
+        self.sort_residues()
+        atoms = []
         for residue in self.residues:
-            if len(molecules) == 0 or molecules[-1][0] != residue.resname:
-                molecules.append((residue.resname, 1))
+            if len(atoms) == 0 or atoms[-1][0] != residue.moltype:
+                atoms.append((residue.moltype, len(residue.atoms)))
             else:
-                molecules[-1] = (residue.resname, molecules[-1][1] + 1)
+                atoms[-1] = (residue.moltype, atoms[-1][1] + len(residue.atoms))
+        molecules = []
+        for moltype, atom_count in atoms:
+            molecules.append((moltype, atom_count/self.moltype_atomcounts[moltype]))
         return molecules
+    def residue_of(self, atom_id):
+        sum_atoms = 0
+        for residue in self.residues:
+            sum_atoms += len(residue.atoms)
+            if sum_atoms > atom_id:
+                return residue
+    def atom_clashes(self, distance_tolerance=1):
+        all_points = None
+        for r in self.residues:
+            if all_points is None:
+                all_points = r.coordinates
+            else:
+                all_points.add_points(r.coordinates.points[:,:3])
+        distances = squareform(pdist(all_points.points))
+        numpy.fill_diagonal(distances, distance_tolerance + 1)
+        clashes = numpy.argwhere(distances <= distance_tolerance)
+        return clashes
+    def moltype_clashgraph(self, distance_tolerance=2):
+        atom_clashes = self.atom_clashes(distance_tolerance=distance_tolerance)
+        graph = nx.Graph()
+        for atom1, atom2 in atom_clashes:
+            res1, res2 = self.residue_of(atom1), self.residue_of(atom2)
+            mol1, mol2 = (res1.moltype, res1.moltype_instance), (res2.moltype, res2.moltype_instance)
+            if mol1 != mol2 and (mol1, mol2) not in graph.edges(mol1):
+                graph.add_edge(mol1, mol2)
+        return graph
+    def declash_moltypes(self, distance_tolerance=2, exclude=None, include=None):
+        all_moltypes = set([(residue.moltype, residue.moltype_instance) for residue in self.residues])
+        clashgraph = self.moltype_clashgraph(distance_tolerance=distance_tolerance)
+        if exclude is not None:
+            exc = [x.upper() for x in exclude]
+            remove = [x for x in all_moltypes if x[0].upper() in exc]
+            clashgraph.remove_nodes_from(remove)
+            all_moltypes -= set(remove)
+        if include is not None:
+            inc = [x.upper() for x in include]
+            remove = [x for x in all_moltypes if x[0].upper() not in inc]
+            clashgraph.remove_nodes_from(remove)
+            all_moltypes -= set(remove)
+        colours = nx.algorithms.greedy_color(clashgraph)
+        groups = []
+        for moltype, colour in colours.items():
+            while len(groups) < colour + 1:
+                groups.append(set())
+            all_moltypes.remove(moltype)
+            groups[colour].add(moltype)
+        groups[0].update(all_moltypes)
+        return groups
     def clashgraph(self, distance_tolerance=1):
         graph = nx.Graph()
         graph.add_nodes_from(range(len(self.residues)))
@@ -260,22 +379,59 @@ class WAEditableGrofile(object):
             lines = [x for x in fh.read().split("\n") if x.strip() != ""]
         self.sysname = lines[0].strip()
         used_resids = set()
+        file_atom_id = 0
+        file_residue_adder = 0
         for line in lines[2:-1]:
+            file_atom_id += 1
             atom_data = gro_to_dict(line)
+            base_resid =  int(atom_data["resid"])
+            resid = str(base_resid + file_residue_adder)
             coordinates = [[
                 10*float(atom_data["posx"]), 
                 10*float(atom_data["posy"]), 
                 10*float(atom_data["posz"])
                 ]]
-            if atom_data["resid"] not in used_resids:
-                used_resids.add(atom_data["resid"])
-                self.residues.append(WAEditableResidue(resid=atom_data["resid"], resname=atom_data["resname"]))
+            if resid not in used_resids:
+                used_resids.add(resid)
+                self.residues.append(WAEditableResidue(resid=resid, resname=atom_data["resname"]))
                 res_start = int(atom_data["atomid"])
             self.residues[-1].coordinates.add_points(coordinates)
-            atom_id = str(1 + int(atom_data["atomid"]) - res_start)
+            atom_id = str(1 + (file_atom_id - res_start))
             self.residues[-1].ids.append(atom_id)
             self.residues[-1].atoms.append(atom_data)
+            if base_resid == 99999:
+                file_residue_adder += 100000
         self.box_vector = [10*float(x) for x in lines[-1].split()]
+    def reload(self, filename, reload_coordinates=True, reload_resids=True, reload_atom_names=True, same_atom_names=True):
+        '''
+        Reloads coordinates and/or resids from a file - this allows gromacs to run a simulation
+        and the results to be loaded back into the object, keeping things like moltypes.
+        '''
+        with open(filename, "r") as fh:
+            lines = [x for x in fh.read().split("\n") if x.strip() != ""]
+        atoms = [gro_to_dict(x) for x in lines[2:-1]]
+        atom_start = 0
+        for residue in self.residues:
+            res_atoms = len(residue.atoms)
+            atom_end = atom_start + res_atoms
+            residue_atoms = atoms[atom_start:atom_end]
+            assert len(residue_atoms) == len(residue.atoms), "Files are too different"
+            if same_atom_names:
+                assert [x["name"] for x in residue.atoms] == [x["name"] for x in residue_atoms], "Atom names have changed"
+            if reload_coordinates:
+                residue.coordinates.points = numpy.array([[
+                    10*float(atom_data["posx"]), 
+                    10*float(atom_data["posy"]), 
+                    10*float(atom_data["posz"]),
+                    1
+                ] for atom_data in residue_atoms])
+            if reload_resids:
+                residue.resid = residue_atoms[0]["resid"]
+            for old_atom, new_atom in zip(residue.atoms, residue_atoms):
+                if reload_atom_names:
+                    old_atom["name"] = new_atom["name"]
+            atom_start = atom_end
+        assert atom_start == len(lines) - 3, "Number of atoms in update file does not match new file."
     def list_residues(self):
         rlist = []
         for residue in self.residues:
@@ -289,7 +445,9 @@ class WAEditableGrofile(object):
             file_handle.write(self.sysname + "\n")
             file_handle.write(str(atom_count).rjust(5)+ "\n")
             atom_id = 0
-            for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+            self.sort_residues()
+            #for residue in sorted(self.residues, key = lambda x:int(x.resid)):
+            for residue in self.residues:
                 residue.sort_atoms()
                 for idx, atom_data in enumerate(residue.atoms):
                     atom_id += 1
@@ -305,3 +463,4 @@ class WAEditableGrofile(object):
                     atom["velz"]    = atom_data.get("velz", 0)
                     file_handle.write(dict_to_gro(atom) + "\n")
             file_handle.write("".join([str(x/10).rjust(10) for x in self.box_vector])+"\n")
+

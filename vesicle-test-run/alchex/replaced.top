@@ -1,0 +1,14 @@
+#include "martini_v2.1.itp"
+#include "CDL.itp"
+[ system ]
+POPE
+
+[ molecules ]
+CDL0	64
+DLPG	63
+DPPC	63
+POPS	312
+CHOL	104
+POPG	207
+W	61552
+

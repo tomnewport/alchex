@@ -19,3 +19,36 @@ def martini_atom_similarity(atom1, atom2):
     if atom1.attrs["atom"] == atom2.attrs["atom"]:
         similarity += 1
     return similarity
+
+ITP_FIELDS = {"atoms":["id",
+                      "type",
+                      "resnr",
+                      "residue",
+                      "atom",
+                      "cgnr",
+                      "charge",
+                      "mass"],
+            "bonds":["i",
+                     "j",
+                     "funct",
+                     "length",
+                     "force"],
+            "angles":["i",
+                      "j",
+                      "k",
+                      "funct",
+                      "angle",
+                      "force"],
+            "moleculetype": ["molname",
+                             "nrexcl"],
+            "constraints" : [
+              "i",
+              "j",
+              "funct",
+              "length"],
+            "dihedrals" : [
+            "i","j","k","l","funct","angle","force"
+            ]
+                     }
+
+

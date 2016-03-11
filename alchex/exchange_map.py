@@ -5,13 +5,15 @@ from alchex.geometry import PointCloud, TransformationMatrix, plot_3d
 import matplotlib.pyplot as plt
 from workarounds import WAEditableResidue
 from alchex.residue import MultiResidueStructure
-
+import json
 
 class ExchangeMap(object):
     def __init__(self):
         self.from_resname = ""
         self.from_count = 0
+        self.from_moltype = None
         self.to_resname = ""
+        self.to_moltype = None
         self.grouping = None
         self.to_count = 0
         self.actions = []
@@ -21,6 +23,20 @@ class ExchangeMap(object):
             "molecule_align", 
             "simple_bridge", 
             "stretch_interpolate"]
+    def to_file(self, filename):
+        json_dict = {
+            "from_count": self.from_count,
+            "from_resname" : self.from_resname,
+            "from_moltype" : self.from_moltype,
+            "to_count"     : self.from_count,
+            "to_resname"   : self.from_resname,
+            "to_moltype"   : self.from_moltype,
+            "grouping"     : self.grouping,
+            "actions"      : self.actions
+            }
+        json_dict = {k:v for k,v in json_dict.items() if v is not None}
+        with open(filename, "w") as file_handle:
+            json.dump(json_dict, file_handle,sort_keys=True, indent=4)
     def used_actions(self):
         return set([x["method"] for x in self.actions])
     def scorecard(self):
@@ -172,7 +188,9 @@ class ExchangeMap(object):
         ]
     def __repr__(self):
         return " 〘 ⚗ Change {from_count}x {from_resname} to {to_count}x {to_resname} {sc} 〙 ".format(sc=self.scorecard(), **self.__dict__)
-    def new(self, from_itp=None, to_itp=None, method="martini.lipid", draw=False, **kwargs):
+    def new(self, from_itp=None, to_itp=None, to_moltype=None, from_moltype=None, method="martini.lipid", draw=False, **kwargs):
+        self.to_moltype = to_moltype
+        self.from_moltype = from_moltype
         self.from_itp = from_itp
         self.to_itp = to_itp
         self.from_resname = self.from_itp.atoms.values()[0].attrs["residue"]

@@ -1,0 +1,13 @@
+#include "martini_v2.1.itp"
+#include "CDL.itp"
+[ system ]
+MIXED-LIPID
+
+[ molecules ]
+DPPC	5184
+CDL0	1296
+POPE	1849
+POPG	743
+W	194170
+NA+	2592
+

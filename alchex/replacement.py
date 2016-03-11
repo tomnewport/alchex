@@ -1,15 +1,25 @@
-from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
+from alchex.gromacs_interface import GromacsWrapper, SimulationContainer, GromacsTOPFile, GromacsMDPFile, GromacsEditableTOPFile
 from alchex.config import default_configuration
 from alchex.geometry import PointCloud
+from alchex.errors import GromacsInterfaceError
 from alchex.residue import ResidueStructure, MultiResidueStructure
 from alchex.workarounds import WAEditableGrofile
+from alchex.lipid_analysis import find_bilayer_leaflets
 from os import path
 from collections import Counter
 import logging
 from random import shuffle
 import networkx as nx
+import sys
+import alchex.logger
 
-logging.basicConfig(format=' ⚗ %(levelname)s : %(message)s', level=logging.INFO)
+logging.info("Done importing")
+
+PROGRESS_BLOCKS = u"█▉▊▋▌▍▎▏"[::-1]
+PROGRESS_SPINNER = [u"🌘",u"🌗",u"🌖",u"🌕",u"🌔",u"🌓",u"🌒",u"🌑"]
 
 def norm_dict(dictionary):
     sum_values = 1.0 * sum(dictionary.values())
@@ -53,7 +63,6 @@ class ReplacementSpecification(object):
                 swap_ratios.add_node(from_resname)
             for to_resname in self.composition.keys():
                 ex_map = self.alchex_config.get_exchange_map(from_resname, to_resname)
-
                 if to_resname not in sizes:
                     sizes[to_resname] = []
                 sizes[to_resname].append(ex_map.from_count/ex_map.to_count)
@@ -105,8 +114,8 @@ class ReplaceableEntity(object):
         to_residue = self.replacement_system.alchex_config.get_reference_structure(self.exchange_model.to_resname)
         self.replacement = self.exchange_model.run(self.from_residue, to_residue)
         self.replacement.resid = self.new_residue_ids
+        self.replacement.moltype = self.exchange_model.to_moltype
         return self.replacement
-
 
 class ReplacementSystem(object):
     def __init__(self, 
@@ -131,6 +140,26 @@ class ReplacementSystem(object):
         if include_from is None:
             self.include_from = path.split(self.input_topology_filename)[0]
         self.setup()
+        self._custom_groups = {}
+        logging.info("Config complete")
+    def custom_group(self, group_name):
+        universe = self.simulations.universe("input.gro")
+        if group_name not in self._custom_groups:
+            if group_name in ["leaflet upper", "leaflet lower"]:  
+                lower_leaflet_resids, upper_leaflet_resids = find_bilayer_leaflets(universe)
+                self._custom_groups["leaflet lower"] = "("+" or ".join(
+                    ["resid "+str(resid) for resid in lower_leaflet_resids]
+                    )+")"
+                self._custom_groups["leaflet upper"] = "("+" or ".join(
+                    ["resid "+str(resid) for resid in upper_leaflet_resids]
+                    )+")"
+        return self._custom_groups[group_name]
+    def preprocess_selection(self, string):
+        custom_groups = ["leaflet upper", "leaflet lower"]
+        for cg in custom_groups:
+            if cg in string:
+                string = string.replace(cg, self.custom_group(cg))
+        return string
     def setup(self):
         # Add specified files:
         self.simulations = SimulationContainer(self.root_folder, GromacsWrapper(self.alchex_config.gromacs_executable))
@@ -159,7 +188,7 @@ class ReplacementSystem(object):
     def build_replaceable_entities(self, map_counts, replacement_specification):
         # Accepts a list of residue names and counts
         input_universe       = self.simulations.universe("input.gro")
-        replaceable_universe = input_universe.select_atoms(replacement_specification.selection)
+        replaceable_universe = self.simulations.select_atoms("input.gro", replacement_specification.selection)
         available_entities   = replaceable_universe.residues
         resid_to_name        = {r.id : r.name for r in available_entities}
         from_resnames = Counter([r.name for r in available_entities])
@@ -178,7 +207,7 @@ class ReplacementSystem(object):
                     if ex_map.from_count == 1:
                         group = [{r.id,} for r in available_entities if r.name==from_resname]
                     elif ex_map.from_count == 2:
-                        group_centres_selection = replaceable_universe.select_atoms("name " + ex_map.grouping["atom"])
+                        group_centres_selection = replaceable_universe.select_atoms("resname "+from_resname+" and name " + ex_map.grouping["atom"])
                         group_centres = PointCloud(3)
                         group_centres.add_points(group_centres_selection.coordinates())
                         logging.info("Pairing points using atom name " + ex_map.grouping["atom"] + ". This may take some time...")
@@ -219,13 +248,104 @@ class ReplacementSystem(object):
                     )
 
         return replaceable_entities
+    def _replace(self, replaceable_entities, name="alchex"):
+        '''
+        Given a set of replaceable_entities, performs replacement in the specified directory
+        '''
+        logging.info("Preparing to replace molecules...")
+        self.simulations.copy_folder("/original", "/" + name)
+        self.simulations.cd("/"+name)
+        original = WAEditableGrofile()
+        original.from_file(self.simulations.resolve_path("/"+name+"/input.gro"))
+        original_topology = GromacsEditableTOPFile()
+        original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
+        em_mdp = GromacsMDPFile()
+        em_mdp = self.alchex_config.grompp_parameters["em"].clone()
+        em_mdp.to_file(self.simulations.resolve_path("em.mdp"))
+        exitcode, message = self.simulations.gromacs.grompp(kwargs={
+                    "-f" : "em.mdp", 
+                    "-c" : "input.gro", 
+                    "-p" : "input.top",
+                    "-o" : "preprocess",
+                    "-pp": "input-pp.top",
+                    "-maxwarn":"1"})
+        if exitcode != 0:
+            raise GromacsInterfaceError(message)
+        full_topology = GromacsEditableTOPFile()
+        full_topology.from_file(self.simulations.resolve_path("/"+name+"/input-pp.top"))
+        logging.info("Adding topology...")
+        original.add_topology(full_topology)
+        replaced = WAEditableGrofile()
+        logging.info("Performing replacements...")
+        todo = len(replaceable_entities)
+        done = 0
+        for entity in replaceable_entities:
+            to_resname = entity.exchange_model.to_resname
+            to_moltype = entity.exchange_model.to_moltype
+            if to_moltype not in original.moltypes:
+                insert_idx = original.moltypes.index(entity.exchange_model.from_moltype)
+                original.moltypes.insert(insert_idx, entity.exchange_model.to_moltype)
+            entity.replacement_system = self
+            entity.setup()
+            new_residues = entity.replace()
+            original.delete_by_resids(entity.residue_ids)
+            original.residues.append(new_residues)
+            done += 1
+            if done % 1 == 0:
+                prog = done/(1.0*todo)
+                p_done = int(prog*50)
+                p_current = int((prog*50 - (p_done)) * 8)
+                p_todo = (50-p_done)
+                endchar = PROGRESS_BLOCKS[p_current]
+                if prog == 1:
+                    endchar = ""
+                spinner = PROGRESS_SPINNER[done/5 % 8]
+                pb = u"█" * int(prog*50) + endchar+ " " * int((1-prog)*50)
+                sys.stdout.write(u"\r ⚗ Replacing residues ┠{pb}┨ {spinner}  {perc:4.1f}%    ".format(pb=pb, perc=prog * 100, spinner=spinner))
+                sys.stdout.flush()
+        print "\n"
+        logging.info("Modifying topology...")
+        original_topology.modify_molecules(original.top_molecules())
+        logging.info("Writing topology...")
+        original_topology.to_file(self.simulations.resolve_path("replaced.top"))
+        logging.info("Sorting residues...")
+        original.sort_residues()
+        logging.info("Renumbering moltypes...")
+        original.renumber_moltypes()
+        logging.info("Saving structure...")
+        #print(len(original.declash_moltypes(2)))
+        # Energy minimise the new system
+        original.to_file(self.simulations.resolve_path("replaced.gro"))   
+        logging.info("Performing energy minimisation simulation...")
+        statuscode, message = self.simulations.gromacs.grompp(kwargs={
+                    "-f" : "em.mdp", 
+                    "-c" : "replaced.gro", 
+                    "-p" : "replaced.top",
+                    "-o" : "all-em.tpr",
+                    "-maxwarn":"1"})
+        if statuscode != 0:
+            raise GromacsInterfaceError(message)
+
+        statuscode, message = self.simulations.gromacs.mdrun(kwargs={
+            "-deffnm" : "all-em"
+            })
+        if statuscode != 0:
+            raise GromacsInterfaceError(message)
+
+        original.reload(self.simulations.resolve_path("all-em.gro"), same_atom_names=False)
+        logging.info("Complete")
+        #print(len(original.declash_moltypes(2)))
+        # Look for clashes
+        # Use alchembed to resolve clashes
     def replace(self, replaceable_entities, name="alchex"):
         '''
+        Old method, see _replace instead.
         Given a set of replaceable_entities, performs replacement in the specified directory
         '''
         self.simulations.copy_folder("/original", "/" + name)
         self.simulations.cd("/"+name)
         replacement_groups = {}
+        '''
         for entity in replaceable_entities:
             to_resname = entity.exchange_model.to_resname
             if to_resname not in replacement_groups:
@@ -233,12 +353,14 @@ class ReplacementSystem(object):
             entity.replacement_system = self
             entity.setup()
             replacement_groups[to_resname].append(entity.replace())
+        '''
         original = WAEditableGrofile()
         original.from_file(self.simulations.resolve_path("/"+name+"/input.gro"))
         original_topology = GromacsTOPFile()
         original_topology.from_file(self.simulations.resolve_path("/"+name+"/input.top"))
-        em_mdp = GromacsMDPFile()
-        em_mdp.attrs = self.alchex_config.grompp_parameters["em"]
+        em_mdp = self.alchex_config.grompp_parameters["em"].clone()
+
+        '''
         for p, v in self.additional_em_parameters.items():
             em_mdp.attrs[p] = v
         for to_resname, residues in replacement_groups.items():
@@ -250,9 +372,8 @@ class ReplacementSystem(object):
             structure.residues = residues
             structure.sysname = "Alchex replacement component " + to_resname
             structure.box_vector = original.box_vector
-
             structure.to_file("debug-"+to_resname+".gro")
-            structures = structure.declash(4.5)
+            structures = structure.declash(2)
             for idx, dc_structure in enumerate(structures):
                 self.simulations.cd("/" + name + "/" + to_resname)
                 base_filename = "alchex_component."+str(idx)
@@ -261,7 +382,7 @@ class ReplacementSystem(object):
                 original_topology.modify_molecules(dc_structure.top_molecules())
                 original_topology.to_file(self.simulations.resolve_path(base_filename+".top"))
                 self.simulations.makedirs(em_dir)
-                self.simulations.gromacs.grompp(kwargs={
+                print self.simulations.gromacs.grompp(kwargs={
                     "-f":"em.mdp", 
                     "-c": base_filename+".gro", 
                     "-p": base_filename+".top",
@@ -271,22 +392,29 @@ class ReplacementSystem(object):
                 grompp_result, grompp_message = self.simulations.gromacs.mdrun(kwargs={"-deffnm":em_dir})
                 if "Steepest Descents converged to Fmax" in grompp_message:
                     logging.info("Successfully energy minimised " + to_resname + "/" +  base_filename + ".")
-    def auto_replace(self, selection, composition):
+        '''
+    def auto_replace(self, *groups):
         '''Shorthand to create replaceable entities and then run replacement'''
-        replacement_specification = ReplacementSpecification(self.alchex_config,
-            selection=selection, 
-            composition=composition, 
-            parsimonious=False)
+        replaceable_entities = []
         input_universe       = self.simulations.universe("input.gro")
-        replaceable_universe = input_universe.select_atoms(selection)
-        # Determine how many of each residue are going to be created:
-        map_counts = replacement_specification.map_counts(
-            Counter(
+        for group in groups:
+            selection = group["selection"]
+            composition = group["composition"]
+
+            replacement_specification = ReplacementSpecification(self.alchex_config,
+                selection=selection, 
+                composition=composition, 
+                parsimonious=False)
+            replaceable_universe = self.simulations.select_atoms("input.gro", selection)
+            #replaceable_universe = input_universe.select_atoms(self.preprocess_selection(selection))
+            # Determine how many of each residue are going to be created:
+            map_counts = replacement_specification.map_counts(
+                Counter(
                 [x.atoms[0].resname for x in replaceable_universe.residues]
                 )
-            )
-        replaceable_entities = self.build_replaceable_entities(map_counts, replacement_specification)
-        self.replace(replaceable_entities)
+                )
+            replaceable_entities += self.build_replaceable_entities(map_counts, replacement_specification)
+        self._replace(replaceable_entities)
     def energy_minimise(self):
         # Determine non-clashing groups of replaceable entites
         # Energy minimise non-clashing groups of replacable entities
@@ -295,9 +423,20 @@ class ReplacementSystem(object):
         # Alchemically add in non-clashing groups of replaceable entites
         pass
 
-
+'''
 d = ReplacementSystem(
     input_structure_filename="data/testpatch/sample.gro",
     input_topology_filename="data/testpatch/sample.top")
 
 d.auto_replace(selection="resname POPC", composition={"DPPC" : 50, "CDL0" : 24})
+
+
+d = ReplacementSystem(
+    input_structure_filename="pip-test/original/centred.gro",
+    input_topology_filename="pip-test/original/input.top",
+    root_folder="pip-test-run"
+    )
+print d.preprocess_selection("hello world")
+print d.preprocess_selection("leaflet upper")
+print d.preprocess_selection("leaflet lower and resid 10")
+'''
