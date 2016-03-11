@@ -1,2 +1,0 @@
-# Alchex - Atomistic branch
-
