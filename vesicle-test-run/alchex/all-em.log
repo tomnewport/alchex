@@ -1,5 +1,5 @@
-Log file opened on Tue Feb  9 18:44:54 2016
-Host: draculin  pid: 17516  rank ID: 0  number of ranks:  1
+Log file opened on Fri Mar 11 15:53:23 2016
+Host: draculin  pid: 6865  rank ID: 0  number of ranks:  1
                     :-) GROMACS - gmx mdrun, VERSION 5.1 (-:
 
                             GROMACS is written by:
@@ -141,7 +141,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = 96433052
+   ld-seed                        = 193655188
    emtol                          = 10
    emstep                         = 0.001
    niter                          = 20
@@ -327,10 +327,10 @@ will apply an additional matrix expansion of order 4 for couplings
 between constraints inside triangles
 Initiating Steepest Descents
    Rel. Constraint Deviation:  RMS         MAX     between atoms
-       Before LINCS          0.006671    0.010409   7510   7511
-        After LINCS          0.000619    0.001074   7245   7247
+       Before LINCS          0.006675    0.010423   7350   7351
+        After LINCS          0.000621    0.001197   7525   7527
 
-Started Steepest Descents on rank 0 Tue Feb  9 18:44:54 2016
+Started Steepest Descents on rank 0 Fri Mar 11 15:53:24 2016
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e+01
@@ -340,9 +340,9 @@ Steepest Descents:
 
    Energies (kJ/mol)
            Bond       G96Angle  Improper Dih.        LJ (SR)   Coulomb (SR)
-    4.72396e+04    9.59950e+03    3.21496e+03    1.27710e+21   -1.24300e+04
+    4.69591e+04    9.60467e+03    3.21542e+03    1.27709e+21   -1.55351e+04
       Potential Pressure (bar)   Constr. rmsd
-    1.27710e+21   -3.04638e+12    6.19401e-04
+    1.27709e+21   -3.04841e+12    6.21373e-04
 
            Step           Time         Lambda
               1        1.00000        0.00000
@@ -389,8 +389,8 @@ off constraints altogether (set constraints = none in mdp file)
 
 Steepest Descents converged to machine precision in 11 steps,
 but did not reach the requested Fmax < 10.
-Potential Energy  =  1.2770955e+21
-Maximum force     =            inf on atom 5572
+Potential Energy  =  1.2770914e+21
+Maximum force     =            inf on atom 5468
 Norm of force     =            inf
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -402,8 +402,8 @@ Norm of force     =            inf
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check              48.128256         433.154     6.9
- NxN RF Elec. + LJ [V&F]                107.446592        5802.116    92.4
+ Pair Search distance check              48.066128         432.595     6.9
+ NxN RF Elec. + LJ [V&F]                107.555072        5807.974    92.4
  Shift-X                                  0.794695           4.768     0.1
  Bonds                                    0.109824           6.480     0.1
  Angles                                   0.074987          12.598     0.2
@@ -413,7 +413,7 @@ Norm of force     =            inf
  Lincs-Mat                                0.384384           1.538     0.0
  Constraint-Vir                           0.006864           0.165     0.0
 -----------------------------------------------------------------------------
- Total                                                    6278.097   100.0
+ Total                                                    6283.396   100.0
 -----------------------------------------------------------------------------
 
 
@@ -424,33 +424,37 @@ On 1 MPI rank, each using 12 OpenMP threads
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1   12         11       0.040          3.386   6.2
- Launch GPU ops.        1   12         11       0.001          0.044   0.1
- Force                  1   12         11       0.002          0.205   0.4
- Wait GPU local         1   12         11       0.008          0.693   1.3
- NB X/F buffer ops.     1   12         11       0.002          0.150   0.3
- Constraints            1   12         21       0.011          0.959   1.8
- Rest                                           0.586         49.305  90.1
+ Neighbor search        1   12         11       0.026          2.190  12.8
+ Launch GPU ops.        1   12         11       0.001          0.055   0.3
+ Force                  1   12         11       0.003          0.274   1.6
+ Wait GPU local         1   12         11       0.001          0.110   0.6
+ NB X/F buffer ops.     1   12         11       0.001          0.049   0.3
+ Constraints            1   12         21       0.000          0.037   0.2
+ Rest                                           0.171         14.407  84.1
 -----------------------------------------------------------------------------
- Total                                          0.651         54.744 100.0
+ Total                                          0.203         17.122 100.0
 -----------------------------------------------------------------------------
 
  GPU timings
 -----------------------------------------------------------------------------
  Computing:                         Count  Wall t (s)      ms/step       %
 -----------------------------------------------------------------------------
- Pair list H2D                         11       0.002        0.183    19.6
- X / q H2D                             11       0.001        0.103    11.0
- Nonbonded F+ene+prune k.              11       0.006        0.567    60.7
- F D2H                                 11       0.001        0.082     8.8
+ Pair list H2D                         11       0.003        0.232    24.1
+ X / q H2D                             11       0.001        0.103    10.7
+ Nonbonded F+ene+prune k.              11       0.006        0.545    56.6
+ F D2H                                 11       0.001        0.083     8.6
 -----------------------------------------------------------------------------
- Total                                          0.010        0.935   100.0
+ Total                                          0.011        0.963   100.0
 -----------------------------------------------------------------------------
 
-Force evaluation time GPU/CPU: 0.935 ms/0.222 ms = 4.223
+Force evaluation time GPU/CPU: 0.963 ms/0.296 ms = 3.252
+
+NOTE: 13 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.727        0.651      265.4
+       Time:        1.870        0.203      919.1
                (steps/hour)
-Performance:        60868.7
-Finished mdrun on rank 0 Tue Feb  9 18:44:55 2016
+Performance:       194616.2
+Finished mdrun on rank 0 Fri Mar 11 15:53:24 2016

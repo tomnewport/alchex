@@ -1,5 +1,0 @@
-emstep                   = 0.001
-integrator               = steep
-emtol                    = 1000
-test                     = success
-nsteps                   = 5000

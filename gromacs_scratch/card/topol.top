@@ -1,9 +1,0 @@
-#include "martini_v2.1.itp"
-#include "CDL.itp"
-
-
-[ system ]
-Test EM
-
-[ molecules ]
-CDL0 1

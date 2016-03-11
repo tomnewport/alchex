@@ -222,10 +222,14 @@ def default_config_path(config):
 
 def default_configuration():
     folder = path.join(path.split(__file__)[0], "default_configuration")
+    #defaultconfig = AlchexConfig(folder=folder, gromacs_executable="/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_sse")
     defaultconfig = AlchexConfig("cg_default")
     defaultconfig.gromacs_executable = "/sbcb/packages/opt/Linux_x86_64/gromacs/5.1/bin/gmx_avx"
+    #defaultconfig.gromacs_executable = "gmx"
+    #defaultconfig.generate_structure("CDDG/CDDG2-noconstraints.itp", "CDDG", additional_itps=["data/martini_v2.1-dna.itp"], repeats=1)
 
     defaultconfig.load_itp_file("data/DLPG.itp", "DLPG")
+    defaultconfig.load_itp_file("CDDG/cddg_v3.itp", "CDDG")
     defaultconfig.load_itp_file("data/DVPE.itp", "DVPE")
     defaultconfig.load_itp_file("data/CDL.itp", "CDL0")
     defaultconfig.load_itp_file("data/chol.itp", "CHOL")
@@ -418,6 +422,12 @@ def default_configuration():
     to_moltype="POPG",
     exchange_model="martini.lipid")
     
+    defaultconfig.build_exchange_map(
+    from_resname="DPPC",
+    from_moltype="DPPC",
+    to_resname="CDDG",
+    to_moltype="CDDG",
+    exchange_model="martini.lipid")
 
     defaultconfig.build_exchange_map(
     from_resname="DPPC",
@@ -438,9 +448,11 @@ def default_configuration():
     defaultconfig.add_reference_structure("POPC","data/popc.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("POPG", "data/popg.pdb", selection="resname POP")
     defaultconfig.add_reference_structure("PODG", "data/PODG-em.gro", selection="resname PODG")
+    defaultconfig.add_reference_structure("CDDG", "CDDG/cddg_v3.gro")
     defaultconfig.add_reference_structure("POPA", "data/POPA-em.gro")
 
-    defaultconfig.add_grompp_parameters("em", "data/em-cg.mdp")
+    defaultconfig.add_grompp_parameters("em", "data/cg_em.mdp")
+    defaultconfig.add_grompp_parameters("alchembed", "alchembed-cg.mdp")
 
     defaultconfig.save()
 
