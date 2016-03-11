@@ -237,7 +237,7 @@ class PointCloud:
         return distance.cdist(longer, shorter).min(axis=0).mean()
     def centroid(self, centroid_weighting=None):
         if centroid_weighting is None:
-            centroid_weighting = [1]*self.points.shape[0]
+            return numpy.mean(self.points, axis=0)
         return numpy.average(self.points, axis=0, weights=centroid_weighting)
     def bounding_box(self, extent=True):
         mins = self.points.min(axis=0)

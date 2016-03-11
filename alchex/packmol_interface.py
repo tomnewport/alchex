@@ -100,8 +100,15 @@ class WrappedPackmolInput(object):
         self.output = output
         self.filetype = filetype
         self.structures = []
+        self.movebadrandom = False
+        self.discale = 1.1
+        self.maxit = 20
     def __str__(self):
         string = "tolerance {tolerance}".format(tolerance=self.tolerance) + "\n"
+        if self.movebadrandom:
+            string += "movebadrandom\n"
+        string += "discale "+str(self.discale)+"\n"
+        string += "maxit "+str(self.maxit)+"\n"
         string += "output {output}".format(output=self.output) + "\n"
         string += "filetype {filetype}".format(filetype=self.filetype) + "\n\n"
         string += "\n\n".join(map(str, self.structures))
@@ -175,8 +182,10 @@ class VesicleBuilder(object):
             # one unit contains <ratio> of this molecule
             total_area = ((4 * 3.141592 * sphere_inside_radius )**2)
 
-            #packnumber = 1.5*((total_area/unitarea) * ratio)
-            packnumber = 0.01 * total_area
+            packnumber = (total_area/(unitarea*10)) * ratio
+            print packnumber
+            #packnumber = 0.008 * total_area
+            #packnumber = 6
             structure = WrappedPackmolStructure(filename=input_pdb, number = int(round(packnumber)), resnumbers=3)
             sphere_inside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere0[1].atoms])
             sphere_outside_selection = WrappedPackmolAtomSelection([x.number+1 for x in sphere1[1].atoms])
@@ -187,6 +196,9 @@ class VesicleBuilder(object):
             structure.atom_selections.append(sphere_inside_selection)
             structure.atom_selections.append(sphere_outside_selection)
             input_object.structures.append(structure)
+        input_object.movebadrandom = True
+        input_object.discale = 1.5
+        input_object.maxit = 40
         print input_object
         return input_object
     def build(self):
@@ -202,13 +214,13 @@ class VesicleBuilder(object):
 
 
 vesicle = VesicleBuilder(output="smallvesicle.pdb", radius=400, cwd="packmol_test")
-#a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", inner="name PO4 and prop z < 10")
-a = vesicle.add_molecule("molecules/dppc.pdb", outer="name PO4", center="name C4A or name C4B",ratio=1)
-a = vesicle.add_molecule("molecules/dppc.pdb", inner="name PO4", center="name C4A or name C4B",ratio=1)
+a = vesicle.add_molecule("molecules/2rlf.pdb", outer="name PO4 and prop z > 10", inner="name PO4 and prop z < 10", orient_tolerance=0.2)
+a = vesicle.add_molecule("molecules/dppc.pdb", outer="name PO4", center="name C4A or name C4B",ratio=10)
+a = vesicle.add_molecule("molecules/dppc.pdb", inner="name PO4", center="name C4A or name C4B",ratio=10)
 
-for radius in [40,50,60,80,90,100,150,200,300,400,500]:
+for radius in [60]:
     vesicle.radius = radius
-    vesicle.output = "vesicle"+str(radius) + ".pdb"
+    vesicle.output = "vesicle-dev-"+str(radius) + ".pdb"
     vesicle.build()
 
 '''
