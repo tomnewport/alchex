@@ -455,6 +455,7 @@ class GromacsEditableTOPFile(object):
         quoted = re.compile('[\'"]([^"'']*)[\'"]')
         with open(filename, "r") as file_handle:
             for line in file_handle:
+                table_columns = None
                 line = self.preprocess_line(line)
                 if line != "":
                     th = table_header.search(line)
