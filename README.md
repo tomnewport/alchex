@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/49133219.svg)](https://zenodo.org/badge/latestdoi/49133219)
+
 Alchex ⚛⚗😎
 ==========
 _(Alk-Ex)_
